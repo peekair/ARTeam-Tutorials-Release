@@ -1,0 +1,146 @@
+*************************************************************************************************TITLE:
+Cracking tutorial for PDF Extract TIFF v1.3 
+*************************************************************************************************
+BEST VIEWED:
+Notepad with word wrap enabled, and in restored window mode
+*************************************************************************************************
+TOOLS USED:
+Ollydbg v1.09d
+*************************************************************************************************TARGET:
+pdf2tiff.exe
+*************************************************************************************************LOCATION OF TOOLS AND PROGRAM:
+Ollydbg v1.09d http://www.grinders.withernsea.com/tools/Ollydbg/odbg109d.rar
+PDF Extract TIFF v1.3  http://www.grinders.withernsea.com/tools/pdf2tif.rar
+*************************************************************************************************
+CONTACT INFORMATION:
+vinceandjane@hotmail.com
+*************************************************************************************************
+TUTORIAL WRITTEN:
+15/03/2004
+*************************************************************************************************
+AUTHOR:
+Pompeyfan
+*************************************************************************************************
+
+The protection for this program is similar to that of PDF2TEXT which I covered in my last tutorial, however I have done this tut because the code where you patch is a bit more complicated.
+
+If you first open your target, you will see that you get a dialogue asking you to input a series number, or if you want click on try, and then it tells you have 100 uses, then the program opens, and you see a message it is a trial version. Okay close the program, and on with the crack.
+
+Okay,lets attack our target, open Olly, and if you haven't done so already, to make things easier for yourself, right click, select appearance/highlighting/jumps'n'calls, makes things so much easier to follow.
+
+Open pdf2tiff.exe in Olly, and you land here:
+
+0042AC02 >/$ 55             PUSH EBP
+
+Press F9 run
+
+Up comes PDF2TIFF with a dialogue box, it shows a product ID which is already computed, you just have to enter series, I'll try all 7's, and then hit okay, and of course we guessed wrong, we get the message ""Series number error, bla, bla bla", click once on CPU screen, then F12 (pause), then Alt & K to bring up the call stack screen, and you get:
+
+Call stack of main thread
+Address    Stack      Procedure / arguments                 Called from                   Frame
+0012EB3C   77D43C53   Includes 7FFE0304                     USER32.77D43C51               0012EB70
+0012EB40   77D4B3F2   USER32.WaitMessage                    USER32.77D4B3ED               0012EB70
+0012EB74   77D4D9A0   USER32.77D4B265                       USER32.77D4D99B               0012EB70
+0012EB9C   77D6AE8E   USER32.77D4D8EC                       USER32.77D6AE89               0012EB98
+0012EE54   77D6A911   ? USER32.SoftModalMessageBox          USER32.77D6A90C               0012EDDC
+0012EF9C   77D6AFD5   ? USER32.77D6A7D7                     USER32.77D6AFD0               0012EF24
+0012EFF4   77D6B0BD   USER32.MessageBoxTimeoutW             USER32.77D6B0B8               0012EFF0
+0012F028   77D6B04A   ? USER32.MessageBoxTimeoutA           USER32.77D6B045               0012F024
+0012F048   77D6B02E   ? USER32.MessageBoxExA                USER32.77D6B029               0012F044
+0012F04C   00380090     hOwner = 00380090 ('Please registe
+0012F050   100172D0     Text = "Series number error, pleas
+0012F054   00000000     Title = NULL
+0012F058   00000010     Style = MB_OK|MB_ICONHAND|MB_APPLM
+0012F05C   00000000     LanguageID = 0 (LANG_NEUTRAL)
+0012F060   10001847   ? USER32.MessageBoxA                  verypdf.10001841
+0012F064   00380090     hOwner = 00380090 ('Please registe
+0012F068   100172D0     Text = "Series number error, pleas
+0012F06C   00000000     Title = NULL
+0012F070   00000010     Style = MB_OK|MB_ICONHAND|MB_APPLM
+
+Okay, you can see from this that the dialogue box is called from one of the dll's rather than pdf2tiff.exe, like the PDF2TEXT program by the same author.
+
+So, restart the program in Olly (Ctrl & F2), then Right click/Go to expression and enter 10001841, which is where the error message is called from, and let us have a look at the section of code as follows:
+
+100017F2   E8 09F8FFFF      CALL verypdf.10001000
+100017F7   83C4 04          ADD ESP,4
+100017FA   85C0             TEST EAX,EAX
+100017FC   74 39            JE SHORT verypdf.10001837
+100017FE   6A 40            PUSH 40
+10001800   68 30730110      PUSH verypdf.10017330                    ; ASCII "Thank you registered"
+10001805   68 04730110      PUSH verypdf.10017304                    ; ASCII "Thank you registered PDFExtractTIFF v1.3."
+1000180A   56               PUSH ESI
+1000180B   FF15 34330110    CALL DWORD PTR DS:[<&USER32.MessageBoxA>>; USER32.MessageBoxA
+10001811   68 20A80110      PUSH verypdf.1001A820
+10001816   56               PUSH ESI
+10001817   E8 04F9FFFF      CALL verypdf.10001120
+1000181C   83C4 08          ADD ESP,8
+1000181F   C705 E8A80110 01>MOV DWORD PTR DS:[1001A8E8],1
+10001829   6A 01            PUSH 1
+1000182B   56               PUSH ESI
+1000182C   FF15 30330110    CALL DWORD PTR DS:[<&USER32.EndDialog>]  ; USER32.EndDialog
+10001832   E9 75020000      JMP verypdf.10001AAC
+10001837   6A 10            PUSH 10
+10001839   6A 00            PUSH 0
+1000183B   68 D0720110      PUSH verypdf.100172D0                    ; ASCII "Series number error, please check it and try again."
+
+Okay, at the start of this section of code above, you can see a call, followed by an Add ESP,4 and a TEST, then a conditional jump, which decides whether you get the good boy or bad boy message, again like PDF2TEXT. 
+
+You will find if you reverse the conditional jump that you will get a good boy message, but on opening the program next time you will be asked to register again, of course we have to patch it at the deepest level possible, so lets go inside the call at 100019E4, we want it to return a value for EAX which isn't zero, then it wont jump, so Right click/GO to/Expression and enter 10001170, and you are here:
+
+10001000   83EC 18          SUB ESP,18
+10001003   8B4424 1C        MOV EAX,DWORD PTR SS:[ESP+1C]
+10001007   56               PUSH ESI
+10001008   8A08             MOV CL,BYTE PTR DS:[EAX]
+1000100A   8A50 0F          MOV DL,BYTE PTR DS:[EAX+F]
+1000100D   884C24 10        MOV BYTE PTR SS:[ESP+10],CL
+10001011   8D4424 04        LEA EAX,DWORD PTR SS:[ESP+4]
+10001015   32C9             XOR CL,CL
+10001017   50               PUSH EAX
+10001018   884C24 15        MOV BYTE PTR SS:[ESP+15],CL
+1000101C   885424 08        MOV BYTE PTR SS:[ESP+8],DL
+10001020   884C24 09        MOV BYTE PTR SS:[ESP+9],CL
+10001024   E8 DC140000      CALL verypdf.10002505
+10001029   8D4C24 14        LEA ECX,DWORD PTR SS:[ESP+14]
+1000102D   8BF0             MOV ESI,EAX
+1000102F   51               PUSH ECX
+10001030   E8 D0140000      CALL verypdf.10002505
+10001035   03F0             ADD ESI,EAX
+10001037   83C4 08          ADD ESP,8
+1000103A   33C0             XOR EAX,EAX
+1000103C   83FE 0A          CMP ESI,0A
+1000103F   0F94C0           SETE AL
+10001042   5E               POP ESI
+10001043   83C4 18          ADD ESP,18
+10001046   C3               RETN
+
+Look at the code starting at line 10001035, now if we change the XOR EAX,EAX to INC EAX like with PDF2TEXT it isn't going to do the job here, as the surrounding code is different, so what if we change the code here to:
+
+10001035   03F0             ADD ESI,EAX
+10001037   83C4 08          ADD ESP,8
+1000103A   83FE 0A          CMP ESI,0A
+1000103D   5E               POP ESI
+1000103E   40               INC EAX
+1000103F   90               NOP
+10001040   90               NOP
+10001041   90               NOP
+10001042   90               NOP
+10001043   83C4 18          ADD ESP,18
+10001046   C3               RETN
+
+So left click once on 1000103A, then Right click/Assemble, enter ammended code, and hit assemble, then close this box, do the same for the other lines that need changing.
+
+Now run the program (F9), enter any series number, you get the thank you message, press ok, and program opens and it doesn't have a message saying it is a trial version.
+
+Okay, make changes permanent, Right click/copy to executable/all modifications/copy all, and then right click on new box that comes up/save file, double click on the file to overwrite and select yes to overwrite.
+
+Just to make absolutely sure, close Olly, open the application, and Voila!, no message asking us to register, , well done cracker!!!
+
+And remember, if you use the program, buy it ,software developers rely on the income from sales to keep going, if nobody buys, no new software would be developed.
+
+*************************************************************************************************
+SHOUTZ AND GREETZ:
+
+To exetools forum, tsrh forum, Ollydbg forum, Ricardo Narvaja, Kruger, Satyric0n, R@dier, LaBBa, Nilrem & Ferarri whoose tuts have helped me more than any others , Ollydbg, and the authors of PDF Extract TIFF.
+
+*************************************************************************************************

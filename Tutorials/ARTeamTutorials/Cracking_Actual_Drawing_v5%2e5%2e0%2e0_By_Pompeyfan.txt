@@ -1,0 +1,70 @@
+*************************************************************************************************TITLE:
+Cracking tutorial for Actual Drawing 5.5.0.0
+*************************************************************************************************
+BEST VIEWED:
+Notepad with word wrap enabled, and in restored window mode
+*************************************************************************************************
+TOOLS USED:
+Ollydbg v1.09d
+PEiD v0.91
+stripper 2.07 final 
+*************************************************************************************************TARGET:
+ActualDrawing.exe
+*************************************************************************************************LOCATION OF TOOLS AND PROGRAM:
+Ollydbg v1.09d http://grinders.withernsea.com/tools/odbg109d.rar
+Actual Drawing 5.5.0.0 http://grinders.withernsea.com/tools/Actual_Drawing_v5.5.0.0.rar
+PEiD v0.91 http://grinders.withernsea.com/tools/PEiD_v0.91.rar
+stripper 2.07 final http://grinders.withernsea.com/tools/stripper_v2.0.7_final.rar
+*************************************************************************************************
+CONTACT INFORMATION:
+vinceandjane@hotmail.com
+*************************************************************************************************
+TUTORIAL WRITTEN:
+9/02/2004
+*************************************************************************************************
+AUTHOR:
+Pompeyfan
+*************************************************************************************************
+
+Firstly, I always usually check with PEiD to see if the program is packed, the last program I cracked by this author wasn't, but we will check anyway, oh I see it is ASProtect 1.22 - 1.23 Beta 21 -> Alexey Solodovnikov [Overlay], shit I don't have any luck with ASProtect to date, oh well just downloaded the latest version of stripper 2.07 final, open stripper.exe, then hit open, browse to ActualDrawing.exe, select unpacking and let it do its stuff, good it says it was unpacked successfully ( you can even save a log of everything it did, including the fixes too the import table )
+
+Now I usually rename the original file to say oldActualDrawing.exe, and rename the unpacked one to ActualDrawing.exe.
+
+OKay, now the moment of truth, usually I have no luck with unpacked ASProtect, when I go to run them in Olly , I generally get access violations, or the damn things just don't run, so lets attack our target, open Olly, and if you haven't done so already, to make things easier for yourself, right click, select appearance/highlighting/jumps'n'calls, makes things so much easier to follow.
+
+Open ActualDrawing.exe in Olly, and you land here:
+
+0060AF94 > $ 55             PUSH EBP (okay this looks prommising)
+
+
+Press F9 run
+
+Close the welcome screen, then click on Help/Registration/Registration Key, enter your details, I used POMPEYFAN and 47806, press ok.
+
+YOu then get the Message titled Error, and the message "Name or Registration Key are not correct. Check Name or Registration Key and try again.
+
+Hit ok.
+
+Click on Olly to bring up CPU window, right click/Search for all referenced text strings, click once on top entry, then right click/ search for text and enter first part of message, I put " Name or Registration Key"
+
+Double click on that to follow in dissassembler, and you land here:
+
+005D1E8F  |. BA C4205D00    MOV EDX,ActualDr.005D20C4                ;  ASCII "Name or Registration Key are not correct.Check Name or Registration Key and try again."
+
+
+Right click, breakpoint/Toggle
+
+Olly breaks at the above address, and if you look in the memory dump in the bottom right of screen, you will see your fake serial and a real one, in my case BD5C7900, that is to easy, so lets have a bit more fun, where you see the real serial in the memory dump, note the address in the second column, in my case 01E43830, lets change the code at 005D1E8F, so instead of moving the error message, you get your serial given to you, then you can generate it for whatever username you like, so left click on that line to select it, then right click/assemble, and change MOV EDX,ActualDr.005D20C4 to MOV EDX,01E43830, hit assemble then close this box, bring up Actual Drawing, enter say NILREM (hehe) and hit ok, you get 0A473F00, then FERARRI (hehe) and ok, you get 0C4E7700, from their use your immagination. 
+
+
+Now then, close Olly, start up ActualDrawing.exe, enter your user name and serial you obtained using Olly, no message, so we click on Help/about, and voila!, you will see it is licenced to you,  well done cracker!!!
+
+
+And remember, if you use the program, buy it ,software developers rely on the income from sales to keep going, if nobody buys, no new software would be developed.
+
+*************************************************************************************************
+SHOUTZ AND GREETZ:
+
+To exetools forum, tsrh forum, Ollydbg forum, Ricardo Narvaja, Nilrem & Ferarri whoose tuts have helped me more than any others , Ollydbg, the authors of PEid and stripper, and the authors of Actual Drawing.
+
+*************************************************************************************************

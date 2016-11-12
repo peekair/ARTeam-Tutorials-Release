@@ -1,0 +1,67 @@
+*************************************************************************************************TITLE:
+Cracking tutorial for AceFTP Pro 3.5.0.0
+*************************************************************************************************
+BEST VIEWED:
+Notepad with word wrap enabled, and in restored window mode
+*************************************************************************************************
+TOOLS USED:
+Ollydbg v1.09d
+*************************************************************************************************TARGET:
+aceftp3.exe
+*************************************************************************************************LOCATION OF TOOLS AND PROGRAM:
+Ollydbg v1.09d http://www.grinders.withernsea.com/toosl/odbg109d.rar
+AceFTP Pro 3.5.0.0 http://www.grinders.withernsea.com/tools/aceftp3pro.rar
+*************************************************************************************************
+CONTACT INFORMATION:
+vinceandjane@hotmail.com
+*************************************************************************************************
+TUTORIAL WRITTEN:
+10/03/2004
+*************************************************************************************************
+AUTHOR:
+Pompeyfan
+*************************************************************************************************
+
+Open aceftp3.exe in Olly, and hang on a minute, the program opens, and cpu window is blank, shit what do we do now, okay answer no to the 2 messages that come up asking you to configure it, then click on Help/Register, and enter your user name and fake serial, I used Pompeyfan and all 7's to fill box, hit OK, and you get the message "Bad registration code", now click on Olly to bring up your blank CPU window again, then click on E on the toolbar, then double click on aceftp3.exe ( I had to do this twice before I got into the aceftp3.exe module.
+
+I tried the Point H method for Windows XP, to try and get the serial, but got no joy out of that, and the call stack didn't seem to be much use either, so what next?
+
+Okay, Right click/search for all referenced text strings, left click once on top entry, then Right click/search for text and enter "Bad registration code" (without the quotation marks), and you get this entry:
+
+Text strings referenced in aceftp3:CODE, item 3200
+ Address=006769C3
+ Disassembly=MOV EAX,aceftp3.00676B4C
+ Text string=ASCII "Bad registration code"
+
+Double click on this entry, and you are here:
+
+006769C3   B8 4C6B6700      MOV EAX,aceftp3.00676B4C                 ; ASCII "Bad registration code"
+
+Seems to be a lot of CMP routines in the code above if you look up a bit, so I took a punt, and set a breakpoint on this line, above where all these comparisons take place:
+
+0067687B   51               PUSH ECX
+
+So left click on this line once, then F2 to toggle a breakpoint on the line, now back to aceftp3.exe, and again enter your fake details, and this time when you hit OK, boom you are on your breakpoint, now we will step over the code with F8, and see what shows up, you get to here:
+
+0067689C   8B45 EC          MOV EAX,DWORD PTR SS:[EBP-14]
+
+And you see that it moves your username for the first time, then you get to here:
+
+006768B5   8B45 E8          MOV EAX,DWORD PTR SS:[EBP-18]
+
+And you see it moves your fake serial for the first time, from here you will see your details appear a few times, until you get to here:
+
+00676944   8B45 F0          MOV EAX,DWORD PTR SS:[EBP-10]
+
+Bingo, it moves the correct serial into the EAX register!!!, for Pompeyfan it is 77HH85-523DD7-PKVB7H-2BXD55.
+
+Now then, close Olly, start up aceftp3.exe, enter your user name and serial you obtained using Olly, and you get the good cracker message, to make sure we click on Help/about, and voila!, you will see it is licenced to you,  well done cracker!!!
+
+And remember, if you use the program, buy it ,software developers rely on the income from sales to keep going, if nobody buys, no new software would be developed.
+
+*************************************************************************************************
+SHOUTZ AND GREETZ:
+
+To exetools forum, tsrh forum, Ollydbg forum, Ricardo Narvaja, Kruger, Satyric0n, R@dier, LaBBa, Nilrem & Ferarri whoose tuts have helped me more than any others , Ollydbg, and the authors of AceFTP Pro.
+
+*************************************************************************************************

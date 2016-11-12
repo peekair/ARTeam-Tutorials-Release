@@ -1,0 +1,89 @@
+*************************************************************************************************TITLE:
+Cracking tutorial for Webkit 1.0
+*************************************************************************************************
+BEST VIEWED:
+Notepad with word wrap enabled, and in restored window mode
+*************************************************************************************************
+TOOLS USED:
+Ollydbg v1.09d
+*************************************************************************************************TARGET:
+Webkit.exe
+*************************************************************************************************LOCATION OF TOOLS AND PROGRAM:
+Ollydbg v1.09d http://www.grinders.withernsea.com/tools/odbg109d.zip
+Webkit 1.0 http://grinders.withernsea.com/tutorials/webkit_v1.0
+*************************************************************************************************
+CONTACT INFORMATION:
+vinceandjane@hotmail.com
+*************************************************************************************************
+TUTORIAL WRITTEN:
+18/02/2004
+*************************************************************************************************
+AUTHOR:
+Pompeyfan
+*************************************************************************************************
+
+Okay,lets attack our target in Olly, and if you haven't done so already, to make things easier for yourself, right click, select appearance/highlighting/jumps'n'calls, makes things so much easier to follow.
+
+Open Webkit.exe in Olly, and you land here:
+
+004BBFCC > $ 55             PUSH EBP
+
+
+Press F9 run
+
+Bring up Webkit, and their is a button "enter your serial number", enter your fake serial, I used all 7's again, click on done, and nothing happens, dead end. If you enter a number to short, you will get an error message "is not a valid integer", but this cant be found in the text strings.
+
+Next I tried using the point H method, but after tracing for a while realised I was getting nowhere, another dead end.
+
+Tried setting breakpoint on all references to lstrcmpA, enter serial, nothing happens, again you are at a dead end.
+
+So, do you give up, not on your life!!!
+
+Okay, restart Webkit in olly, right click/search for all referenced text strings, sometimes logic fails and you have to just try a bit of lateral thinking,I guess all their is left to try, is search for something you might get when you register, often it is something like Thankyou, bla, bla bla or success, you get the picture, anyway we try right click/search for text, uncheck case sensitive, and lets try "thankyou" for starters, that was lucky we get:
+
+Text strings referenced in WebKit:CODE, item 4562
+ Address=004A953E
+ Disassembly=MOV EAX,WebKit.004A9620
+ Text string=ASCII "Thankyou for registering WebKit Advanced, Please restart to take advantage of the features."
+
+Okay, double click on that line and you are then here:
+
+004A953E  |. B8 20964A00    MOV EAX,WebKit.004A9620                  ;  ASCII "Thankyou for registering WebKit Advanced, Please restart to take advantage of the features."
+
+
+you look further down, and you see this line:
+
+004A9580  |> B8 98964A00    MOV EAX,WebKit.004A9698                  ;  ASCII "Invalid Serial Number"
+
+Pity we didn't get that when we entered our fake serial, might have saved some time, now the only reference to this Invalid serial number command is:
+
+004A950C  |. 75 72          JNZ SHORT WebKit.004A9580
+
+So what if we change it to JE, so right click/assemble, and make the change, bring up Webkit again and hit done, still nothing happens, hmmmm.
+
+Okay,look further up, you have 3 conditional jumps that jump beyond this bad cracker go away message, lets try reversing them, this is the part of the code:
+
+004A94D4  |. 0F85 B0000000  JNZ WebKit.004A958A
+004A94DA  |. 8BC7           MOV EAX,EDI
+004A94DC  |. BE 0C000000    MOV ESI,0C
+004A94E1  |. 99             CDQ
+004A94E2  |. F7FE           IDIV ESI
+004A94E4  |. 83FA 03        CMP EDX,3
+004A94E7  |. 0F85 9D000000  JNZ WebKit.004A958A
+004A94ED  |. 8B45 FC        MOV EAX,DWORD PTR SS:[EBP-4]
+004A94F0  |. BE 1A000000    MOV ESI,1A
+004A94F5  |. 99             CDQ
+004A94F6  |. F7FE           IDIV ESI
+004A94F8  |. 4A             DEC EDX
+004A94F9  |. 0F85 8B000000  JNZ WebKit.004A958A
+
+Change all 3 to JE, like you did with the earlier ammendment, bring up Webkit again and hit done, voila! success!, then right click on the line, and select copy to executable/ All modifications, then copy all on new box that pops up, then right click on new box on select save file, then double click on your file to overwrite, and select yes to " do you really want to overwrite it ", all done, well done cracker!!!
+
+And remember, if you use the program, buy it ,software developers rely on the income from sales to keep going, if nobody buys, no new software would be developed.
+
+*************************************************************************************************
+SHOUTZ AND GREETZ:
+
+To exetools forum, tsrh forum, Ollydbg forum, Ricardo Narvaja, Nilrem & Ferarri whoose tuts have helped me more than any others , Ollydbg, and the authors of Webkit.
+
+*************************************************************************************************

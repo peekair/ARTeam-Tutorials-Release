@@ -1,0 +1,79 @@
+*************************************************************************************************TITLE:
+Cracking tutorial Platypus Web Builder 1.6 with Windows XP *************************************************************************************************
+BEST VIEWED:
+Notepad with word wrap enabled, and in restored window mode
+*************************************************************************************************
+TOOLS USED:
+Ollydbg v1.09d
+*************************************************************************************************TARGET:
+WebBuilder.exe
+*************************************************************************************************LOCATION OF TOOLS AND PROGRAM:
+Ollydbg v1.09d http://www.grinders.withernsea.com/tools/odbg109d.zip
+Platypus Web Builder 1.6 http://www.grinders.withernsea.com/tools/Platypus_Web_Builder_v1.6.rar
+Point H tutorial by Ricardo Narvaja (optional) http://www.grinders.withernsea.com/tutorials/punto_h_english.zip
+Cruehead Crackme 2 (Optional)  http://www.grinders.withernsea.com/tools/Cruehead_Crackmes.zip
+*************************************************************************************************
+CONTACT INFORMATION:
+vinceandjane@hotmail.com
+*************************************************************************************************
+TUTORIAL WRITTEN:
+11/02/2004
+*************************************************************************************************
+AUTHOR:
+Pompeyfan
+*************************************************************************************************
+
+If you don't altready know it, you will need to first determine point H (XP equivalent of hmemcpy) for your computer, some excellent articles have been written on this, particularly by Ricardo Narvaja who is a member of both Exetools forum and the Ollydbg forum, try this tutorial by Ricardo http://www.grinders.withernsea.com/tutorials/punto_h_english.zip, and use the Cruehead Crackme 2 at http://www.grinders.withernsea.com/tools/Cruehead_Crackmes.zip with the tut, that one works best I find.
+
+
+OKay, down to business,lets attack our target, open Olly, and if you haven't done so already, to make things easier for yourself, right click, select appearance/highlighting/jumps'n'calls, makes things so much easier to follow.
+
+Open WebBuilder.exe in Olly, and you land here:
+
+
+004C2C39 >/$ 55             PUSH EBP
+
+
+Press F9 run
+
+Up comes the registration box enter your details, I used POMPEYFAN and 47806, and hit ok, you wait a while and absolutely nothing happens, no error message and you certainly aren't lucky enough to fluke the real serial, or are you!!!, I think not.
+
+You scratch your head for a while.
+
+Okay, lets try point H method, Right click/go to/expression Enter the address of point H for your computer, in my case 77D5DEBB, hit okay and you land here:
+
+77D5DEBB   F3:A5            REP MOVS DWORD PTR ES:[EDI],DWORD PTR DS>
+77D5DEBD   8BC8             MOV ECX,EAX
+77D5DEBF   83E1 03          AND ECX,3
+77D5DEC2   F3:A4            REP MOVS BYTE PTR ES:[EDI],BYTE PTR DS:[>
+77D5DEC4   E8 04F9FFFF      CALL user32.77D5D7CD
+
+Right click Breakpoint/memory on access
+
+Now bring registration screen back up again, and hit Ok.
+
+Olly breaks at the above address
+
+Select follow address in dump for the EDI register, Click once on 77D5DEBB then press F8 down to the call, your username will be loaded into the dump window, highlight it, right click/breakpoint/memory on access
+
+Press F9 or run, and you land here:
+
+77E760FF   8A08             MOV CL,BYTE PTR DS:[EAX]
+
+
+Press F8 several times to trace through the code, you will see your user name and fake serial appear a few times, then eventually you see another interesting number, in my case 2aBcKQqM, this is at:
+
+004178EA   . 59             POP ECX                                  ;  00DDAA58
+
+You will see it show up in the little box at the bottom of the CPU window, and also in the memory dump window at address 0012F894.  
+
+Now then, close Olly, start up WebBuilder.exe, enter your user name and the serial you obtained using Olly, and Voila!, you get a "thank you" message, well done cracker!!!
+
+And remember, if you use the program, buy it ,software developers rely on the income from sales to keep going, if nobody buys, no new software would be developed.
+
+*************************************************************************************************
+SHOUTZ AND GREETZ:
+
+To exetools forum, tsrh forum, Ollydbg forum, Ricardo Narvaja, Nilrem & Ferarri whoose tuts have helped me more than any others , Ollydbg, and the authors of Platypus Web Builder.
+
+*************************************************************************************************

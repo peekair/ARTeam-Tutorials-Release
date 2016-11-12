@@ -1,0 +1,254 @@
+                   (BEST VIEWED WITH WORDWRAP ENABLED & FONT= COURIER , SIZE =10)
+
+         @$@$#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@@$@ @#$#$@
+        @@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@  @#$#$#$@
+         @@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#$@ @#$#$@
+          @#$@                             
+          @#$@       @$@$@$@$@ @$@$@ $@$@$ @$@$@ $@$@$   @#@#@#@#@@ @$@$@ $@$@$ @$#$#$#@
+          @#$@      @#$#$#$#$@@ @#$#$#$#$#$ @#$#$#$#$#$ @$#$#$#$#@@@ @#$#$#$#$#$ @#$#$@
+          @#$@    @ @#@#@#@#@#@ @#$@$#$#@@@ @#$@$#$#@@@ @#@@    @#$@ @#$@$#$#@@@  @$#@
+          @#$@#$#$@ @#@#   #@#@ @#$@   @@@  @#$@   @@@  @$@     @#$@ @#$@   @@@   @$#@
+          @#$@@#@#@ @#@#@#@#@#@ @#$@   @@   @#$@   @@         @#@#$@ @#$@   @@    @$#@   
+          @#$@#$#$@ @$@$@$@$@$@ @#$@        @#$@         @@#@@#@#@#@ @#$@         @$#@
+          @#$@    @ @$@#        @#$@        @#$@        @#$#$#$#$#$@ @#$@         @$#@
+          @#$@      @$@#        @#$@        @#$@        @#$@    @#$@ @#$@         @$#@
+          @#$@      @#@#@#@#@#@ @#$@        @#$@        @#$@#$#$#$#@ @#$@         @$#@
+          @#$#@     @$@$@$@$@$@ @#$#@       @#$#@       @#$@#@#@#@#@ @#$#@       @#$#$@
+        @#@#@#@#@    @#@#@#@#@ @#@#@#@     @#@#@#@       @#@#@#@#@# @#@#@#@     @$#$#$#@
+
+
+                                        
+                                     :-)---> ARTeam <---(-:
+                            Visit:-http://cracking.accessroot.com
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$                     $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$  --EMAIL EFFECTS--  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$        1.6          $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$@@@@@@@@@@@@@
+@@@@@@@@@@@@@              AUTHOR            :   FERRARI                          @@@@@@@@@@@@@ 
+@@@       @@@              PROTECTION        :   NAG SCREEN                       @@@       @@@   @@ ferrari @@              TARGET FILE       :   Email Effects.exe                @@ ferrari @@ 
+@@@       @@@              TARGET URL        :   http://www.sigsoftware.com       @@@       @@@   @@@@@@@@@@@@@              OPERATING SYSTEM  :   WINDOWS ALL                      @@@@@@@@@@@@@   @@@@@@@@@@@@@              RELEASE DATE      :   5.02.2004                        @@@@@@@@@@@@@
+@@@@@@@@@@@@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@                                TOOLS USED & TARGET SOFTWARE                                 @
+@                                =============================                                @
+@                                                                                             @
+@ OllyDbg         :- http://grinders.withernsea.com/tools/odbg110b1.rar                       @
+@ EmailEffects    :- http://grinders.withernsea.com/tools/Email_Effects.rar                   @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@           
+   As usual first make a back up of the original exe. Now run the program. You see a nag which tells you to register the program.Take a note of the caption of this window 'About Email Effects' After few seconds the nag closes and starts the main program. 
+      Let's start dude ;-)Fire up olly and load 'Email Effects.exe'. In the CPU window press 'Ctrl N'. This brings up the API calls window(Right click-->sort by-->name). Scroll down till 'CreateWindowExA'-->Select it-->right click and choose 'Set breakpoint on every reference'. Okay now get back to Olly CPU window and press F9. You will land below (00411E26)
+
+00411E1A  |. 68 784A4200    PUSH Email_Ef.00424A78         ; |WindowName = "About Email Effects"
+00411E1F  |. 68 8C4A4200    PUSH Email_Ef.00424A8C         ; |Class = "About"
+00411E24  |. 6A 01          PUSH 1                         ; |ExtStyle = WS_EX_DLGMODALFRAME
+00411E26  |. FF15 DC654800  CALL DWORD PTR DS:[<&USER32.Cr>; \CreateWindowExA  <-- you land here
+
+ Now you see at address 00411E1A...did you take note of our caption in the begining. Okay now look at 'PUSH Email_Ef.00424A78' .What we have to do is press 'Ctrl G' and enter the address  00424A78 and press OK. You land here.
+
+00424A73   75 74            JNZ SHORT Email_Ef.00424AE9
+00424A75   0000             ADD BYTE PTR DS:[EAX],AL
+00424A77   0041 62          ADD BYTE PTR DS:[ECX+62],AL
+
+ See our sweet JNZ (Jump if not equal).Okay just select it-->right click-->Binary-->Fill with NOP's-->Done(not completely though). 
+
+ Now right click in the CPU window-->Copy to executable-->Selection-->Right click in the new window that opens-->Save File-->Choose to overwrite
+
+Now run the program. No nags anymore he he ;-)
+ dude if you think that everything is fine..bad news for you. Just try to advance the system clock by 1 year and try running the program. shit this a trial ware and expires after 28 days. So another nag screen. Okay lets get rid of this too. ;-) But first reset your original time.
+ Load the program again in Olly. Hit F9. We don't get that first NAG ;-). Okay now again advance the clock by 1 year and then close the program. We get the 2nd NAG. Okay back in Olly hit F12 and then Alt K to open the call stack window and u should see this.
+
+Call stack of main thread
+Address    Stack      Procedure / arguments                 Called from                   Frame
+0012FE00   77D43FBE   Includes 7FFE0304                     USER32.77D43FBC               0012FE34
+0012FE04   77D487A7   USER32.WaitMessage                    USER32.77D487A2               0012FE34
+0012FE38   77D4F58C   USER32.77D48607                       USER32.77D4F587               0012FE34
+0012FE60   77D4F5C7   USER32.77D4F4D8                       USER32.77D4F5C2               0012FE5C
+0012FE80   77D650FD   USER32.DialogBoxIndirectParamAorW     USER32.77D650F8               0012FE7C
+0012FEAC   0041309E   USER32.DialogBoxParamA                Email_Ef.00413098             0012FEA8
+0012FEB0   00400000     hInst = 00400000
+0012FEB4   00000190     pTemplate = 190
+0012FEB8   00000000     hOwner = NULL
+0012FEBC   00413100     DlgProc = Email_Ef.00413100
+0012FEC0   0012FEE4     lParam = 0012FEE4
+0012FF04   00408FC1   Email_Ef.00412F90                     Email_Ef.00408FBC
+0012FF48   0041E0F7   Email_Ef.00408E70                     Email_Ef.<ModuleEntryPoint>+
+
+
+Now we can see that 00413098 called the DialogBoxParamA. So lets goto 00413098(Ctrl G) and see this code. We land at 00413098
+ We see that the program call for the GetSystemTimeAsFileTime API. Now see the JNZ at 00412FA6. Now CMP compares the 28 days limit with the system time. If not over then  jumps to  004130E6 orelse get our bad messagebox. Now goto 004130E6
+
+00412F9D  |. 894C24 04      MOV DWORD PTR SS:[ESP+4],ECX
+00412FA1  |. 66:394C24 44   CMP WORD PTR SS:[ESP+44],CX
+00412FA6  |. 0F85 3A010000  JNZ Email_Ef.004130E6
+00412FAC  |. 8D4424 18      LEA EAX,DWORD PTR SS:[ESP+18]
+00412FB0  |. 50             PUSH EAX                                 ; /pFileTime
+00412FB1  |. FF15 F0644800  CALL DWORD PTR DS:[<&KERNEL32.GetSystemT>; \GetSystemTimeAsFileTime
+00412FB7  |. 8B4424 4C      MOV EAX,DWORD PTR SS:[ESP+4C]
+00412FBB  |. 894424 0C      MOV DWORD PTR SS:[ESP+C],EAX
+00412FBF  |. 8B4424 1C      MOV EAX,DWORD PTR SS:[ESP+1C]
+00412FC3  |. 894424 10      MOV DWORD PTR SS:[ESP+10],EAX
+00412FC7  |. 8B4424 10      MOV EAX,DWORD PTR SS:[ESP+10]
+00412FCB  |. 2B4424 0C      SUB EAX,DWORD PTR SS:[ESP+C]
+00412FCF  |. B9 C9000000    MOV ECX,0C9
+00412FD4  |. 31D2           XOR EDX,EDX
+00412FD6  |. F7F1           DIV ECX
+00412FD8  |. 2B4424 54      SUB EAX,DWORD PTR SS:[ESP+54]
+00412FDC  |. 89C5           MOV EBP,EAX
+00412FDE  |. 66:85ED        TEST BP,BP
+00412FE1  |. 7F 0E          JG SHORT Email_Ef.00412FF1
+00412FE3  |. 8B4424 10      MOV EAX,DWORD PTR SS:[ESP+10]
+00412FE7  |. 3B4424 0C      CMP EAX,DWORD PTR SS:[ESP+C]
+00412FEB  |. 0F83 F5000000  JNB Email_Ef.004130E6
+00412FF1  |> 66:81FD B400   CMP BP,0B4
+00412FF6  |. 7E 08          JLE SHORT Email_Ef.00413000
+00412FF8  |. BE 01000000    MOV ESI,1
+00412FFD  |. EB 36          JMP SHORT Email_Ef.00413035
+00412FFF  |  90             NOP
+00413000  |> 66:83FD 78     CMP BP,78
+00413004  |. 7E 0A          JLE SHORT Email_Ef.00413010
+00413006  |. BE 02000000    MOV ESI,2
+0041300B  |. EB 28          JMP SHORT Email_Ef.00413035
+0041300D  |  8D40 00        LEA EAX,DWORD PTR DS:[EAX]
+00413010  |> 66:83FD 3C     CMP BP,3C
+00413014  |. 7E 0A          JLE SHORT Email_Ef.00413020
+00413016  |. BE 03000000    MOV ESI,3
+0041301B  |. EB 18          JMP SHORT Email_Ef.00413035
+0041301D  |  8D40 00        LEA EAX,DWORD PTR DS:[EAX]
+00413020  |> 66:83FD 1E     CMP BP,1E
+00413024  |. 7E 0A          JLE SHORT Email_Ef.00413030
+00413026  |. BE 05000000    MOV ESI,5
+0041302B  |. EB 08          JMP SHORT Email_Ef.00413035
+0041302D  |  8D40 00        LEA EAX,DWORD PTR DS:[EAX]
+00413030  |> BE 07000000    MOV ESI,7
+00413035  |> 66:85F6        TEST SI,SI
+00413038  |. 74 18          JE SHORT Email_Ef.00413052
+0041303A  |. 0FBFCE         MOVSX ECX,SI
+0041303D  |. 0FBFC5         MOVSX EAX,BP
+00413040  |. 894424 08      MOV DWORD PTR SS:[ESP+8],EAX
+00413044  |. 48             DEC EAX
+00413045  |. 99             CDQ
+00413046  |. F7F9           IDIV ECX
+00413048  |. 8B4424 08      MOV EAX,DWORD PTR SS:[ESP+8]
+0041304C  |. 29D0           SUB EAX,EDX
+0041304E  |. 89C7           MOV EDI,EAX
+00413050  |. EB 02          JMP SHORT Email_Ef.00413054
+00413052  |> 89EF           MOV EDI,EBP
+00413054  |> 66:85F6        TEST SI,SI
+00413057  |. 74 15          JE SHORT Email_Ef.0041306E
+00413059  |. 66:8B03        MOV AX,WORD PTR DS:[EBX]
+0041305C  |. 894424 14      MOV DWORD PTR SS:[ESP+14],EAX
+00413060  |. 66:3B7C24 14   CMP DI,WORD PTR SS:[ESP+14]
+00413065  |. 7F 07          JG SHORT Email_Ef.0041306E
+00413067  |. 66:3B6C24 14   CMP BP,WORD PTR SS:[ESP+14]
+0041306C  |. 7D 78          JGE SHORT Email_Ef.004130E6
+0041306E  |> 66:893B        MOV WORD PTR DS:[EBX],DI
+00413071  |. 8D5424 20      LEA EDX,DWORD PTR SS:[ESP+20]
+00413075  |. 52             PUSH EDX                                 ; /pSystemTime
+00413076  |. 8D4424 4C      LEA EAX,DWORD PTR SS:[ESP+4C]            ; |
+0041307A  |. 50             PUSH EAX                                 ; |pFileTime
+0041307B  |. FF15 F4644800  CALL DWORD PTR DS:[<&KERNEL32.FileTimeTo>; \FileTimeToSystemTime
+00413081  |. 8D4424 20      LEA EAX,DWORD PTR SS:[ESP+20]
+00413085  |. 50             PUSH EAX                                 ; /lParam
+00413086  |. 68 00314100    PUSH Email_Ef.00413100                   ; |DlgProc = Email_Ef.00413100
+0041308B  |. 6A 00          PUSH 0                                   ; |hOwner = NULL
+0041308D  |. 68 90010000    PUSH 190                                 ; |pTemplate = 190
+00413092  |. A1 88214200    MOV EAX,DWORD PTR DS:[422188]            ; |
+00413097  |. 50             PUSH EAX                                 ; |hInst => 00400000
+00413098  |. FF15 C0654800  CALL DWORD PTR DS:[<&USER32.DialogBoxPar>; \DialogBoxParamA
+0041309E  |. 2D 96010000    SUB EAX,196                              ;  Switch (cases 196..198)
+004130A3  |. 3D 02000000    CMP EAX,2
+004130A8  |. 77 3C          JA SHORT Email_Ef.004130E6
+004130AA  |. FF2485 B430410>JMP DWORD PTR DS:[EAX*4+4130B4]
+004130B1  |  8D40 00        LEA EAX,DWORD PTR DS:[EAX]
+004130B4  |. D0304100       DD Email_Ef.004130D0                     ;  Switch table used at 004130AA
+004130B8  |. C7304100       DD Email_Ef.004130C7
+004130BC  |. C0304100       DD Email_Ef.004130C0
+004130C0  |> E8 1B020000    CALL Email_Ef.004132E0                   ;  Case 198 (LB_GETITEMRECT) of switch 0041309E
+004130C5  |. EB 1F          JMP SHORT Email_Ef.004130E6
+004130C7  |> E8 54020000    CALL Email_Ef.00413320                   ;  Case 197 (LB_SETTOPINDEX) of switch 0041309E
+004130CC  |. EB 18          JMP SHORT Email_Ef.004130E6
+004130CE  |  89C0           MOV EAX,EAX
+004130D0  |> 68 784B4200    PUSH Email_Ef.00424B78                   ;  ASCII "IDH_PAYMENT"; Case 196 (LB_ADDFILE) of switch 0041309E
+004130D5  |. 6A 00          PUSH 0
+004130D7  |. E8 24F8FFFF    CALL Email_Ef.00412900
+004130DC  |. 59             POP ECX
+004130DD  |. 59             POP ECX
+004130DE  |. C74424 04 0100>MOV DWORD PTR SS:[ESP+4],1
+004130E6  |> 8B4424 04      MOV EAX,DWORD PTR SS:[ESP+4]             ;  Default case of switch 
+
+
+Now select 004130E6 -->right click-->Find reference to-->Address constant.
+
+References in Email_Ef:.text to 00000004, item 727
+
+00413169 LEA EAX,DWORD PTR SS:[ESP+4]<---Double click on this and land below
+
+
+0041313B   . BE 844B4200    MOV ESI,Email_Ef.00424B84            ;  ASCII "The trial period of "
+00413140   . 8D3C24         LEA EDI,DWORD PTR SS:[ESP]
+00413143   . A5             MOVS DWORD PTR ES:[EDI],DWORD PTR DS>
+00413144   . A5             MOVS DWORD PTR ES:[EDI],DWORD PTR DS>
+00413145   . A5             MOVS DWORD PTR ES:[EDI],DWORD PTR DS>
+00413146   . A5             MOVS DWORD PTR ES:[EDI],DWORD PTR DS>
+00413147   . A5             MOVS DWORD PTR ES:[EDI],DWORD PTR DS>
+00413148   . A4             MOVS BYTE PTR ES:[EDI],BYTE PTR DS:[>
+00413149   . 6A 1C          PUSH 1C                              ; /<%i> = 1C (28.)
+0041314B   . 68 9C4B4200    PUSH Email_Ef.00424B9C               ; |Format = "%i"
+00413150   . 8D8424 0801000>LEA EAX,DWORD PTR SS:[ESP+108]       ; |
+00413157   . 50             PUSH EAX                             ; |s
+00413158   . FF15 74654800  CALL DWORD PTR DS:[<&USER32.wsprintf>; \wsprintfA
+0041315E   . 83C4 0C        ADD ESP,0C
+00413161   . 8D8C24 0001000>LEA ECX,DWORD PTR SS:[ESP+100]
+00413168   . 51             PUSH ECX
+00413169   . 8D4424 04      LEA EAX,DWORD PTR SS:[ESP+4]
+0041316D   . 50             PUSH EAX
+0041316E   . E8 7D6D0000    CALL Email_Ef.00419EF0
+00413173   . 59             POP ECX
+00413174   . 59             POP ECX
+00413175   . 68 A04B4200    PUSH Email_Ef.00424BA0               ;  ASCII " days for "
+0041317A   . 8D4424 04      LEA EAX,DWORD PTR SS:[ESP+4]
+0041317E   . 50             PUSH EAX
+0041317F   . E8 6C6D0000    CALL Email_Ef.00419EF0
+00413184   . 59             POP ECX
+00413185   . 59             POP ECX
+00413186   . 68 00010000    PUSH 100                             ; /Count = 100 (256.)
+0041318B   . 8D8424 0401000>LEA EAX,DWORD PTR SS:[ESP+104]       ; |
+00413192   . 50             PUSH EAX                             ; |Buffer
+00413193   . 68 647D0000    PUSH 7D64                            ; |RsrcID = STRING "Email Effects"
+00413198   . A1 88214200    MOV EAX,DWORD PTR DS:[422188]        ; |
+0041319D   . 50             PUSH EAX                             ; |hInst => 00400000
+0041319E   . FF15 6C654800  CALL DWORD PTR DS:[<&USER32.LoadStri>; \LoadStringA
+004131A4   . 8D9424 0001000>LEA EDX,DWORD PTR SS:[ESP+100]
+004131AB   . 52             PUSH EDX
+004131AC   . 8D4424 04      LEA EAX,DWORD PTR SS:[ESP+4]
+004131B0   . 50             PUSH EAX
+004131B1   . E8 3A6D0000    CALL Email_Ef.00419EF0
+004131B6   . 59             POP ECX
+004131B7   . 59             POP ECX
+004131B8   . 68 AC4B4200    PUSH Email_Ef.00424BAC               ;  ASCII " has now elapsed (you have been using it since "
+
+Now all the above code displays that bad message as you can see. But only when the 28 days limit expires which is checked with GetSystemTimeAsFileTime. So if we directly jump from 00412FA6 to 004130E6 the checking doesn't takes place and the software never expires. :-)
+ So just change(Ctrl E) that JNZ(Jump not taken) at 00412FA6 to JE(Jump taken) i.e
+          ==              ==  
+change  0F85 3A010000-->0F84 3A010000
+          ==              == 
+
+So atlast time for making the changes permanent, right click in the CPU window-->Copy to executable-->Selection-->Right click in the new window that opens-->Save File-->Choose to overwrite
+
+Congratulations cracker!!!
+
+@@@@@@@@@@###########################################################################@@@@@@@@@@ 
+@@@@@@@@@@#                          ---SHOUTZ AND GREETZ---                        #@@@@@@@@@@
+@@@@  @@@@#                                                                         #@@@@  @@@@ 
+@@@ H  @@@#            To Nilrem-->Merlin who's Tutorials helped me to use          #@@@ H  @@@   @@  O   @@#            Ollydbg for debugging. Thanks to el-kiwi whose tutorials     #@@  O   @@
+@   R    @#            helped me alot. Thanks to Pompeyfan, www.tech-arena.com      #@   R    @  
+@@  S   @@#            staff, members for encouraging me to write these tutorials.  #@@  S   @@
+@@@ E  @@@#            exetools.com,Sir JMI, SatyricOn, R@dier and others who       #@@@ E  @@@
+@@@@  @@@@#            helped me alot.                                              #@@@@  @@@@
+@@@@@@@@@@@@@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$@@@@@@@@@@@@@ 
+@@@@@@@@@@@@@                                                                     @@@@@@@@@@@@@
+@@@       @@@                                                                     @@@       @@@
+@@ ferrari @@             REMEMBER IF U USE THE PROGRAM THEN BUY IT ;-) !         @@ ferrari @@ 
+@@@       @@@                                                                     @@@       @@@ 
+@@@@@@@@@@@@@                                                                     @@@@@@@@@@@@@   @@@@@@@@@@@@@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$@@@@@@@@@@@@@
+                                    

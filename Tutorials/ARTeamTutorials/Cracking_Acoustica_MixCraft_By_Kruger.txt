@@ -1,0 +1,112 @@
+============================================================================
+TITLE.:
+Acoustica MixCraft v1.00 Build 8
+============================================================================
+BEST VIEWED.:
+Notepad with word wrap enabled, and in restored window mode
+============================================================================
+TOOLS USED.:
+OllyDbg v1.10(step 2)
+============================================================================
+TARGET.:
+mixcraft.exe 684032 bytes.
+Written in Microsoft Visual C++ 6.0
+============================================================================
+LOCATION OF TOOLS AND PROGRAM.:
+http://www.grinders.withernsea.com/tools/odbg110b2.rar
+http://www.grinders.withernsea.com/tools/Acoustica-Mixcraft-Installer.rar
+============================================================================
+WEBSITE.:
+http://cracking.accessroot.com/
+============================================================================
+CONTACT INFORMATION.:
+kruger48@hotmail.com
+============================================================================
+TUTORIAL VERSION.:
+v1.0 Written 18th of April 2004
+============================================================================
+AUTHOR AND OTHER ALIASES.:
+Kruger
+AKA.:(Swat'98) (Swat'99) (Swat)
+============================================================================
+First, to make this crack easy to follow.
+I have used few references so you won't loose the grip of the crack.
+A lot of tutors bombs you with jumps and calls ;-)
+I try to keep it Plain, Simple, Stupid!
+
+Install app, and load in Olly.
+Push F9, program loads but when you try to push the programs form it breaks all the time.
+At least I couldn't get Olly to run it, so here we have to do it manually.
+Good old story, goto top in CPU window -> rightclick -> choose search for all referenced text strings.
+Let's browse and see if we find anything...
+============================================================================
+Text strings referenced in mixcraft:.text, item 43
+Address=00406D81 Disassembly=PUSH mixcraft.0045FE24 Text string=ASCII "x0432-x4120-ao7-345-221"
+Looks like a serial... more of the same below...
+Ok, go on...hmm... 
+A lot of goodies here...
+Address=004314B6  Text string=ASCII "IDS_BEFORE30"
+Address=004314E5  Text string=ASCII "IDS_AFTER30"
+Address=00431660  Text string=ASCII "IDS_BUY_URL"
+Address=00431886  Text string=ASCII "03XXX-GIVEM-E1MIX-CRAFT"
+Address=004318CE  Text string=ASCII "IDS_YOU_EXTENDED"
+Address=00431968  Text string=ASCII "IDS_YOU_REGISTERED"
+F2 On all makes them easy to spot when we go through the code.
+============================================================================
+Lets push Enter on Address 004314B6
+Back in CPU window.
+Browse down and have a look on the jumps.
+00431880   JNZ mixcraft.004319AE     ; *** Meaning, if wrong serial I will jump ***
+00431886   MOV EDI,mixcraft.00462E78 ;  ASCII "03XXX-GIVEM-E1MIX-CRAFT"
+JNZ = Jumps to 004319AE
+004319AE   PUSH 0                  ;  *** Landing Here, invalid serial ***
+004319B0   PUSH mixcraft.00462E30  ;  ASCII "INFORM_RegistrationCodeInvalid"
+So, Wrong Serial = Bye bye, Bad Boy!
+This serial is only for extending the trial period... but shows exactly how the program acts!
+So, at adress 004319AE rightclick -> find references to Selected command.
+This will show us all adresses that jumps to 004319AE
+We got this.:
+References in mixcraft:.text to 004319AE
+00431880   JNZ mixcraft.004319AE
+00431949   JNZ SHORT mixcraft.004319AE
+004319AE   PUSH 0   (Initial CPU selection)
+
+00431880   *** Explained before, go on ***
+00431949   *** New jump, check it out! ***
+So, we go to this jump,
+00431949   JNZ SHORT mixcraft.004319AE
+Looks good, look on line above...
+00431947    TEST EAX,EAX
+So, Wrong Serial = Bye bye, Bad Boy!
+Now, let's try to be clever!
+We change the jump from JNZ to JE
+(JNZ = Jump if Not equal)
+(JE  = Jump if Equal)
+Meaning, this is Opposite instructions!
+
+Old Code.:
+00431949   75 63   JNZ SHORT mixcraft.004319AE
+New Code:
+00431949   74 63    JE SHORT mixcraft.004319AE
+
+Now, browse to the new file... run... register...
+I used kruger@soft.com, and serial 123456789
+Nahh... doesn't work :-(
+Ohh... think...didn't we see a serial in the txt strings?
+03XXX-GIVEM-E1MIX-CRAFT
+Let's edit it to.:
+11111-22222-33333-44444
+Try again! Works!
+RightClick, copy to executable -> all modifications -> copy all -> close window -> save file with a new name.
+Data stored in Registry.:
+HKEY_CURRENT_USER\Software\Acoustica\Mixcraft
+Delete data in "SyncAddress" if you want to change anything.
+Enjoy!
+That's all 4 now!
+
+Remember if you use the application then buy it!
+============================================================================
+SHOUTZ AND GREETZ:
+To all Members of AR Ream, TSRh Club, and the creator of Olly! 
+And to all of you reading my Tuts!
+============================================================================

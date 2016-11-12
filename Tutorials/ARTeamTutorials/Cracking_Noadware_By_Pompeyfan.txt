@@ -1,0 +1,98 @@
+*************************************************************************************************TITLE:
+Cracking tutorial for NoAdware 2.0 with Windows XP using Point H method
+*************************************************************************************************
+BEST VIEWED:
+Notepad with word wrap enabled, and in restored window mode
+*************************************************************************************************
+TOOLS USED:
+Ollydbg v1.09d
+*************************************************************************************************TARGET:
+NoAdware.exe
+*************************************************************************************************LOCATION OF TOOLS AND PROGRAM:
+Ollydbg v1.09d http://www.grinders.withernsea.com/tools/Ollydbg/odbg109d.rar
+NoAdware 2.0 http://www.grinders.withernsea.com/tools/noadware.rar
+Point H tutorial by Ricardo Narvaja (optional) http://home.tiscali.cz:8080/robocop/files/punto_h_english.zip
+Cruehead Crackme 2 (Optional)  http://www.woodmann.com/crackz/Archives/Crackmes.zip
+*************************************************************************************************
+CONTACT INFORMATION:
+vinceandjane@hotmail.com
+*************************************************************************************************
+TUTORIAL WRITTEN:
+21/04/2004
+*************************************************************************************************
+AUTHOR:
+Pompeyfan
+*************************************************************************************************
+
+If you don't altready know it, you will need to first determine point H (XP equivalent of hmemcpy) for your computer, some excellent articles have been written on this, particularly by Ricardo Narvaja who is a member of both Exetools forum and the Ollydbg forum, I'll try and summarise how to find it as follows, if you want a more detailed explanation, then try this tutorial by Ricardo http://home.tiscali.cz:8080/robocop/files/punto_h_english.zip 
+
+OKay, down to business,lets attack or target, open Olly, and if you haven't done so already, to make things easier for yourself, right click, select appearance/highlighting/jumps'n'calls, makes things so much easier to follow.
+
+Open your target in Olly, and you land here:
+
+0042BCC0 >/$ 55             PUSH EBP
+
+Press F9 run
+
+Click on Register/Register now, and enter your Username and fake serial, I'll use Pompeyfan and fill the other boxes with 7's, don't press enter yet.
+
+Right click/go to/expression
+Enter the address of point H for your computer, in my case 77D5DEBB, hit okay and you land here:
+
+77D5DEBB   F3:A5            REP MOVS DWORD PTR ES:[EDI],DWORD PTR DS>
+77D5DEBD   8BC8             MOV ECX,EAX
+77D5DEBF   83E1 03          AND ECX,3
+77D5DEC2   F3:A4            REP MOVS BYTE PTR ES:[EDI],BYTE PTR DS:[>
+77D5DEC4   E8 04F9FFFF      CALL user32.77D5D7CD
+
+Right click Breakpoint/memory on access
+
+Now bring the registration screen back up again, and hit register button.
+
+Olly breaks at the above address
+
+Select follow address in dump for the EDI register, Click once on 77D5DEBB then press F8 down to the call,  and part of your fake serial will be loaded into the dump window, highlight it, right click/breakpoint/memory on access
+
+Press F9 or run, and often you will land back in the programs code, but in this case we are in kernel32, so let us step over the code with F8 till we get back into NoAdware.exe, and eventually we get back into it here:
+
+0043F4C7  |> 8B0E           MOV ECX,DWORD PTR DS:[ESI]
+
+It should be remembered though, that you wont always come back into your main .exe first, sometimes the program may have many .exe files, sometimes you will come back into one of the programs .dll files first, but the beauty of this method is that it will often then tell you which file is responsible for the serial checking routine, as with all methods though don't expect it to always grab you a serial.
+
+Now keep tracing with F8, and eventually we hit the error message here:
+
+0041A065   > E8 F6B50200    CALL NoAdware.00445660                   ; \NoAdware.00445660
+
+And we didn't see our valid serial, so what now, okay start pressing the minus button on your keyboard to backtrack a bit, just a few goes, now this bit looks interesting:
+
+00419FAA   . E8 21E7FFFF    CALL NoAdware.004186D0
+00419FAF   . 83C4 14        ADD ESP,14
+00419FB2   . 85C0           TEST EAX,EAX
+00419FB4   . 0F84 A2000000  JE NoAdware.0041A05C
+
+Let us set a breakpoint on the call, so left click on that line once, then F2 to set your breakpoint, and Right click & remove your memory breakpoint so we will break at our new breakpoint straight away we re-enter our details.
+
+Now, re-enter your fake details, then press F7 to step into the call, then step over the code with F8, once we get here we get stuck in some loops where the serial is calculated (I'll have to learn to Keygen soon):
+
+004187A7   > 33C0           XOR EAX,EAX
+
+To save time, set a breakpoint here:
+
+00418833   . 8D85 7EFFFFFF  LEA EAX,DWORD PTR SS:[EBP-82]
+
+Then press F9 (run), here you will see part of your valid serial appearing for the first time, now continue stepping over the code with F8, and when we get here:
+
+00418A10   . 8BE5           MOV ESP,EBP
+
+The whole serial is shown in the ESP register, with mine being KTXO0-N0VB2-ISWQT
+
+Close Olly, start up NoAdware.exe, enter your Username and the serial you obtained using Olly, and voila! Well done cracker!!!
+
+And remember, if you use the program, buy it ,software developers rely on the income from sales to keep going, if nobody buys, no new software would be developed.
+
+*************************************************************************************************
+SHOUTZ AND GREETZ:
+
+To the AR Cracking team, exetools forum, tsrh forum, Ollydbg forum, Ricardo Narvaja, Kruger, Britedream, Satyric0n, R@dier, LaBBa, Nilrem & Ferarri whoose tuts have helped me more than any others , Ollydbg, and the authors of NoAdware .
+
+*************************************************************************************************

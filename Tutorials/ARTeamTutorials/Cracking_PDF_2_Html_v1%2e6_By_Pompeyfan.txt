@@ -1,0 +1,170 @@
+*************************************************************************************************TITLE:
+Cracking tutorial for PDF2HTML v1.6 
+*************************************************************************************************
+BEST VIEWED:
+Notepad with word wrap enabled, and in restored window mode
+*************************************************************************************************
+TOOLS USED:
+Ollydbg v1.09d
+*************************************************************************************************TARGET:
+pdf2html.exe
+*************************************************************************************************LOCATION OF TOOLS AND PROGRAM:
+Ollydbg v1.09d http://www.grinders.withernsea.com/tools/Ollydbg/odbg109d.rar
+PDF2HTML v1.6 http://www.grinders.withernsea.com/tools/pdf2htm.rar
+*************************************************************************************************
+CONTACT INFORMATION:
+vinceandjane@hotmail.com
+*************************************************************************************************
+TUTORIAL WRITTEN:
+15/03/2004
+*************************************************************************************************
+AUTHOR:
+Pompeyfan
+*************************************************************************************************
+
+Okay,lets attack our target, open Olly, and if you haven't done so already, to make things easier for yourself, right click, select appearance/highlighting/jumps'n'calls, makes things so much easier to follow.
+
+Open pdf2html.exe in Olly, and you land here:
+
+00479BC2 >/$ 55             PUSH EBP
+
+Press F9 run
+
+Up comes PDF2HTML with a dialogue box, enter your email and fake serial number, I used pompeyfan@pompeyfan.com.au and all 7's, and then hit okay, and of course we guessed wrong, we get the message ""Series number error, bla, bla bla", click once on CPU screen, then F12 (pause), then Alt & K to bring up the call stack screen, and you get:
+
+Call stack of main thread
+Address    Stack      Procedure / arguments                 Called from                   Frame
+0012DC30   77D43C53   Includes 7FFE0304                     USER32.77D43C51               0012DC64
+0012DC34   77D4B3F2   USER32.WaitMessage                    USER32.77D4B3ED               0012DC64
+0012DC68   77D4D9A0   USER32.77D4B265                       USER32.77D4D99B               0012DC64
+0012DC90   77D6AE8E   USER32.77D4D8EC                       USER32.77D6AE89               0012DC8C
+0012DF48   77D6A911   ? USER32.SoftModalMessageBox          USER32.77D6A90C               0012DED0
+0012E090   77D6AFD5   ? USER32.77D6A7D7                     USER32.77D6AFD0               0012E018
+0012E0E8   77D6B0BD   USER32.MessageBoxTimeoutW             USER32.77D6B0B8               0012E0E4
+0012E11C   77D6B04A   ? USER32.MessageBoxTimeoutA           USER32.77D6B045               0012E118
+0012E13C   77D6B02E   ? USER32.MessageBoxExA                USER32.77D6B029               0012E138
+0012E140   000B0198     hOwner = 000B0198 ('Please registe
+0012E144   004DB07C     Text = "Series number error, pleas
+0012E148   00000000     Title = NULL
+0012E14C   00000010     Style = MB_OK|MB_ICONHAND|MB_APPLM
+0012E150   00000000     LanguageID = 0 (LANG_NEUTRAL)
+0012E154   0043C24E   ? USER32.MessageBoxA                  pdf2html.0043C248
+0012E158   000B0198     hOwner = 000B0198 ('Please registe
+0012E15C   004DB07C     Text = "Series number error, pleas
+0012E160   00000000     Title = NULL
+0012E164   00000010     Style = MB_OK|MB_ICONHAND|MB_APPLM
+
+Okay, you can see from this that the dialogue box is called from pdf2html.0043C248
+
+So, restart the program in Olly (Ctrl & F2), then Right click/Go to expression and enter 0043C248, which is where the error message is called from, scroll up a bit, and let us have a look at the section of code as follows:
+
+0043C217   . E8 EBF5FFFF    CALL pdf2html.0043B807                   ; \pdf2html.0043B807
+0043C21C   . 83C4 04        ADD ESP,4
+0043C21F   . 85C0           TEST EAX,EAX
+0043C221   . 74 18          JE SHORT pdf2html.0043C23B
+0043C223   . 6A 40          PUSH 40                                  ; /Style = MB_OK|MB_ICONASTERISK|MB_APPLMODAL
+0043C225   . 68 40B04D00    PUSH pdf2html.004DB040                   ; |Title = "Thank you registered"
+0043C22A   . 68 58B04D00    PUSH pdf2html.004DB058                   ; |Text = "Thank you registered pdf2html v1.6."
+0043C22F   . 8B4D 08        MOV ECX,DWORD PTR SS:[EBP+8]             ; |
+0043C232   . 51             PUSH ECX                                 ; |hOwner
+0043C233   . FF15 1C554A00  CALL DWORD PTR DS:[<&USER32.MessageBoxA>>; \MessageBoxA
+0043C239   . EB 30          JMP SHORT pdf2html.0043C26B
+0043C23B   > 6A 10          PUSH 10                                  ; /Style = MB_OK|MB_ICONHAND|MB_APPLMODAL
+0043C23D   . 6A 00          PUSH 0                                   ; |Title = NULL
+0043C23F   . 68 7CB04D00    PUSH pdf2html.004DB07C                   ; |Text = "Series number error, please check it and try again."
+
+Okay, at the start of this section of code above, you can see a call, followed by an Add ESP,4 and a TEST, then a conditional jump, which decides whether you get the good boy or bad boy message. 
+
+You will find if you reverse the conditional jump that you will get a good boy message, but on opening the program next time you will be asked to register again, of course we have to patch it at the deepest level possible, so lets go inside the call at 0043C217, we want it to return a value for EAX which isn't zero, then it wont jump, so Right click/GO to/Expression and enter 0043B807, and you are here:
+
+0043B807  /$ 55             PUSH EBP
+0043B808  |. 8BEC           MOV EBP,ESP
+0043B80A  |. 83EC 3C        SUB ESP,3C
+0043B80D  |. 56             PUSH ESI
+0043B80E  |. 8B45 08        MOV EAX,DWORD PTR SS:[EBP+8]
+0043B811  |. 8A08           MOV CL,BYTE PTR DS:[EAX]
+0043B813  |. 884D F4        MOV BYTE PTR SS:[EBP-C],CL
+0043B816  |. C645 F5 00     MOV BYTE PTR SS:[EBP-B],0
+0043B81A  |. 8B55 08        MOV EDX,DWORD PTR SS:[EBP+8]
+0043B81D  |. 8A42 01        MOV AL,BYTE PTR DS:[EDX+1]
+0043B820  |. 8845 E8        MOV BYTE PTR SS:[EBP-18],AL
+0043B823  |. C645 E9 00     MOV BYTE PTR SS:[EBP-17],0
+0043B827  |. 8B4D 08        MOV ECX,DWORD PTR SS:[EBP+8]
+0043B82A  |. 8A51 0E        MOV DL,BYTE PTR DS:[ECX+E]
+0043B82D  |. 8855 DC        MOV BYTE PTR SS:[EBP-24],DL
+0043B830  |. C645 DD 00     MOV BYTE PTR SS:[EBP-23],0
+0043B834  |. 8B45 08        MOV EAX,DWORD PTR SS:[EBP+8]
+0043B837  |. 8A48 0F        MOV CL,BYTE PTR DS:[EAX+F]
+0043B83A  |. 884D D0        MOV BYTE PTR SS:[EBP-30],CL
+0043B83D  |. C645 D1 00     MOV BYTE PTR SS:[EBP-2F],0
+0043B841  |. 8B55 08        MOV EDX,DWORD PTR SS:[EBP+8]
+0043B844  |. 8A42 02        MOV AL,BYTE PTR DS:[EDX+2]
+0043B847  |. 8845 C4        MOV BYTE PTR SS:[EBP-3C],AL
+0043B84A  |. C645 C5 00     MOV BYTE PTR SS:[EBP-3B],0
+0043B84E  |. 0FBE4D C4      MOVSX ECX,BYTE PTR SS:[EBP-3C]
+0043B852  |. 83F9 24        CMP ECX,24
+0043B855  |. 74 04          JE SHORT pdf2html.0043B85B
+0043B857  |. 33C0           XOR EAX,EAX
+0043B859  |. EB 67          JMP SHORT pdf2html.0043B8C2
+0043B85B  |> 8D55 F4        LEA EDX,DWORD PTR SS:[EBP-C]
+0043B85E  |. 52             PUSH EDX
+0043B85F  |. E8 2CB40300    CALL pdf2html.00476C90
+0043B864  |. 83C4 04        ADD ESP,4
+0043B867  |. 8BF0           MOV ESI,EAX
+0043B869  |. 8D45 D0        LEA EAX,DWORD PTR SS:[EBP-30]
+0043B86C  |. 50             PUSH EAX
+0043B86D  |. E8 1EB40300    CALL pdf2html.00476C90
+0043B872  |. 83C4 04        ADD ESP,4
+0043B875  |. 03F0           ADD ESI,EAX
+0043B877  |. 83FE 0A        CMP ESI,0A
+0043B87A  |. 75 23          JNZ SHORT pdf2html.0043B89F
+0043B87C  |. 8D4D E8        LEA ECX,DWORD PTR SS:[EBP-18]
+0043B87F  |. 51             PUSH ECX
+0043B880  |. E8 0BB40300    CALL pdf2html.00476C90
+0043B885  |. 83C4 04        ADD ESP,4
+0043B888  |. 8BF0           MOV ESI,EAX
+0043B88A  |. 8D55 DC        LEA EDX,DWORD PTR SS:[EBP-24]
+0043B88D  |. 52             PUSH EDX
+0043B88E  |. E8 FDB30300    CALL pdf2html.00476C90
+0043B893  |. 83C4 04        ADD ESP,4
+0043B896  |. 03F0           ADD ESI,EAX
+0043B898  |. 83FE 0A        CMP ESI,0A
+0043B89B  |. 75 02          JNZ SHORT pdf2html.0043B89F
+0043B89D  |. EB 04          JMP SHORT pdf2html.0043B8A3
+0043B89F  |> 33C0           XOR EAX,EAX
+0043B8A1  |. EB 1F          JMP SHORT pdf2html.0043B8C2
+0043B8A3  |> 8B45 08        MOV EAX,DWORD PTR SS:[EBP+8]
+0043B8A6  |. 8A48 03        MOV CL,BYTE PTR DS:[EAX+3]
+0043B8A9  |. 884D C4        MOV BYTE PTR SS:[EBP-3C],CL
+0043B8AC  |. C645 C5 00     MOV BYTE PTR SS:[EBP-3B],0
+0043B8B0  |. 0FBE55 C4      MOVSX EDX,BYTE PTR SS:[EBP-3C]
+0043B8B4  |. 83FA 2F        CMP EDX,2F
+0043B8B7  |. 74 04          JE SHORT pdf2html.0043B8BD
+0043B8B9  |. 33C0           XOR EAX,EAX
+0043B8BB  |. EB 05          JMP SHORT pdf2html.0043B8C2
+0043B8BD  |> B8 01000000    MOV EAX,1
+0043B8C2  |> 5E             POP ESI
+0043B8C3  |. 8BE5           MOV ESP,EBP
+0043B8C5  |. 5D             POP EBP
+0043B8C6  \. C3             RETN
+
+This is somewhat longer code than the other routines for other software I have cracked by this author, but actually it looks pretty easy to patch, now think about it for a moment, we want EAX to return a value other than zero once it returns from this call, and right near the end at 0043B8BD it actually moves EAX=1, so we have to ensure it gets to this line, and not jump past it, noting that you have 3 instances in the code above that have an XOR EAX,EAX followed by a jump to 0043B8C2, which will obviously return from the call with EAX=0.
+
+So what if we patch the just before the first XOR EAX,EAX, that is line 0043B855, change JE SHORT pdf2html.0043B85B to JMP SHORT pdf2html.0043B8BD, that way it will then move EAX=1 and return with this value.
+
+So left click once on 0043B855, then Right click/Assemble, enter ammended code, and hit assemble, then close this box, do the same for the other lines that need changing.
+
+Now run the program (F9), enter any series number, you get the thank you message, press ok, and program opens and it doesn't have a message saying it is a trial version.
+
+Okay, make changes permanent, Right click/copy to executable/all modifications/copy all, and then right click on new box that comes up/save file, double click on the file to overwrite and select yes to overwrite.
+
+Just to make absolutely sure, close Olly, open the application, and Voila!, no message asking us to register, , well done cracker!!!
+
+And remember, if you use the program, buy it ,software developers rely on the income from sales to keep going, if nobody buys, no new software would be developed.
+
+*************************************************************************************************
+SHOUTZ AND GREETZ:
+
+To exetools forum, tsrh forum, Ollydbg forum, Ricardo Narvaja, Kruger, Satyric0n, R@dier, LaBBa, Nilrem & Ferarri whoose tuts have helped me more than any others , Ollydbg, and the authors of PDF2HTML.
+
+*************************************************************************************************

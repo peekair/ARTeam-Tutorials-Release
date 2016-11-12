@@ -1,0 +1,144 @@
+*************************************************************************************************TITLE:
+Cracking tutorial for PDF2TXT v2.9 
+*************************************************************************************************
+BEST VIEWED:
+Notepad with word wrap enabled, and in restored window mode
+*************************************************************************************************
+TOOLS USED:
+Ollydbg v1.09d
+*************************************************************************************************TARGET:
+pdf2txt.exe
+*************************************************************************************************LOCATION OF TOOLS AND PROGRAM:
+Ollydbg v1.09d http://www.grinders.withernsea.com/tools/Ollydbg/odbg109d.rar
+PDF2TXT v2.9 http://www.grinders.withernsea.com/tools/pdf2text_setup.exe
+*************************************************************************************************
+CONTACT INFORMATION:
+vinceandjane@hotmail.com
+*************************************************************************************************
+TUTORIAL WRITTEN:
+15/03/2004
+*************************************************************************************************
+AUTHOR:
+Pompeyfan
+*************************************************************************************************
+
+If you first open your target, you will see that you get a dialogue asking you to input a series number, or if you want click on try, and then it tells you have 100 uses, then the program opens, and you see a message it is a trial version. Okay close the program, and on with the crack.
+
+Okay,lets attack our target, open Olly, and if you haven't done so already, to make things easier for yourself, right click, select appearance/highlighting/jumps'n'calls, makes things so much easier to follow.
+
+Open pdf2txt.exe in Olly, and you land here:
+
+00427E80 >/$ 55             PUSH EBP
+
+Press F9 run
+
+Up comes PDF2TXT with a dialogue box, it shows a product ID which is already computed, you just have to enter series, I'll try all 7's, and then hit okay, and of course we guessed wrong, we get the message ""Series number error, bla, bla bla", click once on CPU screen, then F12 (pause), then Alt & K to bring up the call stack screen, and you get:
+
+Call stack of main thread
+Address    Stack      Procedure / arguments                 Called from                   Frame
+0012EBBC   77D43C53   Includes 7FFE0304                     USER32.77D43C51               0012EBF0
+0012EBC0   77D4B3F2   USER32.WaitMessage                    USER32.77D4B3ED               0012EBF0
+0012EBF4   77D4D9A0   USER32.77D4B265                       USER32.77D4D99B               0012EBF0
+0012EC1C   77D6AE8E   USER32.77D4D8EC                       USER32.77D6AE89               0012EC18
+0012EED4   77D6A911   ? USER32.SoftModalMessageBox          USER32.77D6A90C               0012EE5C
+0012F01C   77D6AFD5   ? USER32.77D6A7D7                     USER32.77D6AFD0               0012EFA4
+0012F074   77D6B0BD   USER32.MessageBoxTimeoutW             USER32.77D6B0B8               0012F070
+0012F0A8   77D6B04A   ? USER32.MessageBoxTimeoutA           USER32.77D6B045               0012F0A4
+0012F0C8   77D6B02E   ? USER32.MessageBoxExA                USER32.77D6B029               0012F0C4
+0012F0CC   001D0150     hOwner = 001D0150 ('Please registe
+0012F0D0   100172F4     Text = "Series number error, pleas
+0012F0D4   00000000     Title = NULL
+0012F0D8   00000010     Style = MB_OK|MB_ICONHAND|MB_APPLM
+0012F0DC   00000000     LanguageID = 0 (LANG_NEUTRAL)
+0012F0E0   10001A39   ? USER32.MessageBoxA                  verypdf.10001A33
+0012F0E4   001D0150     hOwner = 001D0150 ('Please registe
+0012F0E8   100172F4     Text = "Series number error, pleas
+0012F0EC   00000000     Title = NULL
+0012F0F0   00000010     Style = MB_OK|MB_ICONHAND|MB_APPLM
+
+Okay, you can see from this that the dialogue box is called from one of the dll's rather than pdf2txt.exe.
+
+So, restart the program in Olly (Ctrl & F2), then Right click/Go to expression and enter 10001A33, which is where the error message is called from, and let us have a look at the section of code as follows:
+
+100019E4   E8 87F7FFFF      CALL verypdf.10001170
+100019E9   83C4 04          ADD ESP,4
+100019EC   85C0             TEST EAX,EAX
+100019EE   74 39            JE SHORT verypdf.10001A29
+100019F0   6A 40            PUSH 40
+100019F2   68 50730110      PUSH verypdf.10017350                    ; ASCII "Thank you purchased the"
+100019F7   68 28730110      PUSH verypdf.10017328                    ; ASCII "Thank you purchased the PDF2TXT v2.9."
+100019FC   56               PUSH ESI
+100019FD   FF15 3C330110    CALL DWORD PTR DS:[<&USER32.MessageBoxA>>; USER32.MessageBoxA
+10001A03   68 30A80110      PUSH verypdf.1001A830
+10001A08   56               PUSH ESI
+10001A09   E8 F2F8FFFF      CALL verypdf.10001300
+10001A0E   83C4 08          ADD ESP,8
+10001A11   C705 F8A80110 01>MOV DWORD PTR DS:[1001A8F8],1
+10001A1B   6A 01            PUSH 1
+10001A1D   56               PUSH ESI
+10001A1E   FF15 38330110    CALL DWORD PTR DS:[<&USER32.EndDialog>]  ; USER32.EndDialog
+10001A24   E9 72020000      JMP verypdf.10001C9B
+10001A29   6A 10            PUSH 10
+10001A2B   6A 00            PUSH 0
+10001A2D   68 F4720110      PUSH verypdf.100172F4                    ; ASCII "Series number error, please check it and try again."
+
+Okay, at the start of this section of code above, you can see a call, followed by an Add ESP,4 and a TEST, then a conditional jump, which decides whether you get the good boy or bad boy message. 
+
+You will find if you reverse the conditional jump that you will get a good boy message, but on opening the program next time you will be asked to register again, why you ask?, for gods sake man,  lets take notice of the wise words of wisdom from Satyric0n this time, patch it at the deepest level possible, lets go inside the call at 100019E4, we want it to return a value for EAX which isn't zero, then it wont jump, so Right click/GO to/Expression and enter 10001170, and you are here:
+
+10001170   83EC 18          SUB ESP,18
+10001173   53               PUSH EBX
+10001174   56               PUSH ESI
+10001175   8B7424 24        MOV ESI,DWORD PTR SS:[ESP+24]
+10001179   8D5424 08        LEA EDX,DWORD PTR SS:[ESP+8]
+1000117D   57               PUSH EDI
+1000117E   32DB             XOR BL,BL
+10001180   8A46 0E          MOV AL,BYTE PTR DS:[ESI+E]
+10001183   8A4E 0F          MOV CL,BYTE PTR DS:[ESI+F]
+10001186   52               PUSH EDX
+10001187   884424 1C        MOV BYTE PTR SS:[ESP+1C],AL
+1000118B   885C24 1D        MOV BYTE PTR SS:[ESP+1D],BL
+1000118F   884C24 10        MOV BYTE PTR SS:[ESP+10],CL
+10001193   885C24 11        MOV BYTE PTR SS:[ESP+11],BL
+10001197   E8 55160000      CALL verypdf.100027F1
+1000119C   8BF8             MOV EDI,EAX
+1000119E   8D4424 1C        LEA EAX,DWORD PTR SS:[ESP+1C]
+100011A2   50               PUSH EAX
+100011A3   E8 49160000      CALL verypdf.100027F1
+100011A8   03F8             ADD EDI,EAX
+100011AA   83C4 08          ADD ESP,8
+100011AD   83FF 0B          CMP EDI,0B
+100011B0   74 09            JE SHORT verypdf.100011BB
+100011B2   5F               POP EDI
+100011B3   5E               POP ESI
+100011B4   33C0             XOR EAX,EAX
+100011B6   5B               POP EBX
+100011B7   83C4 18          ADD ESP,18
+100011BA   C3               RETN
+
+Look at line 100011B4, what if we change the code here to:
+
+100011B2   5F               POP EDI
+100011B3   5E               POP ESI
+100011B4   40               INC EAX
+100011B5   90               NOP
+100011B6   5B               POP EBX
+100011B7   83C4 18          ADD ESP,18
+100011BA   C3               RETN
+
+So left click once on 100011B4, then Right click/Assemble, enter INC EAX, and hit assemble, then close this box.
+
+Now run the program (F9), enter any series number, program opens and it doesn't have a message saying it is a trial version.
+
+Okay, make changes permanent, Right click/copy to executable/all modifications/copy all, and then right click on new box that comes up/save file, double click on the file to overwrite and select yes to overwrite.
+
+Just to make absolutely sure, close Olly, open the application, and Voila!, no message asking us to register, , well done cracker!!!
+
+And remember, if you use the program, buy it ,software developers rely on the income from sales to keep going, if nobody buys, no new software would be developed.
+
+*************************************************************************************************
+SHOUTZ AND GREETZ:
+
+To exetools forum, tsrh forum, Ollydbg forum, Ricardo Narvaja, Kruger, Satyric0n, R@dier, LaBBa, Nilrem & Ferarri whoose tuts have helped me more than any others , Ollydbg, and the authors of PDF2TEXT.
+
+*************************************************************************************************

@@ -1,0 +1,219 @@
+Creating a SuperClean KeyGen
+By Enforcer
+
+Disclaimer
+If you like it buy it.
+
+Tools used
+ollydbg v1.09d
+http://grinders.withernsea.com/tools/odbg109d.rar
+masm32 package
+http://grinders.withernsea.com/tools/masm32v8.zip
+
+
+In this tutorial I will create a Keygen for SuperClean 2.67. When we
+Enter a name the program uses that name to generate a serial. It then
+compares the generated serial to the serial that the user entered.
+The first thing we need to do is find the point where the serial is
+generated. Open the program in ollydbg and place a breakpoint on 
+GetWindowTextA. The usual way to set a breakpoint is to hit CTRL+N to
+bring up the names window then select the name of the API function in 
+this case GetWindowTextA. This didn't work, setting breakpoints like 
+this only sets a breakpoint where olly can determine that a call has 
+been made to that function. If a function is listed in the import table
+then olly can determine that any call to that function's entry in the
+import address table is infact a call to that function and will add 
+that call into the names window. But that is not the only way to call 
+an imported function. An imported function can be called using
+LoadLibrary/GetProcAddress or the area of code wich makes the call 
+could be encrypted and only decrypted just before it is called. In both
+of these cases olly may be unable to list this function call in the
+names window.
+Hit CTRL+G and type GetWindowTextA we land at the actuall code of this
+function. press F2 to place a breakpoint, this way we catch every call
+to GetWindowTextA. Doing it this way with olly may not work on windows
+9x I can't test in on those systems though. start the program and enter
+a serial the program stops at the breakpoint in GetWindowTextA. In the
+stack window at the bottom left you'll see the arguments that were
+passed to GetWindowTextA. Select Buffer, right click it and chose
+follow in dump.
+Now hit ALT+F9 to return from the call to GetWindowTextA. Select the
+first byte of the name you entered in the dump, set a memory on access
+breakpoint and hit f9. The first area of code we land in is in KERNEL32 its not going to be where the serial check is done. Hit f9 untill we
+are back into SuperClean. look at this peice of code:
+00419841  |> 0FBE1C38       /MOVSX EBX,BYTE PTR DS:[EAX+EDI]
+move a charactor of the name into EBX
+00419845  |. 03DA           |ADD EBX,EDX
+Add the value in EDX (26h) to the name charactor
+00419847  |. 03CB           |ADD ECX,EBX
+Add this value to the value stored in ecx
+00419849  |. 40             |INC EAX
+Add 1 to EAX so we are now at the next charactor
+0041984A  |. 3BC6           |CMP EAX,ESI
+0041984C  |.^7C F3          \JL SHORT SuperCle.00419841
+check if we reached the end of the name if we didn't go thru the loop
+again. So this loop generates a value in ecx that is 26h+value
+of first charactor + value of second charactor and so on. Next wsprintf
+is used to put the decimal representation of the value in ecx into a 
+string. The following loop dose a similar thing, There are 4 loops each
+generates a section of the serial. What you use to write your keygen is
+up to you. You can code this in any language you want. I'll use MASM. 
+You can get MASM as part of the MASM32 package
+(www.masm32.com) this includes the Microsoft Macro Assembler Plus other
+usefull tools and tutorials. There are 2 things we need to do. First
+create a function that contains those 4 loops and generate the serial.
+Second we need to code a way for the user to enter his name and then
+display the serial. Mine will just be a basic console window, writing a
+user iterface in asm is time consuming. If you know some other language
+like c++ you could code a nice looking interface in it and either
+convert the code to that language or link in the object file. 
+Below is the complete source code to the KeyGen
+that is part of this tutorial. cut and paste it to a new file and save
+it as SuperCleanKeyGen.asm
+To assemble with MASM:
+ml /c /coff /nologo SuperCleanKeyGen.asm
+And link it to produce the .exe file:
+Link /SUBSYSTEM:CONSOLE  SuperCleanKeyGen.obj
+
+ml.exe and link.exe are located in your MASM32\BIN folder.
+
+;start of KeyGen code, cut here.
+.386
+;We want our keygen to be compatible with 386 processors and above.
+.model flat, stdcall
+;flat memory model, use standard calling convention.
+option casemap:none 
+;Case Sensitive mode.
+include C:\masm32\include\windows.inc 
+include C:\masm32\include\kernel32.inc 
+include C:\masm32\include\user32.inc
+include C:\masm32\include\masm32.inc 
+
+includelib C:\masm32\lib/kernel32.lib 
+includelib C:\masm32\lib\masm32.lib 
+includelib C:\masm32\lib\user32.lib
+;;change the drive letter if you need to.
+.data
+Seed1 dd 026h
+Seed2 dd 034h
+Seed3 dd 0ch
+Seed4 dd 0eh
+;Seed 1-4 used to generate serial
+SerialFormatString db "%d-",0
+LastSerialFormatString db "%d",0
+;These strings are used with wsprintf to convert a value into a string
+;notice the %d
+szIntro db "SuperClean V2.67 Keygen (Coded by Enforcer)", 0dh, 0ah, "Please visit http://Cracking.accessroot.com",0dh,0ah,0
+szEnter db "Enter your name: ",0
+szSerial db "Your serial is : %s",0dh, 0ah, "Press enter to close",0dh,0ah,0
+;0dh and 0ah are equivilant to "\r\n" in c wich means a new line
+.data?
+TheName db 32 dup(?)
+;Name you entered is stored here
+Serial db 32 dup(?)
+;Generated serial is stored here
+SerialSection db 32 dup(?)
+;used to temporarily store sections of the serial before they are added
+;to the complete serial
+Buffer db 120 dup(?)
+.code 
+KeyGen PROTO
+;prototype of our KeyGen function
+start: 
+    invoke StdOut, addr szIntro
+;display the introduction message
+    invoke StdOut, addr szEnter
+;ask the user for his name.
+    lea edi, TheName
+    invoke StdIn, edi, 32
+;get the name that the user entered and store it in TheName
+    invoke lstrlen, addr TheName
+    mov BYTE PTR [eax+edi-2], 0
+;lstrlen gives us the length of the string. add a strings length to
+;it's address and subtract 2 and we are at the second last charactor of
+;the string. We want to set it to zero so that the last 2 charactors
+;are removed. This is because the StdIn function adds 0dh and 0ah to
+;the string and we only want the name that was entered. 
+    invoke KeyGen
+;call the keygen function    
+    invoke wsprintf, addr Buffer, addr szSerial, addr Serial
+    invoke StdOut, addr Buffer
+    invoke StdIn, 0, 0
+;wait for the user to press enter again so that if he double clicked
+;the program the window won't close before he has a chance to read the
+;serial 
+    invoke ExitProcess, 0     
+
+    KeyGen PROC
+        lea edi, TheName
+        invoke lstrlen, edi
+        mov esi, eax
+;store the length of the entered name into esi (this register is
+;preserved by windows API functions so it is safe to use it to store
+;data        
+	xor eax, eax
+        mov ecx, eax
+;set eax and ecx to zero
+        mov edx, Seed1
+;put the value of Seed1 into edx
+@@:     movsx ebx, BYTE PTR [eax+edi]
+        add ebx, edx
+        add ecx, ebx
+        inc eax
+        cmp eax, esi
+        jl @b
+;first loop wich generates a value from the entered name
+        invoke wsprintf, addr Serial, addr SerialFormatString, ecx 
+;write the first part of the serial        
+	xor ecx, ecx
+        mov eax, ecx
+        mov edx, Seed2
+@@:     movsx ebp, BYTE PTR [EAX+EDI]
+        imul EBP, EDX
+        add ecx, ebp
+        inc eax
+        cmp EAX, ESI
+        jl @b
+        invoke wsprintf, addr SerialSection, addr SerialFormatString, ecx 
+        invoke lstrcat, addr Serial, addr SerialSection
+;Next part of the serial is generated and added to the complete serial        
+	xor ecx, ecx
+        mov eax, ecx
+        mov edx, Seed3
+@@:     movsx ebp, BYTE PTR [eax+edi]
+        add ebp, edx
+        add ecx, ebp
+        inc eax
+        cmp eax, esi
+        jl @b
+        invoke wsprintf, addr SerialSection, addr SerialFormatString, ecx                                     ; /<%ld>
+        invoke lstrcat, addr Serial, addr SerialSection
+        xor ecx, ecx
+        mov eax, ecx
+        mov edx, Seed4
+@@:     movsx ebp, BYTE PTR [EAX+EDI]
+        imul ebp, edx
+        add ecx, ebp
+        inc eax
+        cmp eax, esi
+        jl @b
+        invoke wsprintf, addr SerialSection, addr LastSerialFormatString, ecx
+        invoke lstrcat, addr Serial, addr SerialSection
+        ret
+    KeyGen ENDP
+end start 
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+  

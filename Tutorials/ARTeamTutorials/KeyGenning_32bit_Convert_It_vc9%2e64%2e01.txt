@@ -1,0 +1,121 @@
+============================================================================
+TITLE.:
+32bit Convert It c9.64.01
+============================================================================
+BEST VIEWED.:
+Notepad with word wrap enabled, and in restored window mode
+============================================================================
+TOOLS USED.:
+OllyDbg v1.10(step 2)
+============================================================================
+TARGET.:
+32BC.EXE 671744 bytes.
+Written in Microsoft Visual C++ 6.0
+============================================================================
+LOCATION OF TOOLS AND PROGRAM.:
+http://www.grinders.withernsea.com/tools/odbg110b1.rar
+http://www.grinders.withernsea.com/tools/32bcsx.rar
+http://www.grinders.withernsea.com/tools/Krugerstoolbox.rar
+http://www.grinders.withernsea.com/patches/32bit_Convert_It_vc9.64.01_Inside_KeyGen.rar
+============================================================================
+WEBSITE.:
+http://cracking.accessroot.com/
+============================================================================
+CONTACT INFORMATION.:
+kruger48@hotmail.com
+============================================================================
+TUTORIAL VERSION.:
+v1.0 Written 12th of May 2004
+============================================================================
+AUTHOR AND OTHER ALIASES.:
+Kruger
+AKA.:(Swat'98) (Swat'99) (Swat)
+============================================================================
+First, to make this crack easy to follow I have used few references
+so you won't loose the grip of the crack.
+A lot of tutors bombs you with jumps and calls ;-)
+I try to keep it Plain, Simple, Stupid!
+
+I remember in the mid 90's that I got a crack creating a inside "KeyGen"
+It was for a program called WinPatch.
+I was very impressed and used a lot of time to try to do the same. (With no luck!)
+Now, with Olly it's quite easy to do this. 
+Let's follow this tutor and you will create a inside KeyGen!
+============================================================================
+Install app, and load in Olly.
+F9, and insert.:
+Register Name (Kruger)
+Register Email Address (kruger@soft.com)
+Registration Code (1234567890)
+Click apply...nag...(Timer)...click Order later...OK... 
+You are now back in main program window.
+Push F12, then Push Ctrl+N.
+Browse and find "lstrlenA"
+Right click put brakes on all references...
+Now push F9... Breaks on address
+0040A882  |.  8B2D CC414300 MOV EBP,[DWORD DS:<&KERNEL32.lstrlenA>]  ;  KERNEL32.lstrlenA
+Insert 1234567890
+push F8
+Loops some times...Have a look on
+0040A892 . BF E0FB4400 MOV EDI,32BC.0044FBE0 ; ASCII "30353A383D3E"
+ASCII "30353A383D3E" Cool!
+Finally we got the same ASCII string repeated some times and ends up at address.:
+0040BD88 . BF E0054500 MOV EDI,32BC.004505E0 ; ASCII "30353A383D3E"
+Now, we got a valid serial.
+============================================================================
+***Turning app into Inside KeyGen***
+Before starting to explain "how to" it's important with some basic knowledge.
+The problem.:
+1. You need to know the address that refers to the serial is the same all the time.
+To verify this try to register with long and short name/address/serial 
+and check that the address is unchanged.
+If it changes this crack will fail, or just work with the same lenght in Name/Serial!
+2. We need to show the serial somewhere in the app, a MsgBox is the easiest way.
+============================================================================
+So, with this knowledge let's try to KeyGen!
+Reload app, go to top in CPU window - right click - choose search for all referenced text strings.
+Search for "Don't push this button"
+Found it at address .:
+0040C1AF 68 EC8B4400 PUSH 32BC.00448BEC ; ASCII "Don't press this button"
+F2+enter - into cpu window
+Change jump to.:
+Old.:
+0040C1AF 68 EC8B4400 PUSH 32BC.00448BEC
+New.:
+0040C1AF 68 E0054500 PUSH 32BC.004505E0
+Try app...shit I can only see the serial fore some secs..
+Ok, let's dig this out.
+After the first txtstring, it's replaced with a new one (using a timer)
+"Press one of these buttons, order now"
+Hmmm...Go to References search for  ASCII "Press one of these buttons, order now"
+Found it at address.:
+0040C343
+F2+enter
+Put brake on JNZ two lines up at.:
+0040C33C 75 26 JNZ SHORT 32BC.0040C364
+Breaks at address...0040C33C
+push F7... and look carefully...loops and finally shows the text that covers the serial 4 us.
+0040C353 68 FB030000 PUSH 3FB
+Hmm... "PUSH 3FB"
+Use Kruger's ToolBox, try to convert 3FB to Decimal.
+3FB (Hex) =  1000 (Decimal)
+This is the counter for the timer, counting from 0 to 1000!
+So, lets kill the timer.
+We are going to count from 0 to 0!
+Old.:
+0040C364 68 E8030000 PUSH 3E8 (1000)
+New.:
+0040C364 6A 00000000  PUSH 0   (0)
+Let's kill the loop.
+Old.:
+JNZ SHORT 32BC.0040C364
+New.:
+JMP SHORT 32BC.0040C364
+Save changes run app.
+The serial is now shown all time, and counter is disabled.
+Congrat's! We have just made a inside KeyGen!
+============================================================================
+SHOUTZ AND GREETZ:
+To all Members of AR Team, TSRh Club, the creator of Olly! 
+And to all of you reading my Tuts!
+============================================================================

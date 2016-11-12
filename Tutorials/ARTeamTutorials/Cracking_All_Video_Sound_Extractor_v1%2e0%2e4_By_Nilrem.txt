@@ -1,0 +1,100 @@
+============================================================================
+TITLE:
+Patching All Video Sound Extractor v1.0.4
+============================================================================
+BEST VIEWED:
+Notepad with word wrap enabled, and in restored window mode
+============================================================================
+TOOLS USED:
+OllyDbg v1.09d(step 4)
+Brain (Preferably version human or above)
+============================================================================
+TARGET:
+SoundExtractor.exe
+============================================================================
+LOCATION OF TOOLS AND PROGRAM:
+http://www.grinders.withernsea.com/tools/odbg109d.rar
+http://www.grinders.withernsea.com/tools/All_Video_Sound_Extractor_v1.0.4.rar
+============================================================================
+WEBSITE:
+http://cracking.accessroot.com/
+============================================================================
+CONTACT INFORMATION:
+Msn Messenger - jammysa@hotmail.com
+Icq# - 46313648
+Email Address - Merlin@accessroot.com
+============================================================================
+TUTORIAL VERSION:
+v1.0 Written 15th of February 2004
+============================================================================
+AUTHOR AND OTHER ALIASES:
+Merlin
+
+Nilrem2
+Nilrem
+Grimgnaw
+Khulad
+Khulad Illphukiir
+(-~Merlin~-)
+Merlin The Wizard
+============================================================================
+N.B. I cracked this program on the 9th (of February 2004) which means that the following information (since most of it is written from memory), so if any information is wrong I apologise in advance).
+Let us begin, right, when downloading this program from downloads.com you are informed that the only limitation to this program is a nag screen (should be really easy to RE (Reverse Engineer) then), and when checking the actual program's documentation about limitation (just to make sure that what downloads.com told us is true) we find that there is only a nag screen as a limitation, well that is, simply put, bull$hit. Ok, let us begin, launch SoundExtractor.exe, no nag screen yet, close the program, and you will find the nag screen, it says something along the lines of, "This program is unregistered, please remember to register it". Oh ok, so now we have all the information we need to remove this nag.
+Right, time to debug, launch OllyDbg (this is our debugger), before we do anything else, to make things easier on ourselves, right click in Olly, and select 'Appearance->Highlighting->Jumps'n'calls'. Now open up SoundExtractor.exe in Ollydbg, right click and select, 'Search for->All references text strings', scroll to the top and select the top most line, then right click and choose, 'Search for text', make sure that 'Case sensitive' is unticked' and then search for our nag screen message which (partly) was, 'unregistered', and you should land here:
+
+Text strings referenced in SoundExt:CODE, item 3966
+ Address=0048CB44
+ Disassembly=MOV EAX,SoundExt.0048CB58
+ Text string=ASCII "This is a unregistered Version, Don't forget to register it."
+
+Double click this line to go the address in the main (CPU) Olly window. You should land here:
+
+0048CB44   > B8 58CB4800    MOV EAX,SoundExt.0048CB58                ;  ASCII "This is a unregistered Version, Don't forget to register it."
+
+Now, once here, let us find our bearings of where we actually are, we see directly below our nag screen contents is the CALL that sends it to the program:
+
+0048CB49   . E8 B219FAFF    CALL SoundExt.0042E500
+
+We could NOP (NOP = No Operation = 90 in Hex) this so that it never happens, but this is untidy, instead what we will do is look at the conditional jumps above our nag screen (JNZ, JE, JNZ, (JE = Jump if Equal to) (JNZ = Jump if Not Equal to)). The conditional jumps look like this (in order of furthest away (JNZ, JE, JNZ) from where we are):
+
+0048CB30   . 75 12          JNZ SHORT SoundExt.0048CB44
+
+0048CB39   . 74 09          JE SHORT SoundExt.0048CB44
+
+0048CB42   . 75 0A          JNZ SHORT SoundExt.0048CB4E
+
+If we look at these conditional jumps in more detail we notice that two of them jump to the address 0048CB44, which is the address of the nag screen, and the odd one out jumps to 0048CB4E, which is the line directly below the CALL to the nag screen, which means we could have NOPPED the CALL, but I prefer not to do that. So what we need to do now is change the two calls that jump our nag message so that they never jump there, and that the one that jumps past the nag message CALL always jumps past the nag message CALL. To do this select 0048CB30 and then right click and choose, 'Binary->Fill with NOPs' and do the same for 0048CB39, and finally change 0048CB42 from JNZ to JMP. Once you have done this it is now time to make our changes permanent; to do this right click and select, 'Copy to executable->All modifications->Copy all', then in the new window that appears right click and choose, 'Save file' and name it (for the sake of this tutorial) 'SoundExtractor_1.exe'.
+Now load up SoundExtractor_1.exe (normally, not in Olly) and close the program, congratulations you have got rid of the annoying nag screen. However, there is one problem, load up SoundExtractor_1.exe and try extracting more then 30 seconds of sound from a video, ahh! This was not mentioned as a limitation! You are presented with a message box stating something along the lines that, 'Trial version cannot extract more then 30 seconds'. Once more fire up Ollydbg and load SoundExtractor_1.exe in Olly, right click and select, 'Search for->All referenced text strings' and search for 'Trial version' you will land here:
+
+Text strings referenced in SoundExt:CODE, item 3923
+ Address=0048BEC4
+ Disassembly=MOV EDX,SoundExt.0048C418
+ Text string=ASCII "This trial version only can extract the sound of 30 seconds from total video, this limit only can be eliminated when it is registered!"
+
+Double click this line and you will land here:
+
+0048BEC4  |. BA 18C44800    MOV EDX,SoundExt.0048C418                ;  ASCII "This trial version only can extract the sound of 30 seconds from total video, this limit only can be eliminated when it is registered!"
+
+Now as always take a little time to find your bearings. Hopefully there will be a conditional jump nearby that we can alter that will solve this little hicup. For lines up we see a CMP (Compare) statement:
+
+0048BEB0  |. 833D F03C4900 >CMP DWORD PTR DS:[493CF0],0
+
+and directly below it a conditional jump:
+
+0048BEB7     0F85 AE000000  JNZ SoundExt.0048BF6B
+
+Take notice that the above conditional jump, jumps to 0048BF6B which is away from our message. Double click it and change it from JNZ to JMP. If you save the changes and load it up, you will find that you are still recieving the 30 second limitation, this must mean that there is another call somewhere else to it. So go back to:
+
+0048BEC4  |. BA 18C44800    MOV EDX,SoundExt.0048C418                ;  ASCII "This trial version only can extract the sound of 30 seconds from total video, this limit only can be eliminated when it is registered!"
+
+Hmm if you look a bit up you will see the line (rather interesting):
+
+0048BEBD  |> 6A 30          PUSH 30
+
+If we select, then right click this line and choose, 'Find references to->Selected command' that there are two left (two conditional jumps that jump to the beginning of the limitation initiation). Go to these two addresses and NOP them (right click, select, 'Binary->Fill with NOPs'). Finally save your changes as SoundExtractor_2 and load it up, well done cracker, limitation removed. Remember, sometimes (for some daft and obscure reason) limitations are not properly documented so you will have to check the program's features yourself.
+
+Remember if you use the application then buy it!
+============================================================================
+SHOUTZ AND GREETZ:
+To Kyrstie, I love you with all my heart 4eva neva n always, (Our second) Valentines Day was great! 8-) To exetools.com/forum, dob2.com, tech-arena.com, Hoof Arted for inspiring me to write tutorials for OllyDbg, Ferarri, Pompeyfan, Madman Hercules, the creators of All Video Sound Extractor, and OllyDbg.
+============================================================================

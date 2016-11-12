@@ -1,0 +1,72 @@
+============================================================================
+TITLE:
+Patching Windows Washer v5.0
+============================================================================
+BEST VIEWED:
+Notepad with word wrap enabled, and in restored window mode
+============================================================================
+TOOLS USED:
+OllyDbg v1.09d(step 4)
+Hiew v6.85
+PEiD v0.91
+Resource Tuner v1.93
+Brain (Preferably version human or above)
+============================================================================
+TARGET:
+wwDisp.exe
+============================================================================
+LOCATION OF TOOLS AND PROGRAM:
+http://www.grinders.withernsea.com/tools/odbg109d.rar
+http://www.grinders.withernsea.com/tools/hiew685.rar
+http://www.grinders.withernsea.com/tools/ResTuner_v1.93.rar
+http://www.grinders.withernsea.com/tools/PEiD_v0.91.rar
+http://www.grinders.withernsea.com/tools/Windows_Washer_v5.0.rar
+============================================================================
+WEBSITE:
+http://cracking.accessroot.com/
+============================================================================
+CONTACT INFORMATION:
+Msn Messenger - jammysa@hotmail.com
+Icq# - 46313648
+Email Address - Merlin@accessroot.com
+============================================================================
+TUTORIAL VERSION:
+v1.0 Written 4th of January 2004
+============================================================================
+AUTHOR AND OTHER ALIASES:
+Merlin
+
+Nilrem2
+Nilrem
+Grimgnaw
+Khulad
+Khulad Illphukiir
+(-~Merlin~-)
+Merlin The Wizard
+============================================================================
+Ok, let's get straight down to business; open up wwdisp.exe and you'll see that we can only use this program for 30 days. Close down Web Washer, put your clock forward one year, re-launch the program, and a dialog window will pop-up telling us that our trial has expired, click close. Before we open wwdisp.exe in our debugger (Olly), let's just think for a second, what are our main ways of attack on this program? Well it's a time-trial, so the program must be getting some form of date/time and comparing it against something; the main ways a program does this, is via these commands:
+{GetTimeZoneInformation
+GetSystemTime
+GetFileTime
+GetLocalTime}
+However, I know in advance, that this is a much more complicated route then the one we are going to take. So what other methods do we have, well, we'll know if we put our clock back to what it was, so move your clock back 1 year, and relaunch wwdisp.exe, it now informs us that our program protection system has been tampered with, or something along those lines; but how did the program know this? Simple really, it compares a file (usually created when the program was last used) and compares the date of that file, with the current date. This is executed through the command, 'FileTimeToLocalFileTime'.
+Right, time to debug, launch OllyDbg, before we do anything else, to make things easier on ourselves, right click in Olly, and select 'Appearance->Highlighting->Jumps'n'calls'. Now open up wwdisp.exe in Olly, and you will recieve a message telling you that the program is packed etc. Choose no when asked if you want to debug (leaving Olly open but wwdisp closed in Olly). Open up PEiD (this program is great, it identifies what protection the program is using), once in PEiD, open wwdisp.exe from PEiD, it tells us that UPX was used to pack the program. What now? Well the trial version of Resource Tuner actually comes with a UPX unpacker dll. So load up Resource Tuner, and from within Resource Tuner open wwdisp.exe, once it has opened, it will be unpacked, so save the file as "wwdisp_unpacked.exe". Go back to Olly, and open the newly unpacked executable (wwdisp_unpacked). Right click and choose 'Search for->Name (label) in current module', once there (my preference) right click and select 'Sort by->Name'; scroll down to 'FileTimeToLocalFileTime', select it, then right click and choose 'Set breakpoint on every reference'. Now go back to the main Olly window, and press F9 (to begin the debug process). You should find yourself here:
+
+00408C4B  |. E8 A0DFFFFF    CALL <JMP.&KERNEL32.FileTimeToLocalFileT>; \FileTimeToLocalFileTime
+
+Now, this method may not work all the time for every single time trial program similar to Web Washer, but it's always worth a try, what we will do is keep pressing F8 (to step through the code) until we summon the error message. The line you land on eventually should be this one:
+
+0046333F     FF92 D8000000  CALL DWORD PTR DS:[EDX+D8]               ;  wwDisp_u.0044333C
+
+Go back to Olly, and let's have a look at the code were we are. Now let's get our bearings, we are currently at the address '0046333F', let's have a look at some near by condition jumps, the first one we see, is for some odd reason, not highlighted (remember we choose to highlight jumps'n'calls, the nearest conditional jump to were we landed is:
+
+00463315     75 5A          JNZ SHORT wwDisp_u.00463371
+
+Take a closer look, we see that it is a JNZ, which means 'Jump if Not Equal To', we also see that it jumps to the address '00463371' in 'wwDisp', and on a closer examination, we realise that where it is jumping to '00463371' is actually past were we landed '0046333F', hopefully, if we changed this jump so that it always jumps (EB is a straight jump), then hopefully this will allow us to use Windows Washer as long as we would like.
+Right, click the close button on the Windows Washer dialog that appeared. Write down or remember (this is good practice) the address we want to change. Press 'Ctrl+F2' to restart the program in Olly. Press 'Ctrl+G' (Goto command) and type 00463315, and we should land at the conditional jump we want to change. Now right click this line and choose 'Binary->Edit', now we want to change the 75 (JNZ) to EB (Straight Jump), so change 75 5A to EB 5A, and hit 'OK'. Now keep pressing F9 until Windows Washer loads, congratulations, it's now cracked.
+Olly only makes changes to the program temporarily. Close down Olly. Before we make the changes permanent backup wwdisp.exe, one you have done that launch Hiew (Our Hex Editor), and work your way to wwdisp.exe, ahhh! Look at all that gobbledygook! Press 'F4' (Mode) and choose decode, ahh much better. Press 'F5' (Goto) and type .00463315 you need the "." before the address, because that is the syntax (in Hiew) to search for an address. Now press F3 (Edit) and type EB then press 'F9' and 'F10' to update and close.
+Remember if you use the program buy it!
+============================================================================
+SHOUTZ AND GREETZ:
+To Kyrstie, we've been nearly going out for a year now! 8-) To exetools.com/forum, dob2.com, Hoof Arted for inspiring me to write tutorials for OllyDbg, SD4 for asking me to write this tutorial, Pompeyfan, the creators of Web Washer, Hiew, PEiD, Resource Tuner, and OllyDbg.
+============================================================================

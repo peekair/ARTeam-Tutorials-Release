@@ -1,0 +1,225 @@
+Target:
+
+Pinnacle TRex v1.70
+Get Target At: ftp://ftp.pinnaclesys.de/demo/TRex/TRexSetup.exe
+Get A License At: http://www.pinnaclesys.com/trexlicense
+Remember If you like it........Buy It.  Support the software companies.
+This will ensure we will always have some kind of challenge.
+=================================================================
+This is all I could find about the target.
+" TRex - Trial Version  
+File Version : 1.4
+Date Inserted : 3/13/2003
+Extension : EXE
+Size : 2.4 MB 
+Description TRex is a video file converter. This is a 30-days Trial version. "
+=================================================================
+Crack Tutorial By: MaDMAn_H3rCuL3s
+=================================================================
+Best Viewed with notepad with word-wrap on (full window)
+=================================================================
+Program and Tools:
+http://grinders.withernsea.com/tools/TRexSetup_v1.70.rar
+http://grinders.withernsea.com/tools/PE-Scan_v3.31.rar
+http://grinders.withernsea.com/tools/w32dasm_brat_patch_v3_final.rar
+http://grinders.withernsea.com/tools/hiew685.rar
+=================================================================
+Alright lets get straight down to business.  Ths is my first tutorial, so please don't flame me if it is bad.  Lets start off with the target......Pinnacle TRex v1.70
+
+1. PE Scanning
+2. Disassembly
+
+
+
+
+
+
+
+
+Here we go:
+1. PE Scanning:
+	You'd think a respectable company like Pinnacle would pack their exe but you'd be surprised.  It's not packed at all.  Okay first phase out of the way.
+
+
+
+
+
+2. Disassembly:
+	Now for phase 2.  Open up the exe (TRex.exe) in W32DASM.  Should load up pretty fast considering it's only 704kb.  Now you got you target loaded up??????  Good lets proceed.  Start up the target to get a good idea of what we are gonna look for when we check it's disassembly out.  You see that it loads up with scrolling data in the window on the left hand side.  Well you will notice it says something about day 0 of 60.  Now click on the little Pinnacle "P" on the top left of the target.  Done?  Now you'll see it says something about "this sharware has a 60 day trial period, any further usage and it must be registered".  Ya see it?  Alright we now have something to go on.  Now we will check out the target and see what makes it tick.  Click on String References... Now in the search bar type "trial".
+
+You should see a couple of references:
+"This shareware has a %d day trial"
+"Trial"
+"Your %d day trial period has expired"
+
+Double Click the first:
+
+You should land here:
+
+
+* Possible StringData Ref from Data Obj ->"TRex Rev.1.7.0, Generic Media "
+                                        ->"Converter"
+                                  |
+:00406BC4 682C744200              push 0042742C
+:00406BC9 6A00                    push 00000000
+:00406BCB 8B55EC                  mov edx, dword ptr [ebp-14]
+:00406BCE 52                      push edx
+:00406BCF 8B45E8                  mov eax, dword ptr [ebp-18]
+:00406BD2 50                      push eax
+:00406BD3 E8F8010000              call 00406DD0
+:00406BD8 83C410                  add esp, 00000010
+
+* Possible StringData Ref from Data Obj ->"Mar. 2002 © BS, Pinnacle Systems"
+                                  |
+:00406BDB 6854744200              push 00427454
+:00406BE0 6A01                    push 00000001
+:00406BE2 8B4DEC                  mov ecx, dword ptr [ebp-14]
+:00406BE5 51                      push ecx
+:00406BE6 8B55E8                  mov edx, dword ptr [ebp-18]
+:00406BE9 52                      push edx
+:00406BEA E8E1010000              call 00406DD0
+:00406BEF 83C410                  add esp, 00000010
+:00406BF2 833D1C4E440000          cmp dword ptr [00444E1C], 00000000
+:00406BF9 7547                    jne 00406C42				; make this unconditional jump <-
+									; change 75 -> EB		|
+:00406BFB 6A3C                    push 0000003C								|
+													|
+* Possible StringData Ref from Data Obj ->"This shareware has a %d day trial "				|
+                                        ->"period."							|
+                                  									|
+:00406BFD 6878744200              push 00427478				; you'll land here---------------		
+:00406C02 8D85E0FEFFFF            lea eax, dword ptr [ebp+FFFFFEE0]
+:00406C08 50                      push eax
+
+* Reference To: USER32.wsprintfA, Ord:02ACh
+                                  |
+:00406C09 FF1538324200            Call dword ptr [00423238]
+:00406C0F 83C40C                  add esp, 0000000C
+:00406C12 8D8DE0FEFFFF            lea ecx, dword ptr [ebp+FFFFFEE0]
+:00406C18 51                      push ecx
+:00406C19 6A02                    push 00000002
+:00406C1B 8B55EC                  mov edx, dword ptr [ebp-14]
+:00406C1E 52                      push edx
+:00406C1F 8B45E8                  mov eax, dword ptr [ebp-18]
+:00406C22 50                      push eax
+:00406C23 E8A8010000              call 00406DD0
+:00406C28 83C410                  add esp, 00000010
+
+
+This process kills the about message when you click on the "P" symbol.  Notice it now does NOT say "This shareware has a %d day trial period" anymore........
+
+================================================================================
+Now for the next:
+"Trial"
+
+Double click on that one you should land here:
+
+You should land here:
+
+* Referenced by a CALL at Addresses:
+|:00404A5E   , :0040632E   , :0040670F   
+|
+:00402E24 55                      push ebp
+:00402E25 8BEC                    mov ebp, esp
+:00402E27 81EC0C010000            sub esp, 0000010C
+:00402E2D 8D45FC                  lea eax, dword ptr [ebp-04]
+:00402E30 50                      push eax
+:00402E31 E878540100              call 004182AE
+:00402E36 83C404                  add esp, 00000004
+:00402E39 8B45FC                  mov eax, dword ptr [ebp-04]
+:00402E3C 99                      cdq
+:00402E3D B980510100              mov ecx, 00015180
+:00402E42 F7F9                    idiv ecx
+:00402E44 8945FC                  mov dword ptr [ebp-04], eax
+:00402E47 6A00                    push 00000000
+:00402E49 6A00                    push 00000000
+:00402E4B 6A00                    push 00000000
+:00402E4D E88CFDFFFF              call 00402BDE
+:00402E52 83C40C                  add esp, 0000000C
+:00402E55 85C0                    test eax, eax
+:00402E57 7C0F                    jl 00402E68				; You will want to kill this jump
+									; So change 7C0F -> 9090
+:00402E59 C705746D420000000000    mov dword ptr [00426D74], 00000000
+:00402E63 E9EF000000              jmp 00402F57				; You want this jump to happen
+
+* Referenced by a (U)nconditional or (C)onditional Jump at Address:
+|:00402E57(C)
+|
+:00402E68 688CC64200              push 0042C68C
+
+* Possible StringData Ref from Data Obj ->"Software\Pinnacle Systems\Pinnacle "
+                                        ->"TRex"
+                                  |
+:00402E6D 68286E4200              push 00426E28
+:00402E72 6802000080              push 80000002
+:00402E77 E846480100              call 004176C2
+:00402E7C 83C40C                  add esp, 0000000C
+:00402E7F 6808010000              push 00000108
+:00402E84 8D95F4FEFFFF            lea edx, dword ptr [ebp+FFFFFEF4]
+:00402E8A 52                      push edx
+
+* Possible StringData Ref from Data Obj ->"Trial"
+                                  |
+:00402E8B 68506E4200              push 00426E50
+:00402E90 6890C64200              push 0042C690
+
+* Possible StringData Ref from Data Obj ->"Software\Pinnacle Systems\Pinnacle "
+                                        ->"TRex"
+                                  |
+:00402E95 68586E4200              push 00426E58
+:00402E9A 6802000080              push 80000002
+:00402E9F E8CC450100              call 00417470
+:00402EA4 83C418                  add esp, 00000018
+:00402EA7 85C0                    test eax, eax
+:00402EA9 7458                    je 00402F03
+:00402EAB 8D85F4FEFFFF            lea eax, dword ptr [ebp+FFFFFEF4]
+:00402EB1 50                      push eax
+:00402EB2 E8EC530100              call 004182A3
+:00402EB7 83C404                  add esp, 00000004
+:00402EBA 8B4DFC                  mov ecx, dword ptr [ebp-04]
+:00402EBD 2BC8                    sub ecx, eax
+:00402EBF 890D88C64200            mov dword ptr [0042C688], ecx
+:00402EC5 833D88C6420000          cmp dword ptr [0042C688], 00000000
+:00402ECC 7D16                    jge 00402EE4
+:00402ECE C705746D4200FFFFFFFF    mov dword ptr [00426D74], FFFFFFFF
+:00402ED8 C70588C642003C000000    mov dword ptr [0042C688], 0000003C
+:00402EE2 EB1D                    jmp 00402F01
+
+
+By killing this you have now removed the shopping cart at the middle-top-left of the target.  Also it now says registered user:
+
+Would'nt you like it to say your name?  I do.. so let us continue on and patch it so it says our name.  If you open the target in Hiew and scroll down quite a bit (do this by dragging the target to the Hiew exe, like you would if you dragged something to the recycle bin)
+Hit Enter once.
+And keep hitting page down till you come to the offset where it says on the right hand side of Hiew "Registered User"
+If you still can not get a handle on where the offset isLook at next line.
+It's at offset 00427310  00 00 00 00-54 68 69    just fill in you name (in HEX of course)
+If you are not familiar with Hex numbers just visit this web page for help     
+ http://www.asciitable.com/
+
+"For me it's 48 33 72 43-75 4C 33  I can re-use their "s" thats why mine is only 7 letters instead of 8.
+
+You'll notice that when you start up the target you get your name and "this is &d" you need to go back in Hiew and fill the rest of the lines with 00's
+
+So drag the target to the Hiew exe, hit enter once, pg down till you come to the offset on the next line.
+So go to offset 0047318 and fill the rest of the bytes with 00's.  should be 39 ( bytes that is ).
+
+In other words change 20 69 73 20 64 61 79 20 25 64 20 6F 75 72 20 25 and so on till the "this is %d of" saying is gone.
+
+Now when you start up the target it should just say your name.
+
+
+That is all Thank you for reading my First Tutorial.  If you do not understand anything, email me at 
+keiser@wasp.navy.mil
+and i will be glad to assist you.  Remember i am still just a newbie.
+=================================================================================
+Greetz:
+The Hive (you taught me so much)
+Rhodium (You are my Teacher)
+LapTop (Another Teacher)
+Mr. Clean ( Birch Master )
+Placebo ( the Cure )
+And Finally:
+All of you at the Exetools Message board.  Thank you.
+
+
+-MaDMAn_H3rCuL3s

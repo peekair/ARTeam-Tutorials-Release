@@ -1,0 +1,109 @@
+Obtaining a valid Winzip 9.0 serial
+By Enforcer
+Target Winzip 9.0
+Tools used:
+W32Dasm
+ollydbg
+http://www.grinders.withernsea.com/tools/odbg109d.rar
+
+Disclaimer
+If you like a program then you should pay for it to help support the 
+developer and to encourage further development. This tutorial is 
+only intended for educational purposes only.
+
+In this beginners's tutorial I'll show you how to get a valid serial 
+number for Winzip 9.0.
+Open up winzip and you will see the nag screen thanking you for 
+trying out winzip and giving you the option to register. click 
+enter registration code and then enter any name and serial # 
+then click ok. We get the error message "Incomplete or Incorrect 
+information", this is the string we will search for with w32Dasm. 
+Open up w32Dasm and disassemble winzip (Winzip32.exe). When 
+w32Dasm has finished disassembling it go to search->Find Text and 
+search for "Incomplete or Incorrect information" without the quotes. 
+The place in the program that w32Dasm takes us to is likely to be 
+where the "Incomplete or Incorrect information" error message is 
+displayed. Just above is this
+
+code:
+--------------------------------------------------------------------------------
+
+* Referenced by a (U)nconditional or (C)onditional Jump at Addresses:|:0040D306(C), :0040D30F(C), :0040D318(C)
+
+--------------------------------------------------------------------------------
+
+This shows that this area of code is jumped to from 3 different 
+locations which could mean there are 3 serial checks. 2 of them 
+don't have to check the serial they could check the integrity of 
+the file and just display the incorrect serial message if the file 
+has been altered (cracked), infact none of them could be a serial  
+check, some programs use decoys to wate the cracker's time. Anyway 
+we're just here to get the correct serial not to completely reverse 
+engineer winzip. Lets take a look at the first code location which 
+jumps to the code that displays the error message, go to code 
+location 0040D306. The first thing I notice is that there is a call 
+to GetDlgItemTextA, scroll up and you will see another one. hmm 2 
+calls to GetDlgItemTextA and 2 boxes to enter information 
+(Name and serial number). Lets look up this function in MSDN 
+(if you don't have the CD go to http://msdn.microsoft.com). 
+
+
+code:
+--------------------------------------------------------------------------------
+
+UINT GetDlgItemText(  HWND hDlg,       // handle of dialog box  
+		      int nIDDlgItem,  // identifier of control  
+		      LPTSTR lpString, // address of buffer for text  
+		      int nMaxCount    // maximum size of string);
+
+--------------------------------------------------------------------------------
+
+Function Arguments are pushed onto the stack in reverse order 
+before a function is called so in winzip we have this:
+
+code:
+--------------------------------------------------------------------------------
+
+:0040D2DD 6A0B                    push 0000000B ;maximum length of string (11 bytes)
+:0040D2DF BEB8E04D00              mov esi, 004DE0B8
+:0040D2E4 56                      push esi ;place where the serial we entered is stored
+:0040D2E5 68810C0000              push 00000C81 ; The control ID:
+0040D2EA 53                       push ebx ;The handle of the dialog box (not important to us)
+* Reference To: USER32.GetDlgItemTextA, Ord:0113h                                  
+|:0040D2EB FF15A0C54B00           Call dword ptr [004BC5A0]
+
+--------------------------------------------------------------------------------
+
+Open Winzip32.exe in ollydbg and once it has loaded press CTRL+G 
+to open the go to expression box, in that box type 0040D2EB 
+(the address where GetDlgItemTextA is called to get the serial 
+we entered). click the line just below the call to GetDlgItemTextA 
+so that that line is selected and hit f2 to place a breakpoint at 
+that address. Now hit the play button or go to debug menu and 
+select run, winzip opens and displays the nag screen. Click the 
+enter registration code button, I'll enter the name Enforcer and in 
+the registration # box I'll just put 1212121212, you can put whatever 
+you want. Now hit OK and this time instead of displaying the error 
+message ollydbg pops up. Notice in the registers window on the right 
+that esi points to "1212121212" and edi points to "Enforcer" unless 
+you have entered a different name/serial. Select the number next to 
+esi in the registers window then right click it and select follow in 
+dump, the memory dump window at the bottom changes to display the 
+serial in it. In the memory dump window select the first charactor 
+of the serial (in my case "1") and then right click it and select 
+breakpoint->Memory on access. Now click on the play button again 
+winzip will run untill it acceses the memory where the serial is 
+stored. Winzip is going to use the name I entered to generate a 
+serial and then compare it to the serial we entered. We're going 
+to take a guese that when winzip compares the serial to the correct 
+serial, the addresses of both will be in registers, if you look at 
+the registers after we hit the break point you will see the serial 
+you entered and the name you entered but so far no correct serial, 
+so keep pressing the play button untill you see the serial. After 
+we press it a few times we see this in the registers window
+esi 0012EDC0 ASCII "566F0BBA"
+If you entered something different in the Name box then the serial 
+will be different.
+write it down or use follow in dump and then copy it to the 
+clipboard from the memory window.
+I hope you enjoyed this tutorial 

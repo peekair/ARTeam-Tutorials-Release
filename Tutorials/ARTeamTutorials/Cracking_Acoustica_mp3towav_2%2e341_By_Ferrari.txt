@@ -1,0 +1,73 @@
+                (BEST VIEWED WITH WORDWRAP ENABLED & FONT= COURIER , SIZE =10)
+
+         @$@$#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@@$@ @#$#$@
+        @@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@  @#$#$#$@
+         @@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#$@ @#$#$@
+          @#$@                             
+          @#$@       @$@$@$@$@ @$@$@ $@$@$ @$@$@ $@$@$   @#@#@#@#@@ @$@$@ $@$@$ @$#$#$#@
+          @#$@      @#$#$#$#$@@ @#$#$#$#$#$ @#$#$#$#$#$ @$#$#$#$#@@@ @#$#$#$#$#$ @#$#$@
+          @#$@    @ @#@#@#@#@#@ @#$@$#$#@@@ @#$@$#$#@@@ @#@@    @#$@ @#$@$#$#@@@  @$#@
+          @#$@#$#$@ @#@#   #@#@ @#$@   @@@  @#$@   @@@  @$@     @#$@ @#$@   @@@   @$#@
+          @#$@@#@#@ @#@#@#@#@#@ @#$@   @@   @#$@   @@         @#@#$@ @#$@   @@    @$#@   
+          @#$@#$#$@ @$@$@$@$@$@ @#$@        @#$@         @@#@@#@#@#@ @#$@         @$#@
+          @#$@    @ @$@#        @#$@        @#$@        @#$#$#$#$#$@ @#$@         @$#@
+          @#$@      @$@#        @#$@        @#$@        @#$@    @#$@ @#$@         @$#@
+          @#$@      @#@#@#@#@#@ @#$@        @#$@        @#$@#$#$#$#@ @#$@         @$#@
+          @#$#@     @$@$@$@$@$@ @#$#@       @#$#@       @#$@#@#@#@#@ @#$#@       @#$#$@
+        @#@#@#@#@    @#@#@#@#@ @#@#@#@     @#@#@#@       @#@#@#@#@# @#@#@#@     @$#$#$#@
+
+
+                                                                                
+                                     :-)---> ARTeam <---(-:
+                             Visit:-http://cracking.accessroot.com
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Acoustica MP3ToWAV  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$      Converter      $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$       2.341         $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$@@@@@@@@@@@@@
+@@@@@@@@@@@@@              AUTHOR            :   El-Kiwi, FERRARI                 @@@@@@@@@@@@@ 
+@@@       @@@              PROTECTION        :   SERIAL,limited uses              @@@       @@@   @@ ferrari @@              TARGET FILE       :   mp3towav.exe                     @@ ferrari @@ 
+@@@       @@@              TARGET URL        :   http://www.acoustica.com         @@@       @@@   @@@@@@@@@@@@@              OPERATING SYSTEM  :   WINDOWS ALL                      @@@@@@@@@@@@@   @@@@@@@@@@@@@              RELEASE DATE      :   14.01.2004                       @@@@@@@@@@@@@
+@@@@@@@@@@@@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@                                TOOLS USED & TARGET SOFTWARE                                 @
+@                                =============================                                @
+@                                                                                             @
+@ OllyDbg                      :- http://grinders.withernsea.com/tools/odbg110b1.rar          @
+@ Acoustica MP3ToWav Converter :- http://grinders.withernsea.com/tools/acousticamp3towav.rar  @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+Load mp3towave.exe in ollydbg,push F9 and nag with options pop up,select enter code and write your name and some number,dont push register button,yet.Now in olly select executable modules,choose mp3towav,right click and then view names,scrol down till GetDlgItemTexta,right click and then toggle breakpoint on import.Now you can push register button in your register nag. Olly break and step slowly with F8 till 
+
+00411632 E859F6FFFF CALL mp3towav.00410C90
+
+press F7 and step into call,you can see at the 00410CFF ASCII "IDS_YOU_REGISTERED",now F8 till first jump at
+
+00410CA4 76 71 JBE SHORT mp3towav.00410D17
+
+
+select the above address 00410CA4-->Right click-->Binary-->Fill with NOPS-->Done!!!
+ 
+you can finaly update your program,right click select copy to executable then copy all modifications,select Copy all,now box with modifications pop up,press ctrl+F4 and File changed messagge is there,press Yes,and now you are at app dir,select save file as 'bpk' press open and messagge with question Do you REALLY want to overwrite it? you decide :-). 
+Exit olly,restart your mp3towav, no more registration no more limitations.
+Congratulations cracker!!!
+
+
+
+
+@@@@@@@@@@###########################################################################@@@@@@@@@@ 
+@@@@@@@@@@#                          ---SHOUTZ AND GREETZ---                        #@@@@@@@@@@
+@@@@  @@@@#                                                                         #@@@@  @@@@ 
+@@@ H  @@@#            To Nilrem-->Merlin who's Tutorials helped me to use          #@@@ H  @@@   @@  O   @@#            Ollydbg for debugging. Thanks to el-kiwi whose tutorials     #@@  O   @@
+@   R    @#            helped me alot. Thanks to Pompeyfan, www.tech-arena.com      #@   R    @  
+@@  S   @@#            staff, members for encouraging me to write these tutorials.  #@@  S   @@
+@@@ E  @@@#            exetools.com,Sir JMI, SatyricOn, R@dier and others who       #@@@ E  @@@
+@@@@  @@@@#            helped me alot.                                              #@@@@  @@@@
+@@@@@@@@@@@@@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$@@@@@@@@@@@@@ 
+@@@@@@@@@@@@@                                                                     @@@@@@@@@@@@@
+@@@       @@@                                                                     @@@       @@@
+@@ ferrari @@             REMEMBER IF U USE THE PROGRAM THEN BUY IT ;-) !         @@ ferrari @@ 
+@@@       @@@                                                                     @@@       @@@ 
+@@@@@@@@@@@@@                                                                     @@@@@@@@@@@@@   @@@@@@@@@@@@@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$@@@@@@@@@@@@@
+                                    
+ 

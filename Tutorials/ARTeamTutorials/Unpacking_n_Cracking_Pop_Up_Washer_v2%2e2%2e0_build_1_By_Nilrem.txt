@@ -1,0 +1,65 @@
+============================================================================
+TITLE:
+Unpacking and Patching Pop Up Washer v2.2.0 Build 1
+============================================================================
+BEST VIEWED:
+Notepad with word wrap enabled, and in restored window mode
+============================================================================
+TOOLS USED:
+OllyDbg v1.09d(step 4)
+UPX v1.24
+Brain (Preferably version human or above)
+============================================================================
+TARGET:
+PopUpWasher.exe
+============================================================================
+LOCATION OF TOOLS AND PROGRAM:
+http://www.grinders.withernsea.com/tools/odbg109d.rar
+http://www.grinders.withernsea.com/tools/upx124w.rar
+http://www.grinders.withernsea.com/tools/puw_v2.2.0_b1.rar
+============================================================================
+WEBSITE:
+http://cracking.accessroot.com/
+============================================================================
+CONTACT INFORMATION:
+Msn Messenger - jammysa@hotmail.com
+Icq# - 46313648
+Email Address - Merlin@accessroot.com
+============================================================================
+TUTORIAL VERSION:
+v1.0 Written 18th of January 2004
+============================================================================
+AUTHOR AND OTHER ALIASES:
+Merlin
+
+Nilrem2
+Nilrem
+Grimgnaw
+Khulad
+Khulad Illphukiir
+(-~Merlin~-)
+Merlin The Wizard
+============================================================================
+Lesson 1 - Unpacking Pop Up Washer
+Ok to unpack Pop Up Washer, what we will do is use it's packer UPX; to do this go to 'Start->Run' and type cmd (if you're using Windows XP), then type:
+cd c:\my shared folder\tools\upx124w\
+obviously change the directory structure to meet yours.
+Once UPX has loaded, make a backup of PopUpWasher.exe, I called my backup unpacked.exe, then move it into the UPX directory, and switch back to the command prompt, now type:
+upx unpatched.exe -v -d
+'-V' switches verbose mode on (tells us of any errors etc), 'd' tells UPX to decompress the executable. Move the executable back to the Pop Up Washer directory.
+============================================================================
+Lesson 2 - Patching Pop Up Washer
+Right load up unpatched.exe, close it down, then move your clock 1 year forward (so our 30-day trial expires), then load unpatched.exe again and note a couple of things, one thing to note that is of significance, is the string "trial expired"; this will be our means of attack, but WHY!?!? I hear you ask, why don't we just do what we normally do and use an api call such as 'GetSystemTime' as a breakpoint, well simply put, it's good to experiment with different methods from time to time incase one method gets you stumped, then you have another method in your arsenal to use in an attack.
+Ok, have you written down "trial expired"? Good, let's get started. Close down unpatched.exe and load it in Ollydbg, as in all my tutorials that utilise (this is my preference) ollydbg, right click and select 'Appearance->Highlighting->Jumps'n'calls'. Now, what exactly was "trial expired", it was a string, a referenced text string, so let's search for it and go from there; right click and select 'Search for->All referenced text strings'. Maximise the window if it's in restored window mode (yet again this is my preference), scroll up to the top and select the top line, right click and choose 'Search for text' and make sure that 'Case senstive' is unchecked, type in our string which was (without quotation marks) "trial expired", hit 'Return' and you'll land here:
+
+Text strings referenced in unpatche:CODE, item 4157
+ Address=00474845
+ Disassembly=MOV EDX,unpatche.004749B8
+ Text string=ASCII "Trial Expired"
+
+Double click it to be taken to that address. Now let's get our bearings and try and work out just exactly where we are. Hmm interesting, there's a couple of string references and a call under each of them (executing them), so what we should be doing now is nopping these calls so the procedure will never happen, however that is a bad habit and untidy and can cause the program to cause access violations etc (though if that is the only method then do it), so let's look around for an address that is before all these text strings and their corresponding calls. We find a Jump if Equal to at 00474817, however this will jump to 00474845 which would end up executing a call, so that's no good to us, the next jump that is above that is at 00474815 and is a Jump if Not Equal to, and it jumps to 00474877, which is good news for us because that jumps away from the calls we don't want to execute, so instead of nopping the calls (Nopping - No Operation), we can simply change this JNZ to a JMP, and to do this we left click the line 00474815 then right click and select 'Binary->Edit' and change the 75 60 (75 - JNZ) to EB 60 (EB - JMP), once that has done, right click and choose, 'Copy to executable->All modifications->Copy all', then in the window that appears right click and choose 'Save file' and save it to whatever you want, well done cracker!! If you don't believe that it has worked then open up your newly patched file. 8-)
+
+============================================================================
+SHOUTZ AND GREETZ:
+To Kyrstie, we've been going out over year now and I love you with all my heart. To exetools.com/forum, dob2.com, board.anticrack.de. Hoof Arted for inspiring me to write tutorials for OllyDbg, Ferrari for correcting tutorial mistakes in a past tutorial, anyone that has helped me out, the creators of Pop Up Washer, UPX, and OllyDbg.
+============================================================================

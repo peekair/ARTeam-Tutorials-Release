@@ -1,0 +1,73 @@
+*************************************************************************************************TITLE:
+Cracking tutorial for Animagic GIF Animator Version 1.20 (32 bits)
+*************************************************************************************************
+BEST VIEWED:
+Notepad with word wrap enabled, and in restored window mode
+*************************************************************************************************
+TOOLS USED:
+Ollydbg v1.09d
+*************************************************************************************************TARGET:
+animagic32.exe
+*************************************************************************************************LOCATION OF TOOLS AND PROGRAM:
+Ollydbg v1.09d http://www.grinders.withernsea.com/tools/odbg109d.rar
+Animagic GIF Animator Version 1.20 (32 bits) http://www.grinders.withernsea.com/tools/Animagic_Gif_Animator_v1.20
+*************************************************************************************************
+CONTACT INFORMATION:
+vinceandjane@hotmail.com
+*************************************************************************************************
+TUTORIAL WRITTEN:
+11/02/2004
+*************************************************************************************************
+AUTHOR:
+Pompeyfan
+*************************************************************************************************
+
+Okay,lets attack our target, open Olly, and if you haven't done so already, to make things easier for yourself, right click, select appearance/highlighting/jumps'n'calls, makes things so much easier to follow.
+
+Open animagic32.exe in Olly, and you land here:
+
+00401000 > $ A1 5A104700    MOV EAX,DWORD PTR DS:[47105A]
+
+Press F9 run
+
+Bring up animagic, and click on continue, then Help/Enter name and Password, enter your fake details, I used Pompeyfan and 47806, and you get the Error message "Registration Failed: Invalid Password".
+
+Okay, go back to Olly, right click and select Search for all referenced text strings, then right click on new window and select search for text, and enter "Registration Failed", double click on your error message when the new window comes up, and you will be here:
+
+00422460  |. 68 EE924700    PUSH animagic.004792EE                   ; |Arg3 = 004792EE ASCII "Registration failed: Invalid Password"
+
+I've tried various methods for getting a valid serial without success, so we will just try and get it to accept any serial number, if you look up from the error message a bit:
+
+0042245A  |> 8B06           MOV EAX,DWORD PTR DS:[ESI]
+0042245C  |. 6A 00          PUSH 0                                   ; /Arg5 = 00000000
+0042245E  |. 6A 00          PUSH 0                                   ; |Arg4 = 00000000
+00422460  |. 68 EE924700    PUSH animagic.004792EE                   ; |Arg3 = 004792EE ASCII "Registration failed: Invalid Password"
+00422465  |. FF70 0C        PUSH DWORD PTR DS:[EAX+C]                ; |Arg2
+00422468  |. FF70 68        PUSH DWORD PTR DS:[EAX+68]               ; |Arg1
+0042246B  |. E8 C6060300    CALL animagic.00452B36                   ; \animagic.00452B36
+00422470  |. 83C4 14        ADD ESP,14
+00422473  |. 84DB           TEST BL,BL
+
+The > sign shows the start of this little routine, which ends in the go away bad cracker message, so left click on that line, and select " Find references to selected command ", and you will see that their is a conditional jump that leads to the start of this routine, so double click on that and you are here:
+
+004223E8  |. 74 70          JE SHORT animagic.0042245A
+
+and the 2 lines above are:
+
+004223DC  |. A2 C14F4800    MOV BYTE PTR DS:[484FC1],AL
+004223E1     803D C14F4800 >CMP BYTE PTR DS:[484FC1],0
+
+Now you could do one of 2 things to make this work, take your pick, either change the JE to JNZ (jump if not zero), 0r change the 0 in line 004223E1 to 1 (then they wont be equal), make your change, then right click on the line, and select copy to executable/ All modifications, then copy all on new box that pops up, then right click on new box on select save file, then double click on your file to overwrite, and select yes to " do you really want to overwrite it " 
+
+Now then, close Olly, start up animagic32.exe, enter whatever user name and serial you like,and voila!, you get "Thank you for registering animagic gif", well done cracker!!!
+
+I messed around for a while trying to get rid of the about box coming up every time you open the program, but without success, in the .ini file you have an entry SkipAboutDialog=0, I tried changing it to 1, but that doesn't work, maybe someone else has some ideas. It seems to be called up by CreateWindowExA, found that out with a program called APIS32, which is one of those API spy programs, but cant figure out how to get rid of it and still make the program run. With resource tuner you find it as dialogue 1 and you can edit it a bit, but not get rid of it, you can enable a check box which says don't run the dialogue at startup, but when you startup the program the box is greyed out. Anyway, I guess this is a minor irritation, I just find boxes like this totally uneccessary.
+
+And remember, if you use the program, buy it ,software developers rely on the income from sales to keep going, if nobody buys, no new software would be developed.
+
+*************************************************************************************************
+SHOUTZ AND GREETZ:
+
+To exetools forum, tsrh forum, Ollydbg forum, Ricardo Narvaja, Nilrem & Ferarri whoose tuts have helped me more than any others , Ollydbg, and the authors of Animagic GIF Animator.
+
+*************************************************************************************************

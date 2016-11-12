@@ -1,0 +1,107 @@
+                (BEST VIEWED WITH WORDWRAP ENABLED & FONT= COURIER , SIZE =10)
+
+         @$@$#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@@$@ @#$#$@
+        @@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@  @#$#$#$@
+         @@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#$@ @#$#$@
+          @#$@                             
+          @#$@       @$@$@$@$@ @$@$@ $@$@$ @$@$@ $@$@$   @#@#@#@#@@ @$@$@ $@$@$ @$#$#$#@
+          @#$@      @#$#$#$#$@@ @#$#$#$#$#$ @#$#$#$#$#$ @$#$#$#$#@@@ @#$#$#$#$#$ @#$#$@
+          @#$@    @ @#@#@#@#@#@ @#$@$#$#@@@ @#$@$#$#@@@ @#@@    @#$@ @#$@$#$#@@@  @$#@
+          @#$@#$#$@ @#@#   #@#@ @#$@   @@@  @#$@   @@@  @$@     @#$@ @#$@   @@@   @$#@
+          @#$@@#@#@ @#@#@#@#@#@ @#$@   @@   @#$@   @@         @#@#$@ @#$@   @@    @$#@   
+          @#$@#$#$@ @$@$@$@$@$@ @#$@        @#$@         @@#@@#@#@#@ @#$@         @$#@
+          @#$@    @ @$@#        @#$@        @#$@        @#$#$#$#$#$@ @#$@         @$#@
+          @#$@      @$@#        @#$@        @#$@        @#$@    @#$@ @#$@         @$#@
+          @#$@      @#@#@#@#@#@ @#$@        @#$@        @#$@#$#$#$#@ @#$@         @$#@
+          @#$#@     @$@$@$@$@$@ @#$#@       @#$#@       @#$@#@#@#@#@ @#$#@       @#$#$@
+        @#@#@#@#@    @#@#@#@#@ @#@#@#@     @#@#@#@       @#@#@#@#@# @#@#@#@     @$#$#$#@
+
+
+                                                                                
+                                     :-)---> ARTeam <---(-:
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$  Key logger Killer  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$        1.5          $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$                     $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$@@@@@@@@@@@@@
+@@@@@@@@@@@@@              AUTHOR            :   FERRARI                          @@@@@@@@@@@@@ 
+@@@       @@@              PROTECTION        :   Time Trial                       @@@       @@@   @@ ferrari @@              TARGET FILE       :   keyloggerkiller.exe              @@ ferrari @@ 
+@@@       @@@              TARGET URL        :   http://www.tooto.com             @@@       @@@   @@@@@@@@@@@@@              OPERATING SYSTEM  :   WINDOWS ALL                      @@@@@@@@@@@@@   @@@@@@@@@@@@@              RELEASE DATE      :   10.01.2004                       @@@@@@@@@@@@@
+@@@@@@@@@@@@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@                                TOOLS USED & TARGET SOFTWARE                                 @
+@                                =============================                                @
+@                                                                                             @
+@ OllyDbg                    :- http://grinders.withernsea.com/tools/odbg110b1.rar            @
+@ KeyLogger Killer           :- http://grinders.withernsea.com/tools/kk_install.exe           @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+NOTE:- I CRACKED THIS PROGRAM AFTER IT EXPIRED. I DONT KNOW WHETHER BELOW TUTORIAL WILL HELP IF SOFTWARE HAS NOT YET EXPIRED. BUT I THINK IT WILL WORK. JUST TRY ;-)
+
+Ok, let's get straight down to business; open up KeyloggerKiller.exe and you'll see that we can only use this program for 15 days. Close down KeyloggerKiller, run the program and a dialog window will pop-up telling us that 1 of 15 days remaining, click close. Before we open KeyloggerKiller.exe in our debugger (Olly), let's just think for a second, what are our main ways of attack on this program? Well it's a time-trial, so the program must be getting some form of date/time and comparing it against something; the main ways a program does this, is via these commands:
+{GetTimeZoneInformation
+GetSystemTime <-- in this program we will put breakpoint here
+GetFileTime
+GetLocalTime}
+PEiD, it tells us that whether any packer is used to pack the program.No packer is used here.
+Right, time to debug, launch OllyDbg, before we do anything else, to make things easier on ourselves, right click in Olly, and select 'Appearance->Highlighting->Jumps'n'calls'. Now open up KeyloggerKiller.exe in Olly,  Right click and choose 'Search for->Name (label) in current module', once there (my preference) right click and select 'Sort by->Name'; scroll down to 'GetSystemTime', select it, then right click and choose 'Set breakpoint on every reference'. Now go back to the main Olly window, and press F9 (to begin the debug process). You should find yourself here:
+
+00403FA8  |. FF15 6C604000  CALL DWORD PTR DS:[<&KERNEL32.GetSystemT>; \GetSystemTime
+
+
+
+Now, this method may not work all the time for every single time trial program similar to Keylogger Killer, but it's always worth a try, what we will do is keep pressing F8 (to step through the code) until we summon the error message. The line you land on eventually should be this one:
+
+00401B6A   . E8 272E0000    CALL <JMP.&MFC42.#2514>
+
+
+Go back to Olly, and let's have a look at the code were we are. Now let's get our bearings, we are currently at the address '00401B6A', let's have a look at some near by condition jumps, the first one we see, is for some odd reason, not highlighted (remember we choose to highlight jumps'n'calls, the nearest conditional jump to were we landed is:
+
+00401B61   . 75 26          JNZ SHORT Keylogge.00401B89
+
+
+Take a closer look, we see that it is a JNZ, which means 'Jump Not Taken', we also see that it jumps to the address '00401B89' in 'keylogge', and on a closer examination, we realise that where it is jumping to '00401B89' is actually past were we landed '00401B6A', hopefully, if we changed this jump so that it always jumps (EB is a straight jump), then hopefully this will allow us to use Keylogger Killer as long as we would like.
+Right, click the close button on the Keylogger Killer dialog that appeared. Write down or remember (this is good practice) the address we want to change. Press 'Ctrl+F2' to restart the program in Olly. Press 'Ctrl+G' (Goto command) and type 00401B61, and we should land at the conditional jump we want to change. Now right click this line and choose 'Binary->Edit', now we want to change the 75 (JNZ) to EB (Straight Jump), so change 75 5A to EB 5A, and hit 'OK'. Now keep pressing F9 until Keylogger Killer loads, congratulations, it's now cracked.
+ 
+ Another way you can kill the NAG is 
+
+00401B5F   . 85C0           TEST EAX,EAX
+
+change to
+
+00401B5F   . 33C0           XOR EAX,EAX <----------the flag is always set 
+
+and
+
+
+00401B61   . 75 26          JNZ SHORT Keylogge.00401B89
+
+change to
+
+00401B61   . 74 26          JE SHORT Keylogge.00401B89<-----So Jump Will always be taken
+
+ But the first method is better. ;-)
+
+ Okay now time to make the changes permanent :-)
+Right click/copy to executable/all
+modifications/copy all, then right click on new box/save file, double click on
+apis32.exe and select overwrite file.
+Done! ;-) No ,ore time trial NAG
+
+Congratulations cracker!!!
+
+@@@@@@@@@@###########################################################################@@@@@@@@@@ 
+@@@@@@@@@@#                          ---SHOUTZ AND GREETZ---                        #@@@@@@@@@@
+@@@@  @@@@#                                                                         #@@@@  @@@@ 
+@@@ H  @@@#            To Nilrem-->Merlin who's Tutorials helped me to use          #@@@ H  @@@   @@  O   @@#            Ollydbg for debugging. Thanks to el-kiwi whose tutorials     #@@  O   @@
+@   R    @#            helped me alot. Thanks to Pompeyfan, www.tech-arena.com      #@   R    @  
+@@  S   @@#            staff, members for encouraging me to write these tutorials.  #@@  S   @@
+@@@ E  @@@#            exetools.com,Sir JMI, SatyricOn, R@dier and others who       #@@@ E  @@@
+@@@@  @@@@#            helped me alot.                                              #@@@@  @@@@
+@@@@@@@@@@@@@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$@@@@@@@@@@@@@ 
+@@@@@@@@@@@@@                                                                     @@@@@@@@@@@@@
+@@@       @@@                                                                     @@@       @@@
+@@ ferrari @@             REMEMBER IF U USE THE PROGRAM THEN BUY IT ;-) !         @@ ferrari @@ 
+@@@       @@@                                                                     @@@       @@@ 
+@@@@@@@@@@@@@                                                                     @@@@@@@@@@@@@  @@@@@@@@@@@@@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$@@@@@@@@@@@@@
+                                    

@@ -1,0 +1,171 @@
+============================================================================
+TITLE.:
+FolderMatch v3.40
+============================================================================
+BEST VIEWED.:
+Notepad with word wrap enabled, and in restored window mode
+============================================================================
+TOOLS USED.:
+OllyDbg v1.10(step 2)
+============================================================================
+TARGET.:
+FolderMatch.exe 2195456 bytes.
+Written in Microsoft Visual Basic 5.0 / 6.0
+============================================================================
+LOCATION OF TOOLS AND PROGRAM.:
+http://www.grinders.withernsea.com/tools/odbg110b2.rar
+http://www.grinders.withernsea.com/tools/regsnap.rar
+http://www.grinders.withernsea.com/tools/FolderMatch340.rar
+http://www.grinders.withernsea.com/patches/FolderMatch_340_Crack.rar
+============================================================================
+WEBSITE.:
+http://cracking.accessroot.com/
+============================================================================
+CONTACT INFORMATION.:
+kruger48@hotmail.com
+============================================================================
+TUTORIAL VERSION.:
+v1.0 Written 23th of May 2004
+============================================================================
+AUTHOR AND OTHER ALIASES.:
+Kruger
+AKA.:(Swat'98) (Swat'99) (Swat)
+============================================================================
+First, to make this crack easy to follow.
+I have used few references so you won't loose the grip of the crack.
+A lot of tutors bombs you with jumps and calls ;-)
+I try to keep it Plain, Simple, Stupid!
+============================================================================
+Before Cracking.:
+Use Regsnap, take a snap before installing one after and one after running the app once!
+this is my default way of doing it.
+You have now 3 files, and you can easily see what the Installer is writing
+and what the exefile is creating.
+============================================================================
+Now, load app in Olly.
+Push F9, program loads try to register. 
+I used Kruger as name and 999999999 as serial.
+Got Msg.: "The Registration Name/Registration Key combination is not valid."
+Good old story, got top in CPU window -> right click -> choose search for
+all referenced text strings.
+Hit at.:
+0051C085 ;  UNICODE "The Registration Name/Registration Key combination is not valid."
+F2 -> Enter, back in CPU window.
+Browse up in code, set brake on address.:
+0051BFAA   > \8B55 D8       MOV EDX,[DWORD SS:EBP-28]
+F9, try to register.
+F8 -> We see the serial at address.:
+0051BFF5   .  8B55 D8       MOV EDX,[DWORD SS:EBP-28]
+Stack [SS:0012EACC]=00147734, (UNICODE "ioulxmmebvlxvk")
+Close app, try to register again. (No need to run Olly...)
+Registers, tells us that the code is Valid.
+Restart app, trial version again!
+Shit, the registration procedure seems to be removed in the app.
+Let's try to Crack this shit!!!
+============================================================================
+1. Trial Counter.
+Load Regsnap, Compare file 1 and 3 that you saved? and browse.
+HKEY_LOCAL_MACHINE\SOFTWARE\SALTYBRINE\FM UTILITY\REGINFO
+String FCD is on my PC showing 38130.
+This code is the install date converted to 5 digits.
+Back to Olly, got top in CPU window -> right click -> choose search for
+all referenced text strings.
+Search for FCD.
+Found two places.:
+Address=004FCD8F Disassembly=MOV EDX,43A108 Text string=UNICODE "FCD"
+Address=004FDA38 Disassembly=MOV EDX,43A108 Text string=UNICODE "FCD"
+F2 on both, back to CPU window.
+F9 Load app, breaks on 004FCD8F.
+F8 allot, look at the strings checked... hmm at address 004FD0A9 there is a jump
+to 004FD165.
+Let's change this jump to JE, this will give us a 30 days trial 4ever!
+If you set the system clock ahead one year, the program will generate the new code
+for the date and update registry!
+Nice done cracker! (Ehh...myself?)
+So we change.:
+004FD0A9 /0F85 B6000000 JNZ 004FD165 ;  FolderMa.004FD165
+to.:
+004FD0A9 /0F84 B6000000  JE 004FD165 ;  FolderMa.004FD165
+Timer Killed!
+============================================================================
+2. Splash Killer.
+We go back to all referenced text strings.
+Look in the text, what's this.:
+Address=0052235E Disassembly=MOV EDX,43CDEC Text string=UNICODE "frmSplash.Form_Load"
+Nice, calling the form frmSplash!
+Thanx, Mate!
+F2, back in CPU window have a look in the code.
+Below you can see some calls to MSVBVM60.__vbaNew2
+Meaning loading a form, we need just to know what form the app is using.
+Set a brake on the 4 nearest.
+We got brakes on.:
+005224F0   ;  MSVBVM60.__vbaNew2
+005225C7   ;  MSVBVM60.__vbaNew2
+00522658   ;  MSVBVM60.__vbaNew2
+00522676   ;  MSVBVM60.__vbaNew2
+Now, F9 -> breaks on address.:
+005225C7 Creating the Nag Form!
+Over the address we can see.:
+005225AF   JNZ 00522646               ;  FolderMa.00522646
+005225B5   CMP [DWORD DS:6035A0],EDI
+005225BB   JNZ SHORT 005225CD         ;  FolderMa.005225CD
+
+Look on the jumps, we want to make the jump correct.
+If you understand the code you know what jump to use.
+If not, just try the two and see what's working.
+Yes, 005225AF is the good one!
+We change.:
+005225AF   /0F85 91000000 JNZ 00522646 ;  FolderMa.00522646
+To.:
+005225AF   /E9 92000000   JMP 00522646 ;  FolderMa.00522646
+Right Click, save, try!
+Licensed!
+============================================================================
+3. Nag Text
+In the main window we got the nag text "- (Unregistered Version)"
+Let's try to kill this.
+We go back to all referenced text strings.
+Try to search for "frmMain"
+Lots of hits, but look around the found stings and try to find "- ("
+Yes, it's the beginning of the nag text.
+Why not the whole text you say?
+Well, the "- (" is infront of the text that are inserted from a different place in the
+exefile. As long as we are in trial mode.
+Address=004962EF Disassembly=MOV EDX,432078 Text string=UNICODE "frmMain"
+Below.:
+Address=0049636D Disassembly=PUSH 4320AC Text string=UNICODE " - ("
+F2 on both, back to CPU window.
+F9, breaks on address 004962EF -> F8 slowly to address.:
+00496306     JNZ 00496409  ;  FolderMa.00496409
+He... Won't jump because we have to add the ugly text.
+Let's change this to jump every time.
+We change.:
+00496306  /0F85 FD000000 JNZ 00496409  ;  FolderMa.00496409
+To.:
+00496306  /E9 FE000000   JMP 00496409  ;  FolderMa.00496409
+Text Gone!
+Now the app is fully Cracked !!!
+============================================================================
+4. My Contest!
+Not 4 AR Team Staff! (They know how to... ;-)
+Use all patches as shown, but instead of.:
+004FD0A9 /0F85 B6000000 JNZ 004FD165  ;  FolderMa.004FD165
+change it to.:
+004FD0A9  /E9 B7000000   JMP 004FD165 ;  FolderMa.004FD165
+004FD0AE  |90            NOP
+004FD0AF  |90            NOP
+
+Set sytemtime to + 30 days ahead.
+Run app, try to exit...got a nasty Msg Box?
+Try to kill the Msg Box!
+If you can, plz post how to with changes! on the Ar Team Forum.
+Happy Cracking!
+============================================================================
+Enjoy!
+That's all 4 now!
+Remember if you use the application then buy it!
+============================================================================
+SHOUTZ AND GREETZ:
+To all Members of AR Team, and the creator of Olly! 
+And to all of you reading my Tuts!
+============================================================================

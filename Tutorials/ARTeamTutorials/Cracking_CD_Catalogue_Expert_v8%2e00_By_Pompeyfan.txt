@@ -1,0 +1,115 @@
+*************************************************************************************************TITLE:
+Cracking tutorial for CD Catalog Expert version 8.00 with Windows XP using Point H method
+*************************************************************************************************
+BEST VIEWED:
+Notepad with word wrap enabled, and in restored window mode
+*************************************************************************************************
+TOOLS USED:
+Ollydbg v1.09d
+*************************************************************************************************TARGET:
+cdc.exe
+*************************************************************************************************LOCATION OF TOOLS AND PROGRAM:
+Ollydbg v1.09d http://grinders.withernsea.com/tools/odbg109d.rar
+CD Catalog Expert version 8.00 http://grinders.withernsea.com/tools/CD_Catalog_Expert_v8.00.zip
+Point H tutorial by Ricardo Narvaja (optional) http://grinders.withernsea.com/tutorials/punto_h_english.zip
+Cruehead Crackme 2 (Optional)  http://grinders.withernsea.com/tools/Cruehead_Crackmes.zip
+*************************************************************************************************
+CONTACT INFORMATION:
+vinceandjane@hotmail.com
+*************************************************************************************************
+TUTORIAL WRITTEN:
+7/02/2004
+*************************************************************************************************
+AUTHOR:
+Pompeyfan
+*************************************************************************************************
+
+This is my first cracking tutorial, so hopefully i have learnt enough to be able to explain things clearly enough for people to follow.
+
+If you don't altready know it, you will need to first determine point H (XP equivalent of hmemcpy) for your computer, some excellent articles have been written on this, particularly by Ricardo Narvaja who is a member of both Exetools forum and the Ollydbg forum, I'll try and summarise how to find it as follows, if you want a more detailed explanation, then try this tutorial by Ricardo http://home.tiscali.cz:8080/robocop/files/punto_h_english.zip 
+
+1).Download Cruehead Crackme 2 at http://grinders.withernsea.com/tutorials/Cruehead_Crackmes.zip and open it in Olly.
+2).Search for name (label) in current module and choose API TranslateMessage
+3).Once on this API, right click, and choose CONDITIONAL LOG BREAKPOINT ON IMPORT
+4).IN condition type in "MSG==201", Expression should show "MSG", Decode value of expression as should show "Assumed by expression", all without quotation marks, Change Pause program to On condition.
+5). Press run
+6). Put in name and serial, then hit ok
+7). Olly stops at the breakpoint, hit ALT & M top activate the Memory map window, enter your serialin the ASCII box, click ok
+8). The dump window comes up, and you will see your serial, highlight it, right click, breakpoint/memory on access, then hit run.
+9).You should then be at point H, in my case:
+
+77D5DEBB   F3:A5            REP MOVS DWORD PTR ES:[EDI],DWORD PTR DS>
+
+OKay, down to business,lets attack or target, open Olly, and if you haven't done so already, to make things easier for yourself, right click, select appearance/highlighting/jumps'n'calls, makes things so much easier to follow.
+
+
+Open cdc.exe in Olly, and you land here:
+
+004C1214 >/$ 55             PUSH EBP
+
+Press F9 run
+
+Click on cdc in your tray to bring up the registration dialogue box
+
+Enter your name and fake serial, I'll use Pompeyfan and 47806, don't press enter yet
+
+Right click/go to/expression
+Enter the address of point H for your computer, in my case 77D5DEBB, hit okay and you land here:
+
+77D5DEBB   F3:A5            REP MOVS DWORD PTR ES:[EDI],DWORD PTR DS>
+77D5DEBD   8BC8             MOV ECX,EAX
+77D5DEBF   83E1 03          AND ECX,3
+77D5DEC2   F3:A4            REP MOVS BYTE PTR ES:[EDI],BYTE PTR DS:[>
+77D5DEC4   E8 04F9FFFF      CALL user32.77D5D7CD
+
+Right click Breakpoint/memory on access
+
+Now click on CDC to bring registration screen back up again, and hit register button.
+
+Olly breaks at the above address
+
+Select follow address in dump for the EDI register, Click once on 77D5DEBB then press F8 down to the call, your username will be loaded into the dump window, highlight it, right click/breakpoint/memory on access
+
+Press F9 or run, and you land here:
+
+
+00408B0D  |. 807C1F FF 20   |CMP BYTE PTR DS:[EDI+EBX-1],20
+00408B12  |.^76 F4          \JBE SHORT cdc.00408B08
+00408B14  |> 3BF3           CMP ESI,EBX
+00408B16  |. 7D 0A          JGE SHORT cdc.00408B22
+00408B18  |. 8BC5           MOV EAX,EBP
+00408B1A  |. E8 11BBFFFF    CALL cdc.00404630
+00408B1F  |. EB 17          JMP SHORT cdc.00408B38
+00408B21  |> 4E             /DEC ESI
+00408B22  |> 807C37 FF 20    CMP BYTE PTR DS:[EDI+ESI-1],20
+00408B27  |.^76 F8          \JBE SHORT cdc.00408B21
+00408B29  |. 55             PUSH EBP
+00408B2A  |. 8BCE           MOV ECX,ESI
+00408B2C  |. 2BCB           SUB ECX,EBX
+00408B2E  |. 41             INC ECX
+00408B2F  |. 8BD3           MOV EDX,EBX
+00408B31  |. 8BC7           MOV EAX,EDI
+00408B33  |. E8 08C0FFFF    CALL cdc.00404B40
+00408B38  |> 5D             POP EBP
+00408B39  |. 5F             POP EDI
+00408B3A  |. 5E             POP ESI
+00408B3B  |. 5B             POP EBX
+00408B3C  \. C3             RETN
+
+
+Press F8 several times to trace through the code, you will see your user name and fake seial appear a few times, then eventually when you get here:
+
+004B35F2   . 8B55 E8        MOV EDX,DWORD PTR SS:[EBP-18]
+
+Then if you look down in the dump window you will see the correct serial for your user name, in my case 6601-3030.
+
+Close Olly, start up cdc.exe, enter your user name and the serial you obtained using Olly, and voila! Well done cracker!!!
+
+And remember, if you use the program, buy it ,software developers rely on the income from sales to keep going, if nobody buys, no new software would be developed.
+
+*************************************************************************************************
+SHOUTZ AND GREETZ:
+
+To exetools forum, tsrh forum, Ollydbg forum, Ricardo Narvaja, Nilrem & Ferarri whoose tuts have helped me more than any others , Ollydbg, and the authors of CD Catalog Expert
+
+*************************************************************************************************

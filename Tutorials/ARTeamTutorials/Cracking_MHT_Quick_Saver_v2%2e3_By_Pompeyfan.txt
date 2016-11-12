@@ -1,0 +1,130 @@
+*************************************************************************************************TITLE:
+Cracking tutorial for MHT Quick Saver version 2.3 with Windows XP using Point H method
+*************************************************************************************************
+BEST VIEWED:
+Notepad with word wrap enabled, and in restored window mode
+*************************************************************************************************
+TOOLS USED:
+Ollydbg v1.09d
+*************************************************************************************************TARGET:
+MHTSaver.exe/MHTqs_m.DLL
+*************************************************************************************************LOCATION OF TOOLS AND PROGRAM:
+Ollydbg v1.09d http://www.grinders.withernsea.com/tools/Ollydbg/odbg109d.rar
+MHT Quick Saver version 2.3 http://www.grinders.withernsea.com/tools/MHTQS.rar
+Point H tutorial by Ricardo Narvaja (optional) http://home.tiscali.cz:8080/robocop/files/punto_h_english.zip
+Cruehead Crackme 2 (Optional)  http://www.woodmann.com/crackz/Archives/Crackmes.zip
+*************************************************************************************************
+CONTACT INFORMATION:
+vinceandjane@hotmail.com
+*************************************************************************************************
+TUTORIAL WRITTEN:
+29/03/2004
+*************************************************************************************************
+AUTHOR:
+Pompeyfan
+*************************************************************************************************
+
+Okay,lets attack our target, open Olly, and if you haven't done so already, to make things easier for yourself, right click, select appearance/highlighting/jumps'n'calls, makes things so much easier to follow.
+
+Okay, lets open the program in Olly, and you land here:
+
+00422550 >/$ 55             PUSH EBP
+
+Press F9 (Run), and the program opens, noting up near the top it shows Registration: none, you click on the Registration button at the bottom, and enter a fake Name, key & code, and hit okay, up the top the Registration shows "checking" instead of none, but it just hangs on this.
+
+Okay, close it for now.
+
+Open Regedit, and look under HKEY_CURRENT_USER\Software\Sycory\MHT Quick Saver, and you will see that it has entered 3 values to the registry as follows:
+
+reg_code (your fake details)
+reg_key  (your fake details)
+reg-name (your fake details)
+
+So, are you registered, you open the program, and it still shows Registration: none
+
+Okay, I found neither the call stack, or the string references any help in this instance, so I switched to the point H method for Windows XP (refer to Point H tutorial by Ricardo Narvaja if you don't know how to find point H for your PC).
+
+So, open MHTSaver.exe in Olly again, then F9 (Run), click on Registration, enter your fake details, but don't press ok yet.
+
+Right click/go to/expression & Enter the address of point H for your computer, in my case 77D5DEBB, hit okay and you land here:
+
+77D5DEBB   F3:A5            REP MOVS DWORD PTR ES:[EDI],DWORD PTR DS>
+77D5DEBD   8BC8             MOV ECX,EAX
+77D5DEBF   83E1 03          AND ECX,3
+77D5DEC2   F3:A4            REP MOVS BYTE PTR ES:[EDI],BYTE PTR DS:[>
+77D5DEC4   E8 04F9FFFF      CALL USER32.77D5D7CD
+
+Right click Breakpoint/memory on access
+
+Now click on ok on the Registration screen & Olly breaks at the above address
+
+Select follow address in dump for the EDI register, Click once on 77D5DEBB then press F8 down to the call, your name will be loaded into the dump window, highlight it, then 
+Right click/breakpoint/memory on access
+
+Press F9 (Run), and you land here:
+
+00414ADC   . F2:AE          REPNE SCAS BYTE PTR ES:[EDI]
+00414ADE   . F7D1           NOT ECX
+00414AE0   . 49             DEC ECX
+00414AE1   . 0F84 5E010000  JE MHTSaver.00414C45
+00414AE7   . 8DBD 98FEFFFF  LEA EDI,DWORD PTR SS:[EBP-168]
+00414AED   . 8BCE           MOV ECX,ESI
+00414AEF   . F2:AE          REPNE SCAS BYTE PTR ES:[EDI]
+00414AF1   . F7D1           NOT ECX
+00414AF3   . 49             DEC ECX
+00414AF4   . 0F84 4B010000  JE MHTSaver.00414C45
+00414AFA   . 8DBD 90FCFFFF  LEA EDI,DWORD PTR SS:[EBP-370]
+00414B00   . 8BCE           MOV ECX,ESI
+00414B02   . F2:AE          REPNE SCAS BYTE PTR ES:[EDI]
+00414B04   . F7D1           NOT ECX
+00414B06   . 49             DEC ECX
+00414B07   . 0F84 38010000  JE MHTSaver.00414C45
+
+I tried tracing with F8 right through to 00414C45 and beyond, and could not grab a valid key and code, but if you try it yourself, you can see that it assigns your fake details to the registry keys, they are then loaded into your registry, but you are not registered, you will also notice none of the conditional jumps are taken, the 3 of them are obviously testing your entered details, so I assume that if we had entered the correct details, we would have jumped to 00414C45, it seems to me to be to complex to patch at a deeper level, maybe someone else can figure this out, so I restart Olly, Right click/go to/expression & enter 00414AE1, and make the following change:
+
+00414AE1   . 0F84 5E010000  JE MHTSaver.00414C45 -----> Change to JMP MHTSaver.00414C45
+
+So, Right click on this line/Assemble, change the JE to JMP, then click on Assemble, then close this box.
+
+Then F9 (Run), click on Registration, enter your fake details, hit okay, and bang, now you notice instead of Registration: none, it shows your name, you should be able to get away with just making this change in memory, I didn't have to make the change permanent for it to retain my name in the Registration field.
+
+If you now open Regedit, and browse to the same registry key, as you did earlier, you will now see that you have an additional key, called reg_accept, with value data assigned to it.
+
+So, I think job done, but you put your system clock forward to try and test it out, and whilst program will open still, you find that if you try saving a file while you are browsing the net, instead of saving a file it brings up the program, followed by the registration dialogue box, even though the program still shows you are registered.
+
+Okay, so what next, this had me stumped for a while, I noticed in the program folder the file MHTqs_m.DLL, but this never seemed to start when I opened the program, so what I did is connect up to the net, and Open Olly, then open iexplore.exe in Olly, as obviously to save files you don't open the program itself, you save files from within Internet Explorer.
+
+I would suggest you make a backup of the MHTqs_m.DLL file, before we play around with it.
+
+It helps to  Place the icon MHT Quick Saver on the Microsoft Internet Explorer toolbar. For this:
+- select the MS IE menu point "View->Toolbars->Customize..." 
+- in the appeared window "Customize Toolbar" in the left list choose the points "MHT Quick Saver"
+- consecutively press the buttons "Add->" and "Close", this is taken from the MHT quick saver help file.
+
+Anyway, F9 (Run), and then you will find that you have to Shift & F9 a few times before Internet Explorer opens, now try saving a file with MHT quick saver, then press on E on the Olly toolbar to view the active modules, and you will see that this DLL has started.
+
+So, double click on it and you are here:
+
+013E1000 > 90               NOP
+
+Now, Right click\Search for\Allreferenced text strings, left click once on the top entry, then Right click\Search for\Text and enter register, uncheck case sensitive, then double click on the entry you find, and you are here:
+
+013E4112   68 DC173E01      PUSH MHTqs_m.013E17DC                    ; ASCII " register"
+
+Now just above that you have:
+
+013E4110   75 11            JNZ SHORT MHTqs_m.013E4123
+
+So lets change this conditional jump, to an unconditional jump. So, Right click on this line/Assemble, change the JNZ to JMP, then click on Assemble, then close this box.
+
+Okay, make changes permanent, Right click/copy to executable/all modifications/copy all, and then right click on new box that comes up/save file, double click on the file to overwrite and select yes to overwrite.
+
+Now for the big test, make sure you have put your clock forward beyond the expiry of the trial period, close Olly, connect up to the net, open Internet Explorer, try saving a file, and Voila!, it works, saves files fine, well done cracker!!!
+
+And remember, if you use the program, buy it ,software developers rely on the income from sales to keep going, if nobody buys, no new software would be developed.
+
+*************************************************************************************************
+SHOUTZ AND GREETZ:
+
+To the AR Cracking forum, exetools forum, tsrh forum, Ollydbg forum, Ricardo Narvaja, Kruger, Britedream, Satyric0n, R@dier, LaBBa, Nilrem & Ferarri whoose tuts have helped me more than any others , Ollydbg, and the authors of MHT Quick Saver.
+*************************************************************************************************

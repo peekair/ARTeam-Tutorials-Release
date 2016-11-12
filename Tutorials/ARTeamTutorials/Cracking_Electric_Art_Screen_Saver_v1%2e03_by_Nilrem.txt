@@ -1,0 +1,83 @@
+============================================================================
+TITLE:
+Patching Electric Art Screen Saver v1.03
+============================================================================
+BEST VIEWED:
+Notepad with word wrap enabled, and in restored window mode
+============================================================================
+TOOLS USED:
+OllyDbg v1.10(step 1)
+Brain (Preferably version human or above)
+============================================================================
+TARGET:
+SoundExtractor.exe
+============================================================================
+LOCATION OF TOOLS AND PROGRAM:
+http://www.grinders.withernsea.com/tools/odbg110b1.rar
+http://www.grinders.withernsea.com/tools/Electric_Art_Screen_Saver_v1.03.rar
+============================================================================
+WEBSITE:
+http://cracking.accessroot.com/
+============================================================================
+CONTACT INFORMATION:
+Msn Messenger - jammysa@hotmail.com
+Icq# - 46313648
+Email Address - Merlin@accessroot.com
+============================================================================
+TUTORIAL VERSION:
+v1.0 Written 27th of February 2004
+============================================================================
+AUTHOR AND OTHER ALIASES:
+Merlin
+
+Nilrem2
+Nilrem
+Grimgnaw
+Khulad
+Khulad Illphukiir
+(-~Merlin~-)
+Merlin The Wizard
+============================================================================
+N.B. I'm writing this tutorial specifically (regardless of ease) because it is different, it's a screensaver. Once you have installed Electric Art Screen Saver v1.03 (It's in your windows directory, i.e. "C:\Windows\ElectricArt.scr"), select it, and copy and paste it so it says "Copy of..." open it in OllyDbg. I'll tell you it's protection, it's a nag screen that appears occasionally that says "If you want to enjoy...", and at the bottom a message saying "These messages don't appear in the registered version".
+Ok before we actually begin cracking let's make things easier on ourselves, in OllyDbg right click and select, 'Appearance->Highlighting->Jumps'n'calls'. Now we will begin the assault on the screensaver file. Right click and choose, 'Search for->All referenced text strings'. Scroll up to the top in the window that appears, left click, then right click and select, 'Search for text'. Untick 'Case sensitive' and search for "If you want", and you will land here:
+
+Text strings referenced in Copy_of_:.text, item 1
+ Address=0040103F
+ Disassembly=PUSH Copy_of_.00417304
+ Text string=ASCII "If you want to enjoy %s to its fullest,"
+
+Double click it to go there in our disassembler. You should be here:
+
+0040103F   . 68 04734100    PUSH Copy_of_.00417304                   ;  ASCII "If you want to enjoy %s to its fullest,"
+
+Now, let's get our bearings, hopefully there will be a conditional jump nearby that we can change to get rid of the nag message (so that it is never displayed by jumping past that section of code), if you scroll up you will see the following:
+
+00401034     0F84 EF000000  JE Copy_of_.00401129
+
+The JE is Assembly (ASM) for Jump if Equal to, the later part 00401129 is jumping if a condition is met to the address 00401129, which just so happens to be past the code of the nag message, so what we want to do is make it so this conditional jump always jumps, to do that we must change it from JE to JMP, so double left click the line and change the JE to JMP, leaving everything else the same. Well done cracker, however there is still the problem of the random messages that is displayed at the bottom of the screen saver, so right click and choose 'Search for->All referenced text strings' scroll to the top like before, left click the top line, right click and select, 'Search for text', making sure case sensitive is unticked, and search for "messages don't appear" and you should land here:
+
+Text strings referenced in Copy_of_:.text, item 34
+ Address=00402204
+ Disassembly=PUSH Copy_of_.00417540
+ Text string=ASCII "These messages don't appear in the registered version"
+
+Double click it and you will land here:
+
+00402204  |. 68 40754100    PUSH Copy_of_.00417540                   ;  ASCII "These messages don't appear in the registered version"
+
+Let's get our bearings, you can see that ASCII has been loaded, so let's look for the nearby CALL command that sends it to the program. Two lines down you should see the following:
+
+0040220E     E8 ED990000    CALL Copy_of_.0040BC00
+
+This is what we want to get rid of, if we NOP (NOP = No Operation = 90) it, then it will prevent the message from being displayed, we want to do this to all the messages that appear, so NOP the following:
+
+00402229     E8 7A990000    CALL Copy_of_.0040BBA8
+00402284     E8 77990000    CALL Copy_of_.0040BC00
+
+Now we need to make the changes permanent, so right click and choose, 'Copy to executable->All modifications->Copy all', then in the new window that appears right click and select, 'Save file' and save over the original, thus making "Copy of... .exe" our backup of the program. Well done cracker!
+
+Remember if you use the application then buy it!
+============================================================================
+SHOUTZ AND GREETZ:
+To Kyrstie, I love you with all my heart 4eva neva n always 8-) to exetools.com/forum, dob2.com, tech-arena.com, Hoof Arted for inspiring me to write tutorials for OllyDbg, Ferarri, the AR team, the creators of Electric Art Screen Saver v1.03, and OllyDbg.
+============================================================================

@@ -1,0 +1,156 @@
+*************************************************************************************************TITLE:
+Cracking tutorial for Ultimate Internet Job Spider 6.0.0.314 
+*************************************************************************************************
+BEST VIEWED:
+Notepad with word wrap enabled, and in restored window mode
+*************************************************************************************************
+TOOLS USED:
+Ollydbg v1.09d
+*************************************************************************************************TARGET:
+Ultimate Internet Job Spider.exe
+*************************************************************************************************LOCATION OF TOOLS AND PROGRAM:
+Ollydbg v1.09d http://www.grinders.withernsea.com/tools/Ollydbg/odbg109d.rar
+Ultimate Internet Job Spider 6.0.0.314 http://www.grinders.withernsea.com/tools/Trial_Job_Spider.rar
+*************************************************************************************************
+CONTACT INFORMATION:
+vinceandjane@hotmail.com
+*************************************************************************************************
+TUTORIAL WRITTEN:
+20/03/2004
+*************************************************************************************************
+AUTHOR:
+Pompeyfan
+*************************************************************************************************
+
+Okay,lets attack our target, open Olly, and if you haven't done so already, to make things easier for yourself, right click, select appearance/highlighting/jumps'n'calls, makes things so much easier to follow.
+
+Now, it is a one day trial, so put your system clock forward 1 day to expire the program, then open the program in Olly, and you land here:
+
+00453736 >/$ 55             PUSH EBP
+
+Press F9 run, and of course you get the message " Your Trial Program Has Expired, Please Buy a Registered Copy"
+
+No matter, left click once on the Olly cpu screen, then press F12 (pause), then Alt & K to bring up the call stack window, and you get this:
+
+Call stack of main thread
+Address    Stack      Procedure / arguments                 Called from                   Frame
+0012FA88   77D43A09   Includes 7FFE0304                     USER32.77D43A07               0012FAAC
+0012FA8C   77D443B5   USER32.77D439FD                       USER32.77D443B0               0012FAAC
+0012FAB0   73DD11A7   USER32.GetMessageA                    MFC42.73DD11A1                0012FAAC
+0012FAB4   00492F04     pMsg = Ultimate.00492F04
+0012FAB8   00000000     hWnd = NULL
+0012FABC   00000000     MsgFilterMin = 0
+0012FAC0   00000000     MsgFilterMax = 0
+0012FACC   73DE6C24   Includes MFC42.73DD11A7               MFC42.73DE6C21
+0012FAF0   73DE6B78   MFC42.#5718                           MFC42.73DE6B73
+0012FB2C   0040D2C8   ? <JMP.&MFC42.#2514>                  Ultimate.0040D2C3
+0012FF04   73DDB4F3   Includes Ultimate.0040D2C8            MFC42.73DDB4F0
+0012FF14   00453E05   ? <JMP.&MFC42.#1576>                  Ultimate.00453E00
+0012FF28   0045386A   ? Ultimate.00453DF0                   Ultimate.<ModuleEntryPoint>+
+
+NOw double click on this line:
+
+Call stack of main thread, item 9
+ Address=0012FB2C
+ Stack=0040D2C8
+ Procedure / arguments=? <JMP.&MFC42.#2514>
+ Called from=Ultimate.0040D2C3
+
+Now scroll up a bit from there, and you will see you are in the midst of a 3 way switch statement:
+
+0040D276   . E8 D5230400    CALL Ultimate.0044F650
+0040D27B   . 8BC8           MOV ECX,EAX
+0040D27D   . 49             DEC ECX                                  ;  Switch (cases 1..3)
+0040D27E   . 0F84 86000000  JE Ultimate.0040D30A
+0040D284   . 49             DEC ECX
+0040D285   . 74 22          JE SHORT Ultimate.0040D2A9
+0040D287   . 49             DEC ECX
+0040D288   . 0F85 97000000  JNZ Ultimate.0040D325
+
+Okay, now being that I have GoBack installed on my system, I was able to remove the program completely and install totally fresh, because if you put your clock forward a day to expire the program, even when you put it back to the correct date, you will get the trial expired message.
+
+I then did 2 traces, firstly after a fresh install:
+
+Day 1 of program: 
+
+Set breakpoint on this line: 
+
+0040D276 . E8 D5230400 CALL Ultimate.0044F650 
+
+Trace over with F8 from there:
+
+0040D27B EAX=0 
+0040D27D ECX=0 
+0040D27E Jump not taken 
+0040D284 ECX= FFFFFFFF 
+0040D285 Jump not taken 
+0040D287 ECX+ FFFFFFFE 
+0040D288 Jump Taken 
+
+Program then single steps till the call at 0040D47B, where the checking connection dialogue comes up. 
+
+I then put my system clock forward 1 day:
+
+Day 2 of program: 
+
+Set breakpoint on this line: 
+
+0040D276 . E8 D5230400 CALL Ultimate.0044F650 
+
+Trace over with F8 from there:
+
+0040D27B EAX=2 
+0040D27D ECX=2 
+0040D27E Jump not taken 
+0040D284 ECX= 1 
+0040D285 Jump taken to 0040D2A9 
+
+Program then single steps until the call at 0040D2C3, where the Program expiration message is called up. 
+
+So, my assumption is we need to trace into the call at 0040D276 (CALL Ultimate.0044F650), and make sure that after this call we return with a value of EAX=0 
+
+OKay, look at this code inside the call: 
+
+0044F650 /$ 64:A1 00000000 MOV EAX,DWORD PTR FS:[0] 
+0044F656 |. 6A FF PUSH -1 
+0044F658 |. 68 08D24500 PUSH Ultimate.0045D208 
+0044F65D |. 50 PUSH EAX 
+0044F65E |. 64:8925 000000>MOV DWORD PTR FS:[0],ESP 
+0044F665 |. 83EC 08 SUB ESP,8 
+0044F668 |. 56 PUSH ESI 
+0044F669 |. 8BF1 MOV ESI,ECX 
+0044F66B |. C746 30 010000>MOV DWORD PTR DS:[ESI+30],1 
+0044F672 |. E8 190F0000 CALL Ultimate.00450590 
+0044F677 |. 8BCE MOV ECX,ESI 
+0044F679 |. E8 A2120000 CALL Ultimate.00450920 
+0044F67E |. 8BF0 MOV ESI,EAX 
+0044F680 |. F7DE NEG ESI 
+0044F682 |. 1BF6 SBB ESI,ESI 
+0044F684 |. 83E6 02 AND ESI,2 
+0044F687 |. 74 12 JE SHORT Ultimate.0044F69B 
+0044F689 8BC6 MOV EAX,ESI 
+0044F68B |. 5E POP ESI 
+0044F68C 8B4C24 08 MOV ECX,DWORD PTR SS:[ESP+8] 
+0044F690 64:890D 000000>MOV DWORD PTR FS:[0],ECX 
+0044F697 83C4 14 ADD ESP,14 
+0044F69A |. C3 RETN 
+
+Now set a breakpoint on 0044F650, and remove your previous breakpoint, and Ctrl & F2 to restart Olly, and press F9 (Run), and Olly breaks at the start of this routine, trace through it with F8, and see what values are returned with each step.
+
+With the program expired, when you get to 0044F67E, you can see that EAX=1, 0044F687 you see that the jump is not taken, and at 0044F689 you see that ESI=2 & EAX=1, now how about we change 0044F689 to XOR EAX,EAX, that way EAX should return a value of zero at the end of this routine.
+
+Ctrl & F2 to restart Olly, then Right click/Go to/Expression, enter 0044F689, then Right click on this line/Assemble, enter XOR EAX,EAX, then click on Assemble, then close this box.
+
+Press F9 (Run), and trace through the code with F8, and you will see that it returns from the call with a value of EAX=0, and procedes as per day 1 of the trial.
+
+Okay, make changes permanent, Right click/copy to executable/all modifications/copy all, and then right click on new box that comes up/save file, double click on the file to overwrite and select yes to overwrite.
+
+Just to make absolutely sure, close Olly, open the application, and Voila!, no trial expired message, and program functions normally, well done cracker!!!
+
+And remember, if you use the program, buy it ,software developers rely on the income from sales to keep going, if nobody buys, no new software would be developed.
+
+*************************************************************************************************
+SHOUTZ AND GREETZ:
+
+To exetools forum, tsrh forum, Ollydbg forum, Ricardo Narvaja, Kruger, Satyric0n, R@dier, LaBBa, Nilrem & Ferarri whoose tuts have helped me more than any others , Ollydbg, the mystery guest from the AR cracking forum who asked for help in cracking this program, and the authors of Ultimate Internet Job Spider.
+*************************************************************************************************

@@ -1,0 +1,103 @@
+============================================================================
+TITLE:
+Unpacking UPX Protected Windows Washer v5.0
+============================================================================
+BEST VIEWED:
+Notepad with word wrap enabled, and in restored window mode
+============================================================================
+TOOLS USED:
+OllyDbg v1.09d(step 4)
+OllyDump v2.21b
+Import REConstructor v1.6 FINAL
+Brain (Preferably version human or above)
+============================================================================
+TARGET:
+wwDisp.exe
+============================================================================
+LOCATION OF TOOLS AND PROGRAM:
+http://www.grinders.withernsea.com/tools/odbg109d.rar
+http://www.grinders.withernsea.com/tools/imprec_v1.6_final.rar
+http://www.grinders.withernsea.com/tools/Windows_Washer_v5.0.rar
+http://www.grinders.withernsea.com/tools/Ollydump_v2.21b.rar
+http://www.grinders.withernsea.com/tools/LPE-DLX.rar
+============================================================================
+WEBSITE:
+http://cracking.accessroot.com/
+============================================================================
+CONTACT INFORMATION:
+Msn Messenger - jammysa@hotmail.com
+Icq# - 46313648
+Email Address - Merlin@accessroot.com
+============================================================================
+TUTORIAL VERSION:
+v1.0 Written 10th of January 2004
+============================================================================
+AUTHOR AND OTHER ALIASES:
+Merlin
+
+Nilrem2
+Nilrem
+Grimgnaw
+Khulad
+Khulad Illphukiir
+(-~Merlin~-)
+Merlin The Wizard
+============================================================================
+Unpack the Ollydbg plugin called Ollydump and put it in your Ollydbg plugin folder.
+Load wwDisp.exe into Olly, we get an informative message telling us that our program maybe compressed etc. Click ok and you will land here:
+
+004A4230 > $ 60             PUSHAD
+
+Right click and choose 'Appearance->Highlighting->Jumps'n'calls' to make things a tad clearer for us. Now press 'Alt+M' (Memory Map), and maximize the window (my preference). We are looking for a PE Header, which will be in the 'Contains' column. Under the first PE Header:
+
+Memory map, item 15
+ Address=00400000
+ Size=00001000 (4096.)
+ Owner=wwDisp   00400000 (itself)
+ Section=
+ Contains=PE header
+ Type=Imag 01001002
+ Access=R
+ Initial access=RWE
+
+You will see what is the packer of this program (UPX), you should see this if you are looking in the right place:
+
+Memory map, item 16
+ Address=00401000
+ Size=0006E000 (450560.)
+ Owner=wwDisp   00400000
+ Section=UPX0
+ Type=Imag 01001002
+ Access=R
+ Initial access=RWE
+
+now we are looking for UPX1 (the end of the protection basically), and it is directly underneath UPX0 and it looks like this:
+
+Memory map, item 17
+ Address=0046F000
+ Size=00036000 (221184.)
+ Owner=wwDisp   00400000
+ Section=UPX1
+ Contains=code
+ Type=Imag 01001002
+ Access=R
+ Initial access=RWE
+
+So now we have the starting address of the UPX protection as well as the ending address, the starting address is 00401000 and the ending address is 0046F000. So what now? Well we need to find a jump that is between 00401000 and 0046F000, so close the memory window. Now keep scrolling down until you find it, you should land here:
+
+004A439C   .-E9 D3EEFBFF    JMP wwDisp.00463274
+
+Set a breakpoint on it (F2) and hit F9 and you will land there, now press F8 and you will find yourself at the OEP (Outside Entry Point), OEP's are recognizable by:
+
+PUSH EBP
+MOV EBP,ESP
+
+Now what we do when we land here is to dump this process. So click the plugins menu and select 'OllyDump->Dumpdebuggedprocess'.  Now take special notice of the 'Entry Point:' part of OllyDump, it should be A4230, and we want to change this to what is in the Modify box which is 63274. Uncheck the box that says 'Rebuild Import' we will do the rebuilding of the import with a IMPREC (Import Reconstructor). Now click dump and save the file as wwDisp_manually_unpacked.exe
+Now what we will do is rebuild the import table, to do this we load up Imprec, then select wwDisp.exe from the drop down menu of active processes. Then in the OEP box change 000A4230 to 00063274 and then click the 'IAT AutoSearch' button, and then click the 'Get Imports' button, followed by the 'Fix Dump' button, and choose our dumped executable, which (if you followed the tutorial to a tee) is wwDisp_manually_unpacked.exe, if successful you will have an unpacked version of wwDisp.exe and it will be named wwDisp_manually_unpacked.exe_
+and if so, well done.
+Now to round things off we need to fix the base of our new unpacked executable, and to do this we will use a program called LordPE, so launch LordPE and click the 'Rebuild PE' button, and choose wwDisp_manually_unpacked.exe_ and voila! 8-D
+
+============================================================================
+SHOUTZ AND GREETZ:
+To Kyrstie, we've been going out a year on the 12th 8-D To exetools.com/forum, dob2.com, Hoof Arted for inspiring me to write tutorials for OllyDbg, a big special thanks to R@dier, IWarez, and lownoise, the creators of Web Washer, Import Reconstructor, OllyDump, and OllyDbg.
+============================================================================

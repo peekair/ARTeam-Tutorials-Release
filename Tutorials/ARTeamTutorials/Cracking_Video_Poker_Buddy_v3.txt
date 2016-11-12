@@ -1,0 +1,73 @@
+============================================================================
+TITLE:
+Patching Video Poker Buddy v3
+============================================================================
+BEST VIEWED:
+Notepad with word wrap enabled, and in restored window mode
+============================================================================
+TOOLS USED:
+OllyDbg v1.10(step 2)
+Brain (Preferably version human or above)
+============================================================================
+TARGET:
+videopoker_v3
+============================================================================
+LOCATION OF TOOLS AND PROGRAM:
+http://www.grinders.withernsea.com/tools/odbg110b2.rar
+http://www.grinders.withernsea.com/tools/videopoker_v3.rar
+============================================================================
+WEBSITE:
+http://cracking.accessroot.com/
+============================================================================
+CONTACT INFORMATION:
+Msn Messenger - jammysa@hotmail.com
+Icq# - 46313648
+Email Address - merlin@accessroot.com
+============================================================================
+TUTORIAL VERSION:
+v1.0 Written 10th of June 2004
+============================================================================
+AUTHOR AND OTHER ALIASES:
+Merlin
+
+Nilrem2
+Nilrem
+Grimgnaw
+Khulad
+Khulad Illphukiir
+(-~Merlin~-)
+Merlin The Wizard
+============================================================================
+O.k. let us begin, open up the target executable, and enter any details, (I used ARTeam/77777777). You will recieve an error message.
+Right, time to debug, launch OllyDbg (this is our debugger), before we do anything else, to make things easier on ourselves, right click in Olly, and select 'Appearance->Highlighting->Jumps'n'calls'. Now with that done hit F9 (to the run the program), ok, I would just like to point out this tutorial will be a small one, however there are some ommited methods that I tried from this tutorial, such as using an .arg file (since it's VB6), and the call stack, once you've completed this tutorial, see if you can find an alternative ways. Ok let's get back on track, as you can see under the 'Register' button it says 'Unregistered - deals left: 10000", hmm so as long as the program doesn't need to close after been registered it should be constantly checking (real-time) to see if we are registered, so let's find this place and make the program think we are registered. To do this, let's find this string and see where it is pushed. Right click in Olly and choose 'Search for -> All registered text strings', scroll up to the top, select the top line and hit 'Ctrl+L' (find next, but in this case it will open up the find text function of Olly), tick 'Entire scope', and untick 'Case sensitive', type in 'Unregistered' and hit 'OK'. You will land here:
+
+Text strings referenced in videopok:.text, item 34
+ Address=0040261F
+ Disassembly=ASCII "Unregistered - D"
+
+As you can see this is just the ASCII and isn't yet been pushed. So hit 'Ctrl+L' and you will land here:
+
+Text strings referenced in videopok:.text, item 384
+ Address=00406C40
+ Disassembly=UNICODE "Unregist"
+
+Once again hit 'Ctrl+L' and you will land here:
+
+and we land here, brilliant! Hit enter, and set a breakpoint (F2) there. Just as we guessed earlier the status of our registration is updated in real-time. Ok let's get our bearings, let's look for a (C) (Conditional) jump, there is one here:
+
+0040DD23   . 0F8D BA000000  JGE videopok.0040DDE3
+
+However there is no corresponding text been pushed, let's scroll up some more until you get to here:
+
+0040DCD7   . 68 206C4000    PUSH videopok.00406C20                   ;  UNICODE "Registered"
+
+Ahh now that's more like it! Ok, let's look for this line's corresponding (C) jump, ahhah! Here it is:
+
+0040DCC0     7D 6C          JGE SHORT videopok.0040DD2E
+
+Set a breakpoint there, and hit F9 yes that breaks there so it is the corresponding (C) jump we are looking for. How do we know this is the right (C) jump though? Well look where it is jumping to, it is jumping to the address 0040DD2E which will lead us to been unregistered. So how can we alter this, well here is the (unclean way, I don't want to teach you everything, some things you should try and learn by yourself, experimentation really is the best tutor), select and right click our (C) jump, and then choose, 'Binary -> Fill with NOPs', what this will do is NOP (No Operation, 90 in hex) the line, so nothing happens. Once you have done this, remove the breakpoint then hit F9, well done. 8-) You are now registered.
+Remember if you use the application then buy it!
+============================================================================
+SHOUTZ AND GREETZ:
+To Kyrstie, I love you with all my heart 4eva neva n always. 8-) To exetools.com/forum, dob2.com, tech-arena.com, bgrc.cjb.net, Hoof Arted for inspiring me to write tutorials for OllyDbg, the creators of Video Poker Buddy, and OllyDbg. LONG LIVE THE ARTEAM!
+============================================================================

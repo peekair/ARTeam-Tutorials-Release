@@ -1,0 +1,73 @@
+============================================================================
+TITLE:
+Patching The Curse of Monkey Island v1.0
+============================================================================
+BEST VIEWED:
+Notepad with word wrap enabled, and in restored window mode
+============================================================================
+TOOLS USED:
+OllyDbg v1.09d(step 4)
+Brain (Preferably version human or above)
+============================================================================
+TARGET:
+CURSE.exe
+============================================================================
+LOCATION OF TOOLS AND PROGRAM:
+http://www.grinders.withernsea.com/tools/odbg109d.rar
+http://www.grinders.withernsea.com/tools/comi_v1.rar
+http://www.grinders.withernsea.com/tools/ypp_vbeta_b31.rar
+============================================================================
+WEBSITE:
+http://cracking.accessroot.com/
+============================================================================
+CONTACT INFORMATION:
+Msn Messenger - jammysa@hotmail.com
+Icq# - 46313648
+Email Address - Merlin@accessroot.com
+============================================================================
+TUTORIAL VERSION:
+v1.0 Written 3rd of February 2004
+============================================================================
+AUTHOR AND OTHER ALIASES:
+Merlin
+
+Nilrem2
+Nilrem
+Grimgnaw
+Khulad
+Khulad Illphukiir
+(-~Merlin~-)
+Merlin The Wizard
+============================================================================
+Lesson 1 - Patching CoMI
+Ok, let's get straight down to business; open up CURSE.exe and then click the 'Play...' button and you'll be presented with a message box telling you that the cd cannot be found. Before we open wwdisp.exe in our debugger (Olly), let's just think for a second, what are our main ways of attack on this game? Well it's a game, a game that uses a cd check, now we could either search for the string (the message that was displayed when you tried playing the game without a cd), or instead we could set a breakpoint on 'GetDriveTypeA' (which is an api call that begins a procedure to check if the cd is inserted).
+Right, time to debug, launch OllyDbg (this is our debugger), before we do anything else, to make things easier on ourselves, right click in Olly, and select 'Appearance->Highlighting->Jumps'n'calls'. Now open up CURSE.exe in Ollydbg, right click and select 'Search for->Name (label) in current module', once there, to make things easier (my preference anyways) right click and choose 'Sort by->Name'. Now press 'G' to go to the G section, and left click 'GetDriveTypeA', right click it and select 'Set breakpoint on every reference', close that window to return to the main debugging window. Hit F9 (to run the program), now on your taskbar the CoMI (Curse of Monkey Island) loader should have loaded, click that up and hit the 'Play...' button, and voila! We land at our breakpoint (GetDriveTypeA), and it should look like this:
+
+00401B74   . FF15 FCE74200  CALL DWORD PTR DS:[<&KERNEL32.GetDriveTy>; \GetDriveTypeA
+
+Keep pressing F8 (to step through the code) until you reach here:
+
+00401C10     75 40          JNZ SHORT CURSE.00401C52
+
+The JNZ is a conditional jump that stands for Jump if Not Equal To, now if you look below all the addresses, but above the Hex dump, you will see that it says 'Jump is NOT taken', and if you look a few lines down, here:
+
+00401C16   . 68 84664200    PUSH CURSE.00426684                      ;  ASCII "/LNCH026/Unable to find The Curse of Monkey Island CD. Please insert either The Curse of Monkey Island CD into the CD-ROM drive."
+
+which is our 'bad-guy-code', so what we do is we change the JNZ so that it will always jump to the 'good-guy-code' no matter what; to do this we change JNZ to EB, EB represents a straight JUMP (non-conditional), to do this right click where you are and select, 'Binary->Edit', and change the 75 40 to EB 40 and click the 'OK' button. Once again keep pressing F8 until you land here:
+
+00401C86     74 17          JE SHORT CURSE.00401C9F
+
+We see that this jump is also not taken, which isn't very good for us, because if you look a few lines down you will see this:
+
+00401C8C   . 68 E0654200    PUSH CURSE.004265E0                      ;  ASCII "/LNCH024/Couldn't change the current directory to the root of the CD which is necessary to be able to play The Curse of Monkey Island. Will try to run anyway..."
+
+and we want to jump away from this; so once again it's time to change some bytes, change the 74 17 to a EB 17. Well done cracker! You've successfully cracked this game, to make the changes permanent, right click and choose, 'Copy to executable->All modifitications->Copy all' then right click again and select, 'Save file' and save it as CURSE2. Now go back to the main Olly window, and hit F9, voila! It works. Now close the game by pressing 'Alt+F2' and load CURSE2 outside of Olly!! Argh it doesn't work!!!!
+============================================================================
+LESSON 2 - Patching the game at runtime (creating a loader)
+Now what we are going to do is crack the program at runtime through a thing called a loader, a loader simply patches the program when it is run. To do this we will use a program called ypp by Yoda. Open up ypp, click 'compare files', put CURSE.exe as the 'Original file' and CURSE2.exe as the 'Modified file'; then click 'START'. Once that has completed put CURSE.exe as the filename, then click 'make loader' and you're all done, now double click the loader you just created, and once again voila! Well done cracker! 8-D
+
+Remember if you use the game then buy it!
+============================================================================
+SHOUTZ AND GREETZ:
+To Kyrstie, I love you with all my heart 4eva neva n always! 8-) To exetools.com/forum, dob2.com, tech-arena.com, Hoof Arted for inspiring me to write tutorials for OllyDbg, SD4 for asking me to write this tutorial, Ferarri, ace, the creators of CoMI, ypp, and OllyDbg.
+============================================================================

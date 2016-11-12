@@ -1,0 +1,70 @@
+============================================================================
+TITLE:
+Inline Patching Windows Washer v5.0
+============================================================================
+BEST VIEWED:
+Notepad with word wrap enabled, and in restored window mode
+============================================================================
+TOOLS USED:
+OllyDbg v1.09d(step 4)
+Brain (Preferably version human or above)
+============================================================================
+TARGET:
+wwDisp.exe
+============================================================================
+LOCATION OF TOOLS AND PROGRAM:
+http://www.grinders.withernsea.com/tools/odbg109d.rar
+http://www.grinders.withernsea.com/tools/Windows_Washer_v5.0.rar
+http://www.grinders.withernsea.com/tutorials/Patching_Windows_Washer_v5.0.txt
+http://www.grinders.withernsea.com/tutorials/Unpacking_Upx_Protected_Windows_Washer_v5.00.txt
+============================================================================
+WEBSITE:
+http://cracking.accessroot.com/
+============================================================================
+CONTACT INFORMATION:
+Msn Messenger - jammysa@hotmail.com
+Icq# - 46313648
+Email Address - Merlin@accessroot.com
+============================================================================
+TUTORIAL VERSION:
+v1.1 Written 14th of January 2004
+v1.0 Written 13th of January 2004
+============================================================================
+AUTHOR AND OTHER ALIASES:
+Merlin
+
+Nilrem2
+Nilrem
+Grimgnaw
+Khulad
+Khulad Illphukiir
+(-~Merlin~-)
+Merlin The Wizard
+============================================================================
+Firstly to understand this tutorial you need to have read the other two Windows Washer tutorials of mine (Unpacking and Patching) which are located in the 'LOCATION OF TOOLS AND PROGRAM' section.
+Secondly what is inline patching? Basically inline patching is the patching of the packed executable. What is this useful for? Well let's say you patched the unpacked version, that's all very well, but if you wanted to release your crack it's going to be a lot bigger, then if we patched the packed version (inline patching) then you could create a small patch (say a couple of KB's) to crack the packed version.
+Right then let's get down to business. Open up wwDisp.exe in Olly and you'll land at (if it's packed (make sure it is)):
+
+004A4230 > $ 60             PUSHAD
+
+Now to actually do inline patching (without damaging the program) we have to look for free space, to do this, go to the JMP that is under POPAD, which is:
+
+004A439C    -E9 D3EEFBFF    JMP wwDisp.00463274
+
+Now directly underneath that is some free space (bunch of zeros) unfortunately there is some code underneath that, that is just 3 lines down, but underneath that, that is our free space we will tamper with:
+
+004A43B0     0000           ADD BYTE PTR DS:[EAX],AL
+
+Now we are going to want to edit this line so it makes (the conditional jump we changed in the patching tutorial):
+
+00463315     75 5A          JNZ SHORT wwDisp_u.00463371
+
+become
+
+EB 5A, and to do this we simple left click 004A43B0 then right click and select 'Assemble' now this brings up a dialog box that has the assembly code at that address we just right clicked. Delete it, and type without quotation marks "MOV BYTE PTR DS:[463315],0EB" and click the 'Assemble' button. All that did was move (MOV) the byte (BYTE) EB (0EB, you put a 0 infront because it is a letter now a number you are moving) into the address 00463315 ([463315]). Now the dialog box is still up but for the address just below, delete what is in the dialog box and type without the quotation marks, "JMP 463274" and click the 'Assemble' button and then the 'Cancel' button, now if you are wondering why you changed that line to JMP 463274, we changed it to that because that is where 004A439C jumps to, and now we are going to change where that jumps to, to our newly edited code. So select and right click the address 004A439C, bring up the assemble dialog window replace what's there with "JMP 4A43B0" which will jump to the start of our code change, then it will patch the program, and then jump to the real program code.
+Now to make this changes final we right click and choose 'Copy to executable->All moditifications->Copy all', and then right click in the new window that popped up and select 'Save file' and save it as whatever you like. Well done!! 8-)
+
+============================================================================
+SHOUTZ AND GREETZ:
+To Kyrstie, we've been going out a year and one day now!! 8-D To exetools.com/forum, dob2.com, Hoof Arted for inspiring me to write tutorials for OllyDbg, the creators of Windows Washer, and OllyDbg, and a big special thanks to asterix, amigo, MaRKuS-DJM, and anyone and everyone who has helped me out. An extra thanks to ferrari for spotting a silly little mistake.
+============================================================================

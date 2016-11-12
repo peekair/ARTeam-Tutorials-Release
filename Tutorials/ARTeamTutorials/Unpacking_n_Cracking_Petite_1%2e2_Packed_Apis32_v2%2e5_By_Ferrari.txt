@@ -1,0 +1,432 @@
+                (BEST VIEWED WITH WORDWRAP ENABLED & FONT= COURIER , SIZE =10)
+
+         @$@$#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@@$@ @#$#$@
+        @@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@  @#$#$#$@
+         @@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#$@ @#$#$@
+          @#$@                             
+          @#$@       @$@$@$@$@ @$@$@ $@$@$ @$@$@ $@$@$   @#@#@#@#@@ @$@$@ $@$@$ @$#$#$#@
+          @#$@      @#$#$#$#$@@ @#$#$#$#$#$ @#$#$#$#$#$ @$#$#$#$#@@@ @#$#$#$#$#$ @#$#$@
+          @#$@    @ @#@#@#@#@#@ @#$@$#$#@@@ @#$@$#$#@@@ @#@@    @#$@ @#$@$#$#@@@  @$#@
+          @#$@#$#$@ @#@#   #@#@ @#$@   @@@  @#$@   @@@  @$@     @#$@ @#$@   @@@   @$#@
+          @#$@@#@#@ @#@#@#@#@#@ @#$@   @@   @#$@   @@         @#@#$@ @#$@   @@    @$#@   
+          @#$@#$#$@ @$@$@$@$@$@ @#$@        @#$@         @@#@@#@#@#@ @#$@         @$#@
+          @#$@    @ @$@#        @#$@        @#$@        @#$#$#$#$#$@ @#$@         @$#@
+          @#$@      @$@#        @#$@        @#$@        @#$@    @#$@ @#$@         @$#@
+          @#$@      @#@#@#@#@#@ @#$@        @#$@        @#$@#$#$#$#@ @#$@         @$#@
+          @#$#@     @$@$@$@$@$@ @#$#@       @#$#@       @#$@#@#@#@#@ @#$#@       @#$#$@
+        @#@#@#@#@    @#@#@#@#@ @#@#@#@     @#@#@#@       @#@#@#@#@# @#@#@#@     @$#$#$#@
+
+
+                                                                                
+                                     :-)---> ARTeam <---(-:
+                            Visit:-http://cracking.accessroot.com
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$       APIS32        $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$     API Spy 2.5     $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$                     $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$@@@@@@@@@@@@@
+@@@@@@@@@@@@@  AUTHOR         : FERRARI                                           @@@@@@@@@@@@@ 
+@@@       @@@  PROTECTION     : Petite 1.2, NAG                                   @@@       @@@   @@ ferrari @@  TARGET FILE    : apis32.exe                                        @@ ferrari @@ 
+@@@       @@@  TARGET URL     : http://grinders.withernsea.com/tools/apis3225.rar @@@       @@@   @@@@@@@@@@@@@  OS             : WINDOWS ALL                                       @@@@@@@@@@@@@   @@@@@@@@@@@@@  RELEASE DATE   : 5.03.2004                                         @@@@@@@@@@@@@
+@@@@@@@@@@@@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@                                TOOLS USED & TARGET SOFTWARE                                 @
+@                                =============================                                @
+@                                                                                             @
+@ OllyDbg        :- http://grinders.withernsea.com/tools/odbg110b1.rar                        @
+@ LordPE         :- http://grinders.withernsea.com/tools/LPE-DLX.rar                          @
+@ PEiD           :- http://www.grinders.withernsea.com/tools/PEiD_v0.91.rar                   @
+@ IMPrec         :- http://www.grinders.withernsea.com/tools/imprec_v1.6_final.rar            @
+@ APIS32         :- http://grinders.withernsea.com/tools/apis3225.rar                         @  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+===============================================================================================
+                    STEP 1: UNPACKING THE TARGET PACKED WITH PETITE 1.2 
+===============================================================================================
+ This is my first tut on unpacking a packed 'EXE'. I followed a tut by R@dier on unpacking
+ a 'unpackme' packed with Petite 2.2 So the method is similar. Okay dude so lets start ;-)
+PEID hardcore scan shows that its packed with PEtite 1.2 
+Open the target 'apis32.exe' in our favourite Debugger OllyDbg :-) You'll get an Entry Point Alert. So click OK. Now u will land here.We have to locate the OEP(Outside Entry Point.
+
+00418000 > 66:9C            PUSHFW<----------------You are here
+00418002   60               PUSHAD
+00418003   E8 CA000000      CALL apis32.004180D2
+
+Hit F7 twice to step into the CALL above. You will land here.
+
+004180D2   58               POP EAX           ; apis32.00418008<------land here 
+004180D3   2C 08            SUB AL,8
+004180D5   50               PUSH EAX
+
+Okay now again hit F7 twice and execute the above PUSH. Now note down the values of 'ESP' and 'EDI' in the right hand side 'Register(FPU)' window
+
+EAX 00418000
+ECX 0012FFB0
+EDX 7FFE0304
+EBX 7FFDF000
+ESP 0012FFA2<----------------------------->Note down
+EBP 0012FFF0
+ESI FFFFFFFF
+EDI 77D5B720 USER32.77D5B720<-------------->Note down
+
+Now click in the HEX dump window at the bottom left hand side. Hit 'Ctrl G' and enter the ESP value-->0012FFA2 click OK.
+          == == 
+0012FFA2 |20 B7| D5 77 FF FF FF FF   ·Õwÿÿÿÿ
+          == ==
+                                                                   ====
+Now only select '20 B7' since u can see the last two of EDI = 77D5|B720| 
+                                                                   ====
+Okay now after selecting right click on it-->Breakpoint-->Hardware on Access-->Word. 
+Now hit 'Shift+F9' and u will land here. We are now near the OEP :-)
+
+004195D0   66:9D            POPFW
+004195D2  -E9 89CDFEFF      JMP apis32.00406360<------This is our OEP
+004195D7  -E9 5BE3FEFF      JMP apis32.00407937
+
+You may ask how I know this is the OEP. Okay now while at 004195D0 if u Hit F7 and execute the JMP u will land here.
+
+00406360     55             DB 55                                    ;  CHAR 'U'
+00406361     8B             DB 8B
+00406362     EC             DB EC
+00406363     6A             DB 6A                                    ;  CHAR 'j'
+00406364     FF             DB FF
+00406365     68             DB 68                                    ;  CHAR 'h'
+
+Hey what is this. Okay dude don't get excited Olly has not analyzed this code. So hit 'Ctrl A' to analyze and u should see this. 
+
+00406360  /. 55             PUSH EBP<-------see this
+00406361  |. 8BEC           MOV EBP,ESP<----see this
+00406363  |. 6A FF          PUSH -1
+00406365  |. 68 08924000    PUSH apis32.00409208
+0040636A  |. 68 88624000    PUSH apis32.00406288                     ;  SE handler installation
+
+OEP's are recognized by:
+PUSH EBP
+MOV EBP,ESP
+
+Okay now get back to 004195D0   66:9D      POPFW by pressing the minus key.
+While at this address minimize(don't close) Olly open LordPE. Scroll down and Select program-->right click-->Full Dump-->Save.
+
+Now we have to fix the IAT(Import Allocation Table) of our dumped.exe 
+So now run Imprec-->ImportREC.exe-->At the top u see Attach to Active Process-->Drop down menu and select our program.
+Now at the bootom u see OEP. So enter this value in the box  OEP - Base = 406360-400000 = 6360
+ Now click 'IAT AutoSearch' --> Get Imports. Now u see that all the Imported Functions are Valid so no invalid functions to fix here :-) .If there were any invalid functions u have to click 'Auto Trace' to fix them. But in this case there are none. So now click 'Fix Dump'-->Select our 'dumped.exe' that we dumped with LordPE-->Clcik Open-->It will be saved as 'dumped_.exe'-->Done :-)
+
+Finally to reduce the dumped_.exe size you can use LordPE's rebuild PE feature.
+
+Congrats your target is now unpacked. So lets move on to crack it ;-)
+
+
+===============================================================================================
+                    STEP 2: PATCHING OUR TARGET TO REMOVE REGISTER NAG
+===============================================================================================
+
+ 
+   Okay rename our packed target-->apis32.bak  and rename dumped_.exe -->apis32.exe
+Load the target in Olly and this time no Entry Point messages :-) Ok now hit F9 to run the program. You see a Shareware reminder NAG screen. Ok we'll use the CALL Stack method. So back in olly hit F12 and then 'Alt K' You see this 
+
+
+
+Call stack of main thread
+Address    Stack      Procedure / arguments                                                                     Called from                   Frame
+0012F728   77D43FBE   Includes 7FFE0304                                                                         USER32.77D43FBC               0012F75C
+0012F72C   77D487A7   USER32.WaitMessage                                                                        USER32.77D487A2               0012F75C
+0012F760   77D4F58C   USER32.77D48607                                                                           USER32.77D4F587               0012F75C
+0012F788   77D6AAAE   USER32.77D4F4D8                                                                           USER32.77D6AAA9               0012F784
+0012FA40   77D6AC40   ? USER32.SoftModalMessageBox                                                              USER32.77D6AC3B               0012F9C8
+0012FB88   77D6ADCC   ? USER32.77D6AB06                                                                         USER32.77D6ADC7               0012FB10
+0012FBDC   77D6AE8A   USER32.MessageBoxTimeoutW                                                                 USER32.77D6AE85               0012FBD8
+0012FC10   77D6AE17   ? USER32.MessageBoxTimeoutA                                                               USER32.77D6AE12               0012FC0C
+0012FC30   004012D2   ? USER32.MessageBoxExA                                                                    apis32.004012CC               0012FC2C
+0012FC34   000401EE     hOwner = 000401EE ('APIS32  v. 2.5 - UNREGISTERED',class='#32770')
+0012FC38   0040BD20     Text = "This  copy  of  APIS32  is
+
+U N R E G I S T E R E D
+
+Registration info can be...)
+0012FC3C   0040A030     Title = "APIS32 "
+0012FC40   00002040     Style = MB_OK|MB_ICONASTERISK|MB_TASKMODAL
+0012FC44   00002409     LanguageID = 2409 (LANG_ENGLISH)
+
+
+ We see that apis32.004012CC  called USER32.MessageBoxExA with our "This  copy  of  APIS32  is...." message
+
+Ok back in CPU window hit 'Ctrl G' and type 004012CC-->Ok
+Now scroll up till you see the following code. 
+
+0040123C   . E8 8F110000    CALL apis32.004023D0          ; \apis32.004023D0
+00401241   . 83C4 08        ADD ESP,8
+00401244   > 8B4424 1C      MOV EAX,DWORD PTR SS:[ESP+1C]
+00401248   . 8B4C24 18      MOV ECX,DWORD PTR SS:[ESP+18]
+0040124C   . 8B7424 10      MOV ESI,DWORD PTR SS:[ESP+10]
+00401250   . 50             PUSH EAX
+00401251   . 51             PUSH ECX
+00401252   . 56             PUSH ESI
+00401253   . E8 F80E0000    CALL apis32.00402150
+00401258   . 83C4 0C        ADD ESP,0C
+0040125B   . 6A 01          PUSH 1                        ; /Erase = TRUE
+0040125D   . 68 E0C64000    PUSH apis32.0040C6E0          ; |pRect = 0040C6E0 {246.,200.,554.,400.}
+00401262   . 6A 00          PUSH 0                        ; |hWnd = NULL
+00401264   . FF15 D8914000  CALL DWORD PTR DS:[<&USER32.I>; \InvalidateRect
+0040126A   . 56             PUSH ESI                      ; /hWnd
+0040126B   . FF15 DC914000  CALL DWORD PTR DS:[<&USER32.S>; \SetActiveWindow
+00401271   . 6A 01          PUSH 1
+00401273   . 56             PUSH ESI
+00401274   . FF15 48C34000  CALL DWORD PTR DS:[40C348]    ;  USER32.SwitchToThisWindow
+0040127A   . 56             PUSH ESI
+0040127B   . FFD7           CALL EDI
+0040127D   . 6A 1E          PUSH 1E
+0040127F   . FFD3           CALL EBX
+00401281   . 56             PUSH ESI                      ; /Arg1
+00401282   . E8 091C0000    CALL apis32.00402E90          ; \apis32.00402E90
+00401287   . 83C4 04        ADD ESP,4
+0040128A   . B8 01000000    MOV EAX,1
+0040128F   . 5F             POP EDI
+00401290   . 5B             POP EBX
+00401291   . 5E             POP ESI
+00401292   . C2 1000        RETN 10
+00401295   > 3D 11010000    CMP EAX,111
+0040129A   . 74 3F          JE SHORT apis32.004012DB
+0040129C   . 3D 65870000    CMP EAX,8765
+004012A1   . 74 06          JE SHORT apis32.004012A9
+004012A3   > 33C0           XOR EAX,EAX                   ;  Default case of switch 004011C5
+004012A5   . 5E             POP ESI
+004012A6   . C2 1000        RETN 10
+004012A9   > 817C24 10 6587>CMP DWORD PTR SS:[ESP+10],876>;  Case 8765 of switch 004011C5
+004012B1   . 75 3F          JNZ SHORT apis32.004012F2
+004012B3   . 8B5424 14      MOV EDX,DWORD PTR SS:[ESP+14]
+004012B7   . 8B4424 08      MOV EAX,DWORD PTR SS:[ESP+8]
+004012BB   . 68 09240000    PUSH 2409                     ; /LanguageID = 2409 (LANG_ENGLISH)
+004012C0   . 68 40200000    PUSH 2040                     ; |Style = MB_OK|MB_ICONASTERISK|MB_TASKMODAL
+004012C5   . 68 30A04000    PUSH apis32.0040A030          ; |Title = "APIS32 "
+004012CA   . 52             PUSH EDX                      ; |Text
+004012CB   . 50             PUSH EAX                      ; |hOwner
+004012CC   . FF15 64914000  CALL DWORD PTR DS:[<&USER32.M>; \MessageBoxExA
+
+Now i remember Satyricon's tip-->"Always study the code in depth :-)" So therefore i see three CALLS in the above code viz.
+
+0040123C   . E8 8F110000    CALL apis32.004023D0          ; \apis32.004023D0
+.
+.
+.
+00401253   . E8 F80E0000    CALL apis32.00402150
+.
+.
+.
+00401282   . E8 091C0000    CALL apis32.00402E90          ; \apis32.00402E90
+
+So what i do is i select the address 0040123C and press "Enter" and land here. I scroll down till
+address 0040249A.
+
+
+004023D0  /$ 55             PUSH EBP<--------Land here
+004023D1  |. 8BEC           MOV EBP,ESP
+004023D3  |. 83EC 30        SUB ESP,30
+004023D6  |. 53             PUSH EBX
+004023D7  |. 56             PUSH ESI
+004023D8  |. 57             PUSH EDI
+004023D9  |. 8B45 0C        MOV EAX,DWORD PTR SS:[EBP+>
+004023DC  |. 50             PUSH EAX                   ; /hWnd
+004023DD  |. FF15 BC914000  CALL DWORD PTR DS:[<&USER3>; \GetDC
+004023E3  |. 8945 E0        MOV DWORD PTR SS:[EBP-20],>
+004023E6  |. 8B4D E0        MOV ECX,DWORD PTR SS:[EBP->
+004023E9  |. 51             PUSH ECX                   ; /hDC
+004023EA  |. FF15 38904000  CALL DWORD PTR DS:[<&GDI32>; \CreateCompatibleDC
+004023F0  |. 8945 DC        MOV DWORD PTR SS:[EBP-24],>
+004023F3  |. 6A 74          PUSH 74                    ; /RsrcName = 116.
+004023F5  |. 8B15 44C34000  MOV EDX,DWORD PTR DS:[40C3>; |apis32.00400000
+004023FB  |. 52             PUSH EDX                   ; |hInst => 00400000
+004023FC  |. FF15 C0914000  CALL DWORD PTR DS:[<&USER3>; \LoadBitmapA
+00402402  |. 8945 D4        MOV DWORD PTR SS:[EBP-2C],>
+00402405  |. 8D45 E8        LEA EAX,DWORD PTR SS:[EBP->
+00402408  |. 50             PUSH EAX                   ; /Buffer
+00402409  |. 6A 18          PUSH 18                    ; |BufSize = 18 (24.)
+0040240B  |. 8B4D D4        MOV ECX,DWORD PTR SS:[EBP->; |
+0040240E  |. 51             PUSH ECX                   ; |hObject
+0040240F  |. FF15 34904000  CALL DWORD PTR DS:[<&GDI32>; \GetObjectA
+00402415  |. 8B55 D4        MOV EDX,DWORD PTR SS:[EBP->
+00402418  |. 52             PUSH EDX                   ; /hObject
+00402419  |. 8B45 DC        MOV EAX,DWORD PTR SS:[EBP->; |
+0040241C  |. 50             PUSH EAX                   ; |hDC
+0040241D  |. FF15 3C904000  CALL DWORD PTR DS:[<&GDI32>; \SelectObject
+00402423  |. 8945 D4        MOV DWORD PTR SS:[EBP-2C],>
+00402426  |. 6A 08          PUSH 8                     ; /Index = HORZRES
+00402428  |. 8B4D E0        MOV ECX,DWORD PTR SS:[EBP->; |
+0040242B  |. 51             PUSH ECX                   ; |hDC
+0040242C  |. FF15 2C904000  CALL DWORD PTR DS:[<&GDI32>; \GetDeviceCaps
+00402432  |. 2B45 EC        SUB EAX,DWORD PTR SS:[EBP->
+00402435  |. 99             CDQ
+00402436  |. 2BC2           SUB EAX,EDX
+00402438  |. D1F8           SAR EAX,1
+0040243A  |. 8B55 08        MOV EDX,DWORD PTR SS:[EBP+>
+0040243D  |. 8902           MOV DWORD PTR DS:[EDX],EAX
+0040243F  |. 6A 0A          PUSH 0A                    ; /Index = VERTRES
+00402441  |. 8B45 E0        MOV EAX,DWORD PTR SS:[EBP->; |
+00402444  |. 50             PUSH EAX                   ; |hDC
+00402445  |. FF15 2C904000  CALL DWORD PTR DS:[<&GDI32>; \GetDeviceCaps
+0040244B  |. 2B45 F0        SUB EAX,DWORD PTR SS:[EBP->
+0040244E  |. 99             CDQ
+0040244F  |. 2BC2           SUB EAX,EDX
+00402451  |. D1F8           SAR EAX,1
+00402453  |. 8B4D 08        MOV ECX,DWORD PTR SS:[EBP+>
+00402456  |. 8941 04        MOV DWORD PTR DS:[ECX+4],E>
+00402459  |. C745 D8 44A040>MOV DWORD PTR SS:[EBP-28],>;  ASCII " v. 2.5"
+00402460  |. 68 2000CC00    PUSH 0CC0020               ; /ROP = SRCCOPY
+00402465  |. 6A 00          PUSH 0                     ; |YSrc = 0
+00402467  |. 6A 00          PUSH 0                     ; |XSrc = 0
+00402469  |. 8B55 DC        MOV EDX,DWORD PTR SS:[EBP->; |
+0040246C  |. 52             PUSH EDX                   ; |hSrcDC
+0040246D  |. 8B45 F0        MOV EAX,DWORD PTR SS:[EBP->; |
+00402470  |. 50             PUSH EAX                   ; |Height
+00402471  |. 8B4D EC        MOV ECX,DWORD PTR SS:[EBP->; |
+00402474  |. 51             PUSH ECX                   ; |Width
+00402475  |. 8B55 08        MOV EDX,DWORD PTR SS:[EBP+>; |
+00402478  |. 8B42 04        MOV EAX,DWORD PTR DS:[EDX+>; |
+0040247B  |. 50             PUSH EAX                   ; |YDest
+0040247C  |. 8B4D 08        MOV ECX,DWORD PTR SS:[EBP+>; |
+0040247F  |. 8B11           MOV EDX,DWORD PTR DS:[ECX] ; |
+00402481  |. 52             PUSH EDX                   ; |XDest
+00402482  |. 8B45 E0        MOV EAX,DWORD PTR SS:[EBP->; |
+00402485  |. 50             PUSH EAX                   ; |hDestDC
+00402486  |. FF15 28904000  CALL DWORD PTR DS:[<&GDI32>; \BitBlt
+0040248C  |. E8 AF2B0000    CALL apis32.00405040
+00402491  |. EB 01          JMP SHORT apis32.00402494
+00402493  |  B8             DB B8
+00402494  |> 0AC0           OR AL,AL
+00402496     74 02          JE SHORT apis32.0040249A
+00402498  |. EB 09          JMP SHORT apis32.004024A3
+0040249A  |> C745 D0 D4A040>MOV DWORD PTR SS:[EBP-30],>;  ASCII "UNREGISTERED"
+004024A1  |. EB 61          JMP SHORT apis32.00402504
+004024A3  |> BF 4CA04000    MOV EDI,apis32.0040A04C    ;  ASCII "Registered to "
+004024A8  |. BA 20BD4000    MOV EDX,apis32.0040BD20    ;  ASCII "This  copy  of  APIS32  is
+
+U N R E G I S T E R E D
+
+Registration info can be found in file REGINFO.TXT"
+
+Now this is interesting. I see another CALL at:
+0040248C  |. E8 AF2B0000    CALL apis32.00405040
+
+I select this address and press Enter. and land here
+
+00405040  /$ 51             PUSH ECX
+00405041  |. 53             PUSH EBX
+00405042  |. 55             PUSH EBP
+00405043  |. 56             PUSH ESI
+00405044  |. 57             PUSH EDI
+00405045  |. 6A 50          PUSH 50
+00405047  |. 68 40B74000    PUSH apis32.0040B740
+0040504C  |. 68 88A64000    PUSH apis32.0040A688        ;  ASCII "UserKey"
+00405051  |. E8 1A030000    CALL apis32.00405370
+00405056  |. 83C4 0C        ADD ESP,0C
+00405059  |. 83F8 10        CMP EAX,10<-----------This means the User Key is 10 character long.
+0040505C  |. 7D 08          JGE SHORT apis32.00405066
+0040505E  |. 33C0           XOR EAX,EAX
+00405060  |. 5F             POP EDI
+00405061  |. 5E             POP ESI
+00405062  |. 5D             POP EBP
+00405063  |. 5B             POP EBX
+00405064  |. 59             POP ECX
+00405065  |. C3             RETN
+00405066  |> 6A 2F          PUSH 2F
+00405068  |. 68 C0C34000    PUSH apis32.0040C3C0
+0040506D  |. 68 78A64000    PUSH apis32.0040A678         ;  ASCII "UserName"
+00405072  |. E8 F9020000    CALL apis32.00405370
+00405077  |. 83C4 0C        ADD ESP,0C
+0040507A  |. 83F8 05        CMP EAX,5<-----------This means the User Name is 5 character long.
+0040507D  |. 7D 08          JGE SHORT apis32.00405087
+0040507F  |. 33C0           XOR EAX,EAX
+00405081  |. 5F             POP EDI
+00405082  |. 5E             POP ESI
+00405083  |. 5D             POP EBP
+00405084  |. 5B             POP EBX
+00405085  |. 59             POP ECX
+00405086  |. C3             RETN
+
+Now if u see address 00405051 which CALL 00405370. Now goto 00405370 and u will see this
+
+00405370  /$ 8B4424 0C      MOV EAX,DWORD PTR SS:[ESP+>
+00405374  |. 68 20B74000    PUSH apis32.0040B720       ; /pHandle = apis32.0040B720
+00405379  |. 68 19000200    PUSH 20019                 ; |Access = KEY_READ
+0040537E  |. 6A 00          PUSH 0                     ; |Reserved = 0
+00405380  |. 68 90A64000    PUSH apis32.0040A690       ; |Subkey = "SOFTWARE\APIS32"
+00405385  |. 68 02000080    PUSH 80000002              ; |hKey = HKEY_LOCAL_MACHINE
+0040538A  |. 894424 20      MOV DWORD PTR SS:[ESP+20],>; |
+0040538E  |. FF15 08904000  CALL DWORD PTR DS:[<&advap>; \RegOpenKeyExA
+
+
+
+This means it checks the registry for a valid UserKey and corrosponding UserName. It checks the key and name and then return to our earlier code i.e back to:
+
+0040248C  |. E8 AF2B0000    CALL apis32.00405040
+00402491  |. EB 01          JMP SHORT apis32.00402494
+00402493  |  B8             DB B8
+00402494  |> 0AC0           OR AL,AL
+00402496     74 02          JE SHORT apis32.0040249A
+00402498  |. EB 09          JMP SHORT apis32.004024A3
+0040249A  |> C745 D0 D4A040>MOV DWORD PTR SS:[EBP-30],>;  ASCII "UNREGISTERED"
+004024A1  |. EB 61          JMP SHORT apis32.00402504
+004024A3  |> BF 4CA04000    MOV EDI,apis32.0040A04C    ;  ASCII "Registered to "
+004024A8  |. BA 20BD4000    MOV EDX,apis32.0040BD20    ;  ASCII "This  copy  of  APIS32  is
+
+U N R E G I S T E R E D
+
+Registration info can be found in file REGINFO.TXT"
+
+Okay at '00402494' it checks if the username and key are valid. If not valid then jumps to the bad message at '0040249A' orelse if valid jumps to good message at '004024A3'
+ So now u know what to do ;-). You may be tempted to NOP that JE at '0040249A' like i was.
+But i was bit curious about '00405040' where the registration check takes place 
+ So just curious i selected '00402E96' in above code-->right click-->Find references to-->Call Destination.
+And bull shit....banging my head....shiiiiiiiiiiiiiiiitttttt....why didn't i think of this earlier. I mean all the CALL addresses are there. 
+ If we go to all these CALLS and NOP all the JE's the program will show registered but the limitation to log 20 entries in the log file is still there. In my original tutorial i had NOP'd the JE's. But that's just cosmetic. So the correct way to crack this program.
+ 
+  Thanks to SatyricOn and R@dier
+
+==>SatyricOn's suggestion:
+ You would have seen earlier that you should not have patched the JEs following the CALLS to 405040, but you should instead have changed the code in 405040 so that when the function returned, AL would never == 0 (probably should == 1, as the return type of the function 405040 is probably bool).
+
+Indeed, to use the same example as I used with Winamp, you could think of the function 405040 as having the prototype
+
+bool IsAPIS32Registered();
+
+where the return value is stored in AL.
+
+==>R@dier's suggestion:
+
+"For apis32 you do not need to patch all the places that are mentioned in the tut,all you need is to change the sub prog IsProgReged to return true (1)and all will work so before the sub prog ends we need to increment eax thus at 40505E needs to be changed to inc eax (4090h) BOOL IsProgReged() {return (1)}"
+
+So this means just change
+
+0040505E  |. 33C0           XOR EAX,EAX
+
+to
+
+0040505E  |. 40             INC EAX
+0040505F  |. 90             NOP
+
+Thats it!!! the program is now fully cracked :-)
+
+Okay now time to make the changes permanent :-)
+Right click/copy to executable/all
+modifications/copy all, then right click on new box/save file, double click on
+apis32.exe and select overwrite file.
+
+Okay now close olly and run our program. Voila! product is registered and NAG killed. :-)
+
+
+ 
+@@@@@@@@@@###########################################################################@@@@@@@@@@ 
+@@@@@@@@@@#                          ---SHOUTZ AND GREETZ---                        #@@@@@@@@@@
+@@@@  @@@@#                                                                         #@@@@  @@@@ 
+@@@ H  @@@#            To Nilrem-->Merlin who's Tutorials helped me to use          #@@@ H  @@@   @@  O   @@#            Ollydbg for debugging. Thanks to Pompeyfan, el-kiwi          #@@  O   @@
+@   R    @#            whose tutorials helped me too.Thanks to www.tech-arena.com   #@   R    @  
+@@  S   @@#            staff, members for encouraging me to write these tutorials.  #@@  S   @@
+@@@ E  @@@#            exetools.com,Sir JMI, SatyricOn,LaBBa, R@dier and others     #@@@ E  @@@
+@@@@  @@@@#            who helped me alot.                                          #@@@@  @@@@
+@@@@@@@@@@@@@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$@@@@@@@@@@@@@ 
+@@@@@@@@@@@@@                                                                     @@@@@@@@@@@@@
+@@@       @@@                                                                     @@@       @@@
+@@ ferrari @@             REMEMBER IF U USE THE PROGRAM THEN BUY IT ;-) !         @@ ferrari @@ 
+@@@       @@@                                                                     @@@       @@@ 
+@@@@@@@@@@@@@                                                                     @@@@@@@@@@@@@   @@@@@@@@@@@@@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$@@@@@@@@@@@@@
+   
+                                
+ 

@@ -1,0 +1,144 @@
+============================================================================
+TITLE.:
+CD CATALOG EXPERT v8.00
+============================================================================
+BEST VIEWED.:
+Notepad with word wrap enabled, and in restored window mode
+============================================================================
+TOOLS USED.:
+OllyDbg v1.10(step 2)
+============================================================================
+TARGET.:
+cdc.exe 1822720 bytes.
+Written in Borland Delphi 6.0 - 7.0
+============================================================================
+LOCATION OF TOOLS AND PROGRAM.:
+http://www.grinders.withernsea.com/tools/odbg110b2.rar
+http://www.grinders.withernsea.com/tools/Krugerstoolbox_v116.rar
+http://www.grinders.withernsea.com/tools/cdc.rar
+http://www.grinders.withernsea.com/patches/CD_Catalog_Expert_v8_KeyGen.rar
+============================================================================
+WEBSITE.:
+http://cracking.accessroot.com/
+============================================================================
+CONTACT INFORMATION.:
+kruger48@hotmail.com
+============================================================================
+TUTORIAL VERSION.:
+v1.0 Written 8th of May 2004
+============================================================================
+AUTHOR AND OTHER ALIASES.:
+Kruger
+AKA.:(Swat'98) (Swat'99) (Swat)
+============================================================================
+First, to make this KeyGen easy to follow.
+I have used few references so you won't loose the grip of the KeyGen.
+A lot of tutors bombs you with jumps and calls ;-)
+I try to keep it Plain, Simple, Stupid!
+Download my Toolbox to easy covert/understand the Hex/Dec strings!
+Install app, and load in Olly.
+Push F9, program loads and try to register.
+I used Kruger as name and 9 as serial.
+Got the message "Incorrect Registration Info!"
+Good old story, goto top in CPU window -> rightclick -> choose search for all referenced text strings.
+Let's browse and see if we find anything...
+============================================================================
+Text strings referenced in cdc:CODE, item 5991
+Address=004B36A3 Text string=ASCII "Incorrect Registration Info!"
+Push F2 on this one.
+============================================================================
+Lets push Enter on Address 004B36A3
+Back in CPU window.
+Browse up in code.
+004B35FD JNZ cdc.004B369E
+Jumps if serial is bad... :-(
+look further up and try to set brake F2 on adress 004B359E MOV [DWORD FS:EAX],ESP
+F9, program breaks on brake and push F8 until you land here...
+(Loops through the name Kruger...)
+004B3A3C  |> /8B4D FC       /MOV ECX,[DWORD SS:EBP-4]
+004B3A3F  |. |0FB64C11 FF   |MOVZX ECX,[BYTE DS:ECX+EDX-1]
+004B3A44  |. |03D9          |ADD EBX,ECX
+004B3A46  |. |42            |INC EDX
+004B3A47  |. |48            |DEC EAX
+004B3A48  |.^\75 F2         \JNZ SHORT cdc.004B3A3C
+============================================================================
+Now, push F8 and you will see that the KeyGen Algo is here.:
+(You can use F7 to see all the things happening if you like...)
+004B3A4D  |.  8BC3          MOV EAX,EBX
+004B3A4F  |.  C1E0 03       SHL EAX,3
+004B3A52  |.  2BC3          SUB EAX,EBX
+004B3A54  |.  E8 B352F5FF   CALL cdc.00408D0C
+004B3A59  |.  FF75 F4       PUSH [DWORD SS:EBP-C]
+004B3A5C  |.  68 C83A4B00   PUSH cdc.004B3AC8
+004B3A61  |.  8D55 F0       LEA EDX,[DWORD SS:EBP-10]
+004B3A64  |.  83C3 43       ADD EBX,43
+004B3A67  |.  8D045B        LEA EAX,[DWORD DS:EBX+EBX*2]
+004B3A6A  |.  E8 9D52F5FF   CALL cdc.00408D0C
+004B3A6F  |.  FF75 F0       PUSH [DWORD SS:EBP-10]
+============================================================================
+Now, the algo is here for the first Serial.:
+004B3A4D  MOV EAX,EBX
+EBX = 00000270 (This is Kruger in sum as Hex.)
+004B3A52  SUB EAX,EBX
+EAX = 1380 (270*8 = 1380)
+SUB EBX (270) = 1380 - 270 = 1110 (4368 in dec)
+4368 = First Serial!
+(Comment.: Why use Name * 8 - Name??? -;)
+============================================================================
+Algo for the second Serial.:
+004B3A64  ADD EBX,43
+Meaning, sum of name + 43
+EBX = 270 + 43 = 2B3
+004B3A67  LEA EAX,[DWORD DS:EBX+EBX*2]
+EBX = 2B3 * 3 = 819 (2073 in dec)
+2073 = Second serial!
+============================================================================
+My serial for the name Kruger is.: 4368-2073
+Algo.:
+Serial1.:
+Name * 8 - Name = Serial1
+Serial2.:
+(Name + 43) * 3 = Serial2
+
+Now, let's write a KeyGen for this app.:
+Note.: KeyGen is written as the algo found.
+Instead of using
+T2 = T1 * 8
+TOTAL1 = T2 - T1
+We could just use
+T2 = T1 * 7
+TOTAL1 = T2
+============================================================================
+'***** VB Code For CD Catalog Expert 8.00 KeyGen *****
+' create a form with Textbox 1 and 2, and a button Command1.
+Private Sub Text1_Change()
+For i = 1 To Len(Text1.Text)
+ASCII = Asc(Mid$(Text1.Text, i, 1))
+'*****
+SUM1 = ASCII
+T1 = SUM1 + T1
+T2 = T1 * 8
+TOTAL1 = T2 - T1
+'*****
+SUM2 = ASCII
+X1 = SUM2 + X1
+X2 = X1 + 67
+TOTAL2 = X2 * 3
+Next i
+Text2.Text = TOTAL1 & "-" & TOTAL2
+If Text2.Text = "-" Then Text2.Text = ""
+End Sub
+Private Sub Command1_Click()
+End
+End Sub
+'*********** End of Code ***********
+============================================================================
+Enjoy!
+That's all 4 now!
+
+Remember if you use the application then buy it!
+============================================================================
+SHOUTZ AND GREETZ:
+To all Members of AR Team, TSRh Club, and the creator of Olly! 
+And to all of you reading my Tuts!
+============================================================================

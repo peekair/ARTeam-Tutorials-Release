@@ -1,0 +1,124 @@
+        (BEST VIEWED WITH WORDWRAP ENABLED & FONT= COURIER , SIZE =10)
+
+         @$@$#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@@$@ @#$#$@
+        @@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@  @#$#$#$@
+         @@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#$@ @#$#$@
+          @#$@                             
+          @#$@       @$@$@$@$@ @$@$@ $@$@$ @$@$@ $@$@$   @#@#@#@#@@ @$@$@ $@$@$ @$#$#$#@
+          @#$@      @#$#$#$#$@@ @#$#$#$#$#$ @#$#$#$#$#$ @$#$#$#$#@@@ @#$#$#$#$#$ @#$#$@
+          @#$@    @ @#@#@#@#@#@ @#$@$#$#@@@ @#$@$#$#@@@ @#@@    @#$@ @#$@$#$#@@@  @$#@
+          @#$@#$#$@ @#@#   #@#@ @#$@   @@@  @#$@   @@@  @$@     @#$@ @#$@   @@@   @$#@
+          @#$@@#@#@ @#@#@#@#@#@ @#$@   @@   @#$@   @@         @#@#$@ @#$@   @@    @$#@   
+          @#$@#$#$@ @$@$@$@$@$@ @#$@        @#$@         @@#@@#@#@#@ @#$@         @$#@
+          @#$@    @ @$@#        @#$@        @#$@        @#$#$#$#$#$@ @#$@         @$#@
+          @#$@      @$@#        @#$@        @#$@        @#$@    @#$@ @#$@         @$#@
+          @#$@      @#@#@#@#@#@ @#$@        @#$@        @#$@#$#$#$#@ @#$@         @$#@
+          @#$#@     @$@$@$@$@$@ @#$#@       @#$#@       @#$@#@#@#@#@ @#$#@       @#$#$@
+        @#@#@#@#@    @#@#@#@#@ @#@#@#@     @#@#@#@       @#@#@#@#@# @#@#@#@     @$#$#$#@
+
+
+                                                                                
+                                     :-)---> ARTeam <---(-:
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$  ComputerWaterMark  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$       1.0           $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$                     $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$@@@@@@@@@@@@@
+@@@@@@@@@@@@@              AUTHOR            :   FERRARI                          @@@@@@@@@@@@@ 
+@@@       @@@              PROTECTION        :   30-Days Trial                    @@@       @@@   @@ ferrari @@              TARGET FILE       :   cwmark.exe                       @@ ferrari @@ 
+@@@       @@@              TARGET URL        :   http://www.computerwatermark.com @@@       @@@   @@@@@@@@@@@@@              OPERATING SYSTEM  :   WINDOWS ALL                      @@@@@@@@@@@@@   @@@@@@@@@@@@@              RELEASE DATE      :   12.01.2004                       @@@@@@@@@@@@@
+@@@@@@@@@@@@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@                                TOOLS USED & TARGET SOFTWARE                                 @
+@                                =============================                                @
+@                                                                                             @
+@ OllyDbg                    :- http://grinders.withernsea.com/tools/odbg110b1.rar            @
+@ ComputerWaterMark          :- http://grinders.withernsea.com/tools/cwmtrial.rar             @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+Ok, let's get straight down to business; open up cwmark.exe and you'll see that we can only use this program for 30 days. click Quit.Always make a backup of the original EXE. Before we open cwmark.exe in our debugger (Olly), let's just think for a second, what are our main ways of attack on this program? Well it's a time-trial, so here is list of breakpoints you can try 
+
+Reading/Writing files: 
+
+ReadFile 
+WriteFile 
+CreateFileA 
+
+Reading data from INI file: 
+
+GetPrivateProfileStringA 
+GetPrivateProfileIntA 
+WritePrivateProfileStringA 
+WritePrivateProfileIntA 
+
+Registry Access: 
+
+RegCreateKeyA 
+RegDeleteKeyA 
+RegQueryValueA 
+RegCloseKeyA 
+RegOpenKeyA 
+
+DialogBoxes: 
+
+GetWindowTextA <------In this program we are going to put a breakpoint here.
+GetDlgItemTextA 
+GetDlgItemInt 
+
+MessageBoxes: 
+
+MessageBox 
+MessageBoxA 
+MessageBoxExA 
+MessageBeep 
+
+Time And Date: 
+
+GetLocalTime 
+GetSystemTime 
+GetFileTime 
+
+Creating a window (like a NAG): 
+
+CreateWindowExA 
+ShowWindow  
+
+
+PEiD, it tells us that whether any packer is used to pack the program.No packer is used here.
+Right, time to debug, launch OllyDbg, before we do anything else, to make things easier on ourselves, right click in Olly, and select 'Appearance->Highlighting->Jumps'n'calls'and 'Appearance->Colors (all)->'Mostly black' (It gives u the Softice feel ;-). Now open up cwmark.exe in Olly,  Right click and choose 'Search for->Name (label) in current module', once there (my preference) right click and select 'Sort by->Name' and'Appearance->Font->'font 6'; scroll down to 'GetWindowTextA', select it, then right click and choose 'Set breakpoint on every reference'. Now go back to the main Olly window, and press F9 (to begin the debug process). You should find yourself here:
+
+00460487  |. E8 D46EFAFF    CALL <JMP.&user32.GetWindowTextA>        ; \GetWindowTextA
+
+
+Now, this method may not work all the time for every single time trial program similar to ComputerWaterMark, but it's always worth a try, what we will do is keep pressing F8 (to step through the code) until we summon the error message. The line you land on eventually should be this one:
+
+00481998   . E8 3BF9FFFF    CALL cwmark.004812D8
+
+
+Go back to Olly, and let's have a look at the code where we are. Now let's get our bearings, we are currently at the address '00481998', let's have a look at some near by condition jumps i.e above this CALL, there is no jump condition. So what now? Simple just NOP this CALL and you are done. Select and Right click on this above address then 'Binary->Fill with NOPs'. Congratulations your exe is now cracked!!!
+ 
+To save the changes there are two ways:
+
+1) Right click in Olly then 'Copy to executable-->All modifications-->Copy all' ; A window will pop up. close that window, it will ask you 'Dump of file \..\cwmark.exe differs from original. Do you want to save blah blah blah..., Click yes and overwrite. Done! You can now run your Cracked exe. It works without that nag.
+ 
+2) launch Hiew (Our Hex Editor), and work your way to cwmark.exe, ahhh! Look at all that gobbledygook! Press 'F4' (Mode) and choose decode, ahh much better. Press 'F5' (Goto) and type .00481998 you need the "." before the address, because that is the syntax (in Hiew) to search for an address. Now press F3 (Edit) and type '9090909090' in place of 'E83BF9FFFF'  then press 'F9' and 'F10' to update and close.Done! You can now run your Cracked exe. NAG killed ;-).
+
+Congratulations cracker!!
+
+
+@@@@@@@@@@###########################################################################@@@@@@@@@@ 
+@@@@@@@@@@#                          ---SHOUTZ AND GREETZ---                        #@@@@@@@@@@
+@@@@  @@@@#                                                                         #@@@@  @@@@ 
+@@@ H  @@@#            To Nilrem-->Merlin who's Tutorials helped me to use          #@@@ H  @@@   @@  O   @@#            Ollydbg for debugging. Thanks to el-kiwi whose tutorials     #@@  O   @@
+@   R    @#            helped me alot. Thanks to Pompeyfan, www.tech-arena.com      #@   R    @  
+@@  S   @@#            staff, members for encouraging me to write these tutorials.  #@@  S   @@
+@@@ E  @@@#            exetools.com,Sir JMI, SatyricOn, R@dier and others who       #@@@ E  @@@
+@@@@  @@@@#            helped me alot.                                              #@@@@  @@@@
+@@@@@@@@@@@@@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$@@@@@@@@@@@@@ 
+@@@@@@@@@@@@@                                                                     @@@@@@@@@@@@@
+@@@       @@@                                                                     @@@       @@@
+@@ ferrari @@             REMEMBER IF U USE THE PROGRAM THEN BUY IT ;-) !         @@ ferrari @@ 
+@@@       @@@                                                                     @@@       @@@ 
+@@@@@@@@@@@@@                                                                     @@@@@@@@@@@@@   @@@@@@@@@@@@@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$@@@@@@@@@@@@@
+                                    

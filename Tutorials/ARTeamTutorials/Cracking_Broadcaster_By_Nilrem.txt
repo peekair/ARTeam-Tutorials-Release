@@ -1,0 +1,688 @@
+============================================================================
+TITLE:
+Patching mpegable Broadcaster v2.2
+============================================================================
+BEST VIEWED:
+Notepad with word wrap enabled, and in restored window mode
+============================================================================
+TOOLS USED:
+OllyDbg v1.10(step 1)
+Brain (Preferably version human or above)
+============================================================================
+TARGET:
+mpegableBroadcaster.exe
+============================================================================
+LOCATION OF TOOLS AND PROGRAM:
+http://www.grinders.withernsea.com/tools/odbg110b1.rar
+http://www.grinders.withernsea.com/tools/mpegableBroadcaster-Setup.exe.rar
+============================================================================
+WEBSITE:
+http://cracking.accessroot.com/
+============================================================================
+CONTACT INFORMATION:
+Msn Messenger - jammysa@hotmail.com
+Icq# - 46313648
+Email Address - Merlin@accessroot.com
+============================================================================
+TUTORIAL VERSION:
+v1.0 Written 13th of April 2004
+============================================================================
+AUTHOR AND OTHER ALIASES:
+Merlin
+
+Nilrem2
+Nilrem
+Grimgnaw
+Khulad
+Khulad Illphukiir
+(-~Merlin~-)
+Merlin The Wizard
+============================================================================
+O.k. let us begin, open up the target executable, and enter any details, (I used Merlin/77777777/merlin@accessroot.com/ARTeam). You will see this message (unless you entered the correct details), "Invalid serial blah blah"
+Right, time to debug, launch OllyDbg (this is our debugger), before we do anything else, to make things easier on ourselves, right click in Olly, and select 'Appearance->Highlighting->Jumps'n'calls'. Now open up the crackme in Ollydbg, right click and select, 'Search for->All references text strings', scroll to the top and select the top most line, then right click and choose, 'Search for text', make sure that 'Case sensitive' is unticked' and then search for our bad boy message string, double click it and set a breakpoint on it (F2).
+Keep stepping through the code and you will get the message, so let's find the call/code that checks if we are registered or not. Just hit F9 to get the error message (or carry on stepping through the code if you like).
+Now press enter
+go back to Olly, let's try the call stack, alt+k, f12
+0042C520, long way away, so keep pressing F9 until you get the message, then go back into Olly, and let's try and go to our error message to get our bearings:
+Three lines above we see:
+0042C969  |. E8 12AC0000    CALL mpegable._CheckKeyEx@4              ; \_CheckKeyEx@4
+
+hmm looks interesting, set a bp (breakpoint) on it. Go and hit enter, and boom! We land there, press F7 to enter the call.
+Ok, let's get our bearings, it says PUSH EBP, look in the 'Registers (FPU)' window, and we see EBP = ARTeam
+
+Keep stepping through the code (F8), until you reach this call:
+004375A8  |. E8 83FBFFFF    CALL mpegable.00437130
+
+press F7 to enter it.
+Ok, set a bp here, why well if we need to restart Olly we can just F9 to here, because it looks interesting (remember always try and get your bearings, a minimum sense of where you are, if you look around you see words like REG_NAME, EMAIL, followed by conditional jumps).
+
+Keep stepping through the code until you get to here:
+0043713F  |. 56             PUSH ESI                                 ;  mpegable.00486594
+
+So it is pushing 7777777
+00437140  |> 8B37           /MOV ESI,DWORD PTR DS:[EDI]	// Moves edi to esi
+00437142  |. 83C7 04        |ADD EDI,4	// Adds 4 to EDI
+
+Keep stepping through the code until:
+0043714D  |. 8B1F           |MOV EBX,DWORD PTR DS:[EDI] // Move our username to ebx
+0043714F  |. 83C7 04        |ADD EDI,4	// Add 4 to edi
+00437152  |. 85DB           |TEST EBX,EBX	// Does ebx = 0?
+00437154     0F84 90000000  JE mpegable.004371EA // If so jump to 004371EA
+
+If you are wondering why you aren't making it jump to 4371EA, go to it and you will see:
+004371EA  |> 5E             POP ESI
+Which then leads to:
+004371EF  \. C3             RETN
+Which will return to wherever it was called, which will then lead to our bad boy message, which we don't want.
+
+The next two lines:
+0043715A  |. 68 94144700    |PUSH mpegable.00471494                  ;  ASCII "REG_NAME"
+0043715F  |. 56             |PUSH ESI
+
+Lead to here:
+00437160  |. E8 19040100    |CALL mpegable.0044757E
+
+You can enter this call if you want, in fact do so, have a good look around, but we don't need to (not for what we are doing). So press F8 to step past the call.
+
+00437165  |. 83C4 08        |ADD ESP,8	// add 8 to esp
+00437168  |. 85C0           |TEST EAX,EAX	// See if eax = 0
+0043716A  |. 75 08          |JNZ SHORT mpegable.00437174	// If it doesn't = 0 jump to 437174
+
+We will change the JNZ to a JMP, why will we do this? Because otherwise we will jump to 4371E2, and if you go there (scroll down, or 'Ctrl+G'), you will see that this just leads to a RETN (RETURN), which will return to where we were called from which will then lead us to the bad boy message, which we don't want. So once you are on the line:
+
+0043716A     EB 08          JNZ SHORT mpegable.00437174
+
+change it from JNZ SHORT to JMP SHORT, to do that, press the spacebar (assemble), and make the changes that way, hit 'Ok' then 'Cancel'.
+
+00437174  |> 68 84144700    |PUSH mpegable.00471484                  ;  ASCII "EMAIL"	// Our email details are been pushed.
+00437179  |. 56             |PUSH ESI	// REG_NAME is been pushed.
+
+Press F8 until you get here:
+
+0043717A  |. E8 FF030100    |CALL mpegable.0044757E
+
+We will enter this call (because it is different from the others, all the others in this routine are CALL 4457E), press F7, you land here:
+
+0044757E  /$ 55             PUSH EBP
+
+F8 until here:
+
+00447583  |. E8 A474FFFF    CALL mpegable.0043EA2C
+
+Press F7 to enter the call, you land here:
+
+0043EA2C  /$ 53             PUSH EBX
+
+F8 until here:
+
+00447588  |. 8B58 64        MOV EBX,DWORD PTR DS:[EAX+64]            ;  mpegable.00485318
+
+Press F8 until the next call:
+
+004475A6  |. E8 85FFFFFF    CALL mpegable.00447530
+
+and enter it, you will land here:
+
+00447530  /$ 55             PUSH EBP
+
+Press F8 until you get to here:
+
+00447540  |> 0AC0           /OR AL,AL
+
+Which is the start of a subroutine. Keep pressing F8 and you can see it is entering the word REG_NAME. Keep pressing F8 until you are out of it:
+
+00447572  |. 1AC0           SBB AL,AL
+
+Keep pressing F8 until you get to here (please notice what is going on around you, after this tutorial go explore some more):
+
+00437165  |. 83C4 08        |ADD ESP,8
+
+Press F8 until here:
+
+00437174  |> 68 84144700    |PUSH mpegable.00471484                  ;  ASCII "EMAIL"
+
+So now EMAIL is been pushed,
+
+00437179  |. 56             |PUSH ESI
+
+and so is ESI (REG_NAME).
+
+0043717A  |. E8 FF030100    |CALL mpegable.0044757E
+0043717F  |. 83C4 08        |ADD ESP,8
+00437182  |. 85C0           |TEST EAX,EAX
+
+Step over the call (F8), and stop at the TEST command. Just below that you see it's corresponding conditional jump:
+
+00437184  |. 75 08          |JNZ SHORT mpegable.0043718E
+
+Now let's think logically for a second, if turn it into a JMP SHORT, then we will always no matter what jump to the address 43718E, what will happen if we don't, well these lines will execute:
+
+00437186  |. 891D 84414800  |MOV DWORD PTR DS:[484184],EBX
+0043718C  |. EB 54          |JMP SHORT mpegable.004371E2
+
+and remember that 4371E2 jumps near the RETN command, and we want to keep away from that, so turn the JNZ SHORT into a JMP SHORT, hit F8 and you will land here:
+
+0043718E  |> 68 84424700    |PUSH mpegable.00474284                  ;  ASCII "LANGUAGE_ID"
+
+Let's look at the lines after it:
+
+00437193  |. 56             |PUSH ESI	// PUSH ESI (REG_NAME)
+00437194  |. E8 E5030100    |CALL mpegable.0044757E // Call a procedure that we don't need to figure out (in this tutorial)
+00437199  |. 83C4 08        |ADD ESP,8	// Add 8 to ESP
+0043719C  |. 85C0           |TEST EAX,EAX	// Is EAX 0?
+0043719E  |. 75 10          |JNZ SHORT mpegable.004371B0	// If it isn't then jump
+004371A0  |. 53             |PUSH EBX	// Push EBX
+004371A1  |. E8 A62D0000    |CALL mpegable.00439F4C	// Call some procedure
+004371A6  |. 83C4 04        |ADD ESP,4	// Add 4 to ESP
+004371A9  |. A3 90414800    |MOV DWORD PTR DS:[484190],EAX	// Move EAX (1) to 484190
+004371AE  |. EB 32          |JMP SHORT mpegable.004371E2	// Jump to 4371E2 (Bad!)
+
+As you can see we want to make the conditional jump at 43719E a non-conditonal jump. So press F8 until you get there, then assemble (space-bar), and change it from JNZ SHORT to JMP SHORT, then press F8, and you will land here:
+
+004371B0  |> 68 78144700    |PUSH mpegable.00471478                  ;  ASCII "PRODUCT_ID"
+
+Let's take a look at the lines below it:
+
+004371B5  |. 56             |PUSH ESI	// Push ESI (REG_NAME)
+004371B6  |. E8 C3030100    |CALL mpegable.0044757E	// Call
+004371BB  |. 83C4 08        |ADD ESP,8	// Add 8 to ESP
+004371BE  |. 85C0           |TEST EAX,EAX	// Is EAX 0?
+004371C0  |. 75 08          |JNZ SHORT mpegable.004371CA	// If not then jump
+
+Ok I think you know what to do by now, so do it (Change the JNZ SHORT to JMP SHORT).
+Keep pressing F8 until you get to here:
+
+004371CA  |> 68 80424700    |PUSH mpegable.00474280                  ;  ASCII "KEY"
+
+The lines below it are:
+
+004371CF  |. 56             |PUSH ESI	// Push ESI (REG_NAME)
+004371D0  |. E8 A9030100    |CALL mpegable.0044757E	// Call
+004371D5  |. 83C4 08        |ADD ESP,8	// Add 8 to ESP
+004371D8  |. 85C0           |TEST EAX,EAX	// Is EAX 0?
+004371DA  |. 75 06          |JNZ SHORT mpegable.004371E2	// If it isn't then jump
+004371DC  |. 891D 8C414800  |MOV DWORD PTR DS:[48418C],EBX	// Move EBX to 48418C
+004371E2  |> 85FF           |TEST EDI,EDI	// Is EDI 0?
+004371E4    ^0F85 56FFFFFF  JNZ mpegable.00437140	// If it isn't jump to start of routine (don't want this)
+004371EA  |> 5E             POP ESI	// Pop ESI
+004371EB  |. 5B             POP EBX	// Pop EBX
+004371EC  |. 33C0           XOR EAX,EAX	// Make EAX 0
+004371EE  |. 5F             POP EDI	// Pop EDI
+004371EF  \. C3             RETN	// Reurn to the bad boy message
+
+Now we can execute the RETN command because all of our registration details have been entered. Change the conditional jump:
+
+004371DA  |. 75 06          |JNZ SHORT mpegable.004371E2
+
+to an uncondtional jump (so that it always jumps).
+Then NOP this conditional jump:
+
+004371E4    ^0F85 56FFFFFF  JNZ mpegable.00437140
+
+So that we don't go to the start of the routine.
+Keep pressing F8 until you land here:
+
+004375AD  |. 83C4 04        ADD ESP,4	// Add 4 to ESP
+004375B0  |. 85C0           TEST EAX,EAX	// Does EAX = 0?
+004375B2     7C 52          JL SHORT mpegable.00437606 // If EAX < 0 Jump
+
+So.. what we have to ask ourselves here is.. do we want to jump to 437606, let's look what's there.. ahh it leads to RETN 4, which will take us back to our bad boy message. So if we change the TEST EAX,EAX to XOR EAX,EAX EAX will be 0, and won't be less then 0 so the jump will not take place, but why don't we just do INC EAX? Well in this case increasing EAX would make it not less then 0, but what if somehow EAX was -2, that wouldn't help us then would it because it would make EAX -1.
+Once you have made the changes press F8 until you get to here:
+
+004375B4  |. 8B1D 80414800  MOV EBX,DWORD PTR DS:[484180]
+
+We can see that our username is been moved to EBX
+
+004375BA  |. 8BC3           MOV EAX,EBX
+
+Now our username is moved to EAX
+
+004375BC  |. 8D50 01        LEA EDX,DWORD PTR DS:[EAX+1]
+
+Now the first letter is taken away
+
+004375C0  |> 8A08           /MOV CL,BYTE PTR DS:[EAX]
+004375C2  |. 40             |INC EAX
+004375C3  |. 84C9           |TEST CL,CL
+004375C5  |.^75 F9          \JNZ SHORT mpegable.004375C0
+
+What that subroutine above does is it takes our username one letter at a time, then exits, so press F8 until you get to here:
+
+004375C7  |. 2BC2           SUB EAX,EDX	// EAX = EAX - EDX
+004375C9  |. 83F8 08        CMP EAX,8	// Does our username = 8 in length?
+004375CC     72 38          JB SHORT mpegable.00437606	// If our username is below 8 then jump
+
+As you can see here, we don't want to jump, so change the CMP EAX,8 to CMP EAX,0 that way our username can be anything (even blank). Press F8 until you get to here:
+
+004375CE  |. 8B3D 84414800  MOV EDI,DWORD PTR DS:[484184]	// Move our email address to EDI
+004375D4  |. 8BC7           MOV EAX,EDI	// Move our email address to EAX
+004375D6  |. 8D50 01        LEA EDX,DWORD PTR DS:[EAX+1]	// Get the first character of our email address.
+004375D9  |. 8DA424 0000000>LEA ESP,DWORD PTR SS:[ESP]
+
+If you look around you can see it is exactly the same as the above, so change the cmp eax,8 to cmp eax,0 and press F8 until you get to here:
+
+004375EE  |. A1 8C414800    MOV EAX,DWORD PTR DS:[48418C]
+
+Now if you look below this line:
+
+004375F3  |. 8BC8           MOV ECX,EAX
+004375F5  |. 8D71 01        LEA ESI,DWORD PTR DS:[ECX+1]
+004375F8  |> 8A11           /MOV DL,BYTE PTR DS:[ECX]
+004375FA  |. 41             |INC ECX
+004375FB  |. 84D2           |TEST DL,DL
+004375FD  |.^75 F9          \JNZ SHORT mpegable.004375F8
+004375FF  |. 2BCE           SUB ECX,ESI
+00437601  |. 83F9 08        CMP ECX,8
+00437604     73 0E          JNB SHORT mpegable.00437614
+00437606  |> B8 0E000000    MOV EAX,0E
+0043760B  |. 5F             POP EDI
+0043760C  |. 5E             POP ESI
+0043760D  |. 5B             POP EBX
+0043760E  |. 8BE5           MOV ESP,EBP
+00437610  |. 5D             POP EBP
+00437611  |. C2 0400        RETN 4
+
+Now as you can see we have a similar situation as before, however it is (significantly) slightly different, the JNB is now to 437614, what is significant about this? Well if we don't take the jump we will end up executing RETN 4, which means we will be back to our bad boy message. How can we solve this?
+
+Easy! Look at the line at address 437604, it says JNB = Jump if Not Below, well the line above that is CMP ECX,8 so, if ECX is the same as or above 8 it will jump, what we want to do is make it always jump, to do this we change CMP ECX,8 to CMP ECX,0 that way it will always be the same or above no matter what you entered for the serial. So make the changes, then keep pressing F8 until you get to here:
+
+00437614  |> 8D50 01        LEA EDX,DWORD PTR DS:[EAX+1]
+
+The following code should be familiar:
+
+00437617  |> 8A08           /MOV CL,BYTE PTR DS:[EAX]
+00437619  |. 40             |INC EAX
+0043761A  |. 84C9           |TEST CL,CL
+0043761C  |.^75 F9          \JNZ SHORT mpegable.00437617
+0043761E  |. 2BC2           SUB EAX,EDX
+00437620  |. 83F8 08        CMP EAX,8
+00437623     0F85 85000000  JNZ mpegable.004376AE
+
+Hmm... what is at the address 004376AE, well let's take a look, either scroll down or go to it via 'Ctrl+G'. You will find this:
+
+004376AE  |> 8B55 08        MOV EDX,DWORD PTR SS:[EBP+8]
+004376B1  |. 8D8424 2001000>LEA EAX,DWORD PTR SS:[ESP+120]
+004376B8  |. 50             PUSH EAX
+004376B9  |. 8D4C24 24      LEA ECX,DWORD PTR SS:[ESP+24]
+004376BD  |. 51             PUSH ECX
+004376BE  |. 52             PUSH EDX
+004376BF  |. E8 6CFCFFFF    CALL mpegable._GenKeyEx@12
+
+Now doesn't this look interesting; especially the last line. GenKeyEx@12, that certainly looks like a call we should check out, so we need to make sure our conditional jump is taken, well it is comparing eax with 8 and if eax doesn't equal 8 it will jump. How can we make it so tha eax doesn't equal 8? Simple! Change the line SUB EAX,EDX to XOR EAX,EAX that way EAX will = 0 and will never equal 8, so the jump will take place. Ok so make the changes (you should know how by now), and press F8 until you get to the call:
+
+004376BF  |. E8 6CFCFFFF    CALL mpegable._GenKeyEx@12
+
+Then press F7 to enter it. You will land here:
+
+00437330 > $ 55             PUSH EBP
+
+Below that you can see the following code:
+
+00437331   . 8BEC           MOV EBP,ESP
+00437333   . 83E4 F8        AND ESP,FFFFFFF8
+00437336   . 81EC 00040000  SUB ESP,400
+0043733C   . 56             PUSH ESI
+0043733D   . 57             PUSH EDI
+0043733E   . 33C0           XOR EAX,EAX
+00437340   . C64424 08 00   MOV BYTE PTR SS:[ESP+8],0
+00437345   . B9 FF000000    MOV ECX,0FF
+0043734A   . 8D7C24 09      LEA EDI,DWORD PTR SS:[ESP+9]
+0043734E   . F3:AB          REP STOS DWORD PTR ES:[EDI]
+00437350   . 66:AB          STOS WORD PTR ES:[EDI]
+00437352   . AA             STOS BYTE PTR ES:[EDI]
+00437353   . 8B45 08        MOV EAX,DWORD PTR SS:[EBP+8]
+00437356   . 50             PUSH EAX
+00437357   . E8 D4FDFFFF    CALL mpegable.00437130
+0043735C   . 83C4 04        ADD ESP,4
+0043735F   . 85C0           TEST EAX,EAX
+00437361   . 7D 44          JGE SHORT mpegable.004373A7
+00437363   . 8B15 54434700  MOV EDX,DWORD PTR DS:[474354]
+00437369   . 8B4D 0C        MOV ECX,DWORD PTR SS:[EBP+C]
+0043736C   . 8911           MOV DWORD PTR DS:[ECX],EDX
+0043736E   . A1 58434700    MOV EAX,DWORD PTR DS:[474358]
+00437373   . 8941 04        MOV DWORD PTR DS:[ECX+4],EAX
+00437376   . 8B15 5C434700  MOV EDX,DWORD PTR DS:[47435C]
+0043737C   . 8951 08        MOV DWORD PTR DS:[ECX+8],EDX
+0043737F   . A1 60434700    MOV EAX,DWORD PTR DS:[474360]
+00437384   . 8941 0C        MOV DWORD PTR DS:[ECX+C],EAX
+00437387   . 8B15 64434700  MOV EDX,DWORD PTR DS:[474364]
+0043738D   . 8951 10        MOV DWORD PTR DS:[ECX+10],EDX
+00437390   . 66:A1 68434700 MOV AX,WORD PTR DS:[474368]
+00437396   . 66:8941 14     MOV WORD PTR DS:[ECX+14],AX
+0043739A   . B8 0E000000    MOV EAX,0E
+0043739F   . 5F             POP EDI
+004373A0   . 5E             POP ESI
+004373A1   . 8BE5           MOV ESP,EBP
+004373A3   . 5D             POP EBP
+004373A4   . C2 0C00        RETN 0C
+004373A7   > A1 80414800    MOV EAX,DWORD PTR DS:[484180]
+004373AC   . 8D50 01        LEA EDX,DWORD PTR DS:[EAX+1]
+004373AF   . 90             NOP
+004373B0   > 8A08           MOV CL,BYTE PTR DS:[EAX]
+004373B2   . 40             INC EAX
+004373B3   . 84C9           TEST CL,CL
+004373B5   .^75 F9          JNZ SHORT mpegable.004373B0
+004373B7   . 2BC2           SUB EAX,EDX
+004373B9   . 83F8 08        CMP EAX,8
+004373BC     73 1C          JNB SHORT mpegable.004373DA
+004373BE   . 8B7D 0C        MOV EDI,DWORD PTR SS:[EBP+C]
+004373C1   . B9 0B000000    MOV ECX,0B
+004373C6   . BE 28434700    MOV ESI,mpegable.00474328                ;  ASCII "<reg_name> must have at least 8 characters!"
+004373CB   . F3:A5          REP MOVS DWORD PTR ES:[EDI],DWORD PTR DS>
+004373CD   . B8 0E000000    MOV EAX,0E
+004373D2   . 5F             POP EDI
+004373D3   . 5E             POP ESI
+004373D4   . 8BE5           MOV ESP,EBP
+004373D6   . 5D             POP EBP
+004373D7   . C2 0C00        RETN 0C
+004373DA   > A1 84414800    MOV EAX,DWORD PTR DS:[484184]
+004373DF   . 8D50 01        LEA EDX,DWORD PTR DS:[EAX+1]
+004373E2   > 8A08           MOV CL,BYTE PTR DS:[EAX]
+004373E4   . 40             INC EAX
+004373E5   . 84C9           TEST CL,CL
+004373E7   .^75 F9          JNZ SHORT mpegable.004373E2
+004373E9   . 2BC2           SUB EAX,EDX
+004373EB   . 83F8 08        CMP EAX,8
+004373EE     73 1D          JNB SHORT mpegable.0043740D
+004373F0   . 8B7D 0C        MOV EDI,DWORD PTR SS:[EBP+C]
+004373F3   . B9 0A000000    MOV ECX,0A
+004373F8   . BE FC424700    MOV ESI,mpegable.004742FC                ;  ASCII "<email> must have at least 8 characters!"
+004373FD   . F3:A5          REP MOVS DWORD PTR ES:[EDI],DWORD PTR DS>
+004373FF   . A4             MOVS BYTE PTR ES:[EDI],BYTE PTR DS:[ESI]
+00437400   . B8 0E000000    MOV EAX,0E
+00437405   . 5F             POP EDI
+00437406   . 5E             POP ESI
+00437407   . 8BE5           MOV ESP,EBP
+00437409   . 5D             POP EBP
+0043740A   . C2 0C00        RETN 0C
+
+Ok, that may seem overwhelming, but it's pretty simple really, you just have to think logically. Ok, the important things to look for and examine are calls and conditional jumps. Our first call is:
+
+00437357   . E8 D4FDFFFF    CALL mpegable.00437130
+
+However that address should be familiar to you, because if you go there you will see that is the place we were at earlier where it goes through each of your registration details, we won't need to enter that call because we took care of that earlier. The next thing of importance is:
+
+0043735F   . 85C0           TEST EAX,EAX
+00437361   . 7D 44          JGE SHORT mpegable.004373A7
+
+Do we want to take this jump? Well what is at 4373A7, this is:
+
+004373A7   > A1 80414800    MOV EAX,DWORD PTR DS:[484180]
+
+Do we want to to jump there? Well what happens if we don't? We will end up executing this command:
+
+004373A4   . C2 0C00        RETN 0C
+
+Which we really don't want to do, so the first thing we need to do is take care of this conditional jump. Well TEST EAX,EAX just checks if EAX = 0, and the conditional jump wants EAX to be greater than or equal to 0, so if we changed to line above it:
+
+0043735F     33C0           TEST EAX,EAX
+
+to:
+
+0043735F     33C0           XOR EAX,EAX
+
+Then EAX would be 0, and would be equal to, and thus the jump would take place.
+
+So press F8 until you get to here:
+
+004373A7   > A1 80414800    MOV EAX,DWORD PTR DS:[484180]
+004373AC   . 8D50 01        LEA EDX,DWORD PTR DS:[EAX+1]
+004373AF   . 90             NOP
+004373B0   > 8A08           MOV CL,BYTE PTR DS:[EAX]
+004373B2   . 40             INC EAX
+004373B3   . 84C9           TEST CL,CL
+004373B5   .^75 F9          JNZ SHORT mpegable.004373B0
+
+Once again what will happen if we take the jump? Well we'll just end up in a loop,
+which we really don't want. Well in this case we have to make sure CL equals 0.
+You can either do this:
+
+004373B3     84C9           XOR CL,CL	// Does CL = 0?
+004373B5    ^75 F9          JNZ SHORT mpegable.004373B0	// CL = 0 so don't jump.
+
+Or you can just NOP the JNZ SHORT, whichever you want, both work.
+
+So make the changes and keep pressing F8 until you get to here:
+
+004373B7   . 2BC2           SUB EAX,EDX	// EAX = EAX - EDX
+004373B9   . 83F8 08        CMP EAX,8	// Does EAX = 8?
+004373BC     73 1C          JNB SHORT mpegable.004373DA	// If it isn't below 8 then jump
+004373BE   . 8B7D 0C        MOV EDI,DWORD PTR SS:[EBP+C]
+004373C1   . B9 0B000000    MOV ECX,0B
+004373C6   . BE 28434700    MOV ESI,mpegable.00474328                ;  ASCII "<reg_name> must have at least 8 characters!"
+004373CB   . F3:A5          REP MOVS DWORD PTR ES:[EDI],DWORD PTR DS>
+004373CD   . B8 0E000000    MOV EAX,0E
+004373D2   . 5F             POP EDI
+004373D3   . 5E             POP ESI
+004373D4   . 8BE5           MOV ESP,EBP
+004373D6   . 5D             POP EBP
+004373D7   . C2 0C00        RETN 0C
+
+So, if you examine the above code you can work out that if we don't jump we will get bad messages, which we don't want so, let's make sure we jump. Do the following changes:
+
+
+004373B7   . 2BC2           SUB EAX,EDX
+004373B9   . 83F8 08        CMP EAX,8
+
+to:
+
+004373B7   . 2BC2           XOR EAX,EAX	// Make EAX = 0
+004373B9   . 83F8 08        CMP EAX,0	// Does EAX = 0?
+
+So now we'll always jump, make the changes and keep pressing F8 until you get to here:
+
+004373DA   > A1 84414800    MOV EAX,DWORD PTR DS:[484184]
+004373DF   . 8D50 01        LEA EDX,DWORD PTR DS:[EAX+1]
+004373E2   > 8A08           MOV CL,BYTE PTR DS:[EAX]
+004373E4   . 40             INC EAX
+004373E5   . 84C9           TEST CL,CL
+004373E7   .^75 F9          JNZ SHORT mpegable.004373E2
+004373E9   . 2BC2           SUB EAX,EDX
+004373EB   . 83F8 08        CMP EAX,8
+004373EE     73 1D          JNB SHORT mpegable.0043740D
+004373F0   . 8B7D 0C        MOV EDI,DWORD PTR SS:[EBP+C]
+004373F3   . B9 0A000000    MOV ECX,0A
+004373F8   . BE FC424700    MOV ESI,mpegable.004742FC                ;  ASCII "<email> must have at least 8 characters!"
+004373FD   . F3:A5          REP MOVS DWORD PTR ES:[EDI],DWORD PTR DS>
+004373FF   . A4             MOVS BYTE PTR ES:[EDI],BYTE PTR DS:[ESI]
+00437400   . B8 0E000000    MOV EAX,0E
+00437405   . 5F             POP EDI
+00437406   . 5E             POP ESI
+00437407   . 8BE5           MOV ESP,EBP
+00437409   . 5D             POP EBP
+0043740A   . C2 0C00        RETN 0C
+
+Once again we have the same thing, this time with our email address instead. Change:
+
+004373E5   . 84C9           TEST CL,CL
+
+to:
+
+004373E5   . 84C9           XOR CL,CL // So CL = 0
+
+So that we never jump (loop), then change:
+
+004373E9   . 2BC2           SUB EAX,EDX
+004373EB   . 83F8 08        CMP EAX,8
+
+to:
+
+004373E9   . 2BC2           XOR EAX,EAX // EAX = 0
+004373EB   . 83F8 08        CMP EAX,0 // Does EAX = 0?
+
+So that we take the conditional jump, once you have done that keep pressing F8 until you land here:
+
+0043740D   > 8D4424 08      LEA EAX,DWORD PTR SS:[ESP+8]
+00437411   . 8D50 01        LEA EDX,DWORD PTR DS:[EAX+1]
+00437414   > 8A08           MOV CL,BYTE PTR DS:[EAX]
+00437416   . 40             INC EAX
+00437417   . 84C9           TEST CL,CL
+00437419   .^75 F9          JNZ SHORT mpegable.00437414	// Loop, we don't want that
+0043741B   . 2BC2           SUB EAX,EDX
+0043741D   . 83F8 40        CMP EAX,40
+00437420     0F83 9C000000  JNB mpegable.004374C2
+00437426     EB 08          JMP SHORT mpegable.00437430
+00437428     8DA424 0000000>LEA ESP,DWORD PTR SS:[ESP]
+0043742F   . 90             NOP
+00437430   > 8B0D 80414800  MOV ECX,DWORD PTR DS:[484180]
+00437436   . 51             PUSH ECX
+00437437   . E8 B2440000    CALL mpegable.0043B8EE
+0043743C   . 83C4 04        ADD ESP,4
+0043743F   . 8BD0           MOV EDX,EAX
+00437441   > 8A08           MOV CL,BYTE PTR DS:[EAX]
+00437443   . 40             INC EAX
+00437444   . 84C9           TEST CL,CL
+00437446   .^75 F9          JNZ SHORT mpegable.00437441	// Don't want a loop
+00437448   . 8D7C24 08      LEA EDI,DWORD PTR SS:[ESP+8]
+0043744C   . 2BC2           SUB EAX,EDX
+0043744E   . 4F             DEC EDI
+0043744F   . 90             NOP
+00437450   > 8A4F 01        MOV CL,BYTE PTR DS:[EDI+1]
+00437453   . 47             INC EDI
+00437454   . 84C9           TEST CL,CL
+00437456   .^75 F8          JNZ SHORT mpegable.00437450	// Don't want a loop
+00437458   . 8BC8           MOV ECX,EAX
+0043745A   . C1E9 02        SHR ECX,2
+0043745D   . 8BF2           MOV ESI,EDX
+0043745F   . 8B15 84414800  MOV EDX,DWORD PTR DS:[484184]
+00437465   . F3:A5          REP MOVS DWORD PTR ES:[EDI],DWORD PTR DS>
+00437467   . 8BC8           MOV ECX,EAX
+00437469   . 83E1 03        AND ECX,3
+0043746C   . 52             PUSH EDX
+0043746D   . F3:A4          REP MOVS BYTE PTR ES:[EDI],BYTE PTR DS:[>
+0043746F   . E8 7A440000    CALL mpegable.0043B8EE
+00437474   . 83C4 04        ADD ESP,4
+00437477   . 8BC8           MOV ECX,EAX
+00437479   . 8DA424 0000000>LEA ESP,DWORD PTR SS:[ESP]
+00437480   > 8A10           MOV DL,BYTE PTR DS:[EAX]
+00437482   . 40             INC EAX
+00437483   . 84D2           TEST DL,DL
+00437485   .^75 F9          JNZ SHORT mpegable.00437480	// Don't want a loop
+00437487   . 8D7C24 08      LEA EDI,DWORD PTR SS:[ESP+8]
+0043748B   . 2BC1           SUB EAX,ECX
+0043748D   . 8BF1           MOV ESI,ECX
+0043748F   . 4F             DEC EDI
+00437490   > 8A4F 01        MOV CL,BYTE PTR DS:[EDI+1]
+00437493   . 47             INC EDI
+00437494   . 84C9           TEST CL,CL
+00437496   .^75 F8          JNZ SHORT mpegable.00437490	// Don't want a loop
+00437498   . 8BC8           MOV ECX,EAX
+0043749A   . C1E9 02        SHR ECX,2
+0043749D   . F3:A5          REP MOVS DWORD PTR ES:[EDI],DWORD PTR DS>
+0043749F   . 8BC8           MOV ECX,EAX
+004374A1   . 83E1 03        AND ECX,3
+004374A4   . 8D4424 08      LEA EAX,DWORD PTR SS:[ESP+8]
+004374A8   . F3:A4          REP MOVS BYTE PTR ES:[EDI],BYTE PTR DS:[>
+004374AA   . 8D50 01        LEA EDX,DWORD PTR DS:[EAX+1]
+004374AD   . 8D49 00        LEA ECX,DWORD PTR DS:[ECX]
+004374B0   > 8A08           MOV CL,BYTE PTR DS:[EAX]
+004374B2   . 40             INC EAX
+004374B3   . 84C9           TEST CL,CL
+004374B5   .^75 F9          JNZ SHORT mpegable.004374B0	// Don't want a loop
+004374B7   . 2BC2           SUB EAX,EDX
+004374B9   . 83F8 40        CMP EAX,40
+004374BC   .^0F82 6EFFFFFF  JB mpegable.00437430
+004374C2   > A1 88414800    MOV EAX,DWORD PTR DS:[484188]
+004374C7   . 8BC8           MOV ECX,EAX
+004374C9   . 8D71 01        LEA ESI,DWORD PTR DS:[ECX+1]
+004374CC   . 8D6424 00      LEA ESP,DWORD PTR SS:[ESP]
+004374D0   > 8A11           MOV DL,BYTE PTR DS:[ECX]
+004374D2   . 41             INC ECX
+004374D3   . 84D2           TEST DL,DL
+004374D5   .^75 F9          JNZ SHORT mpegable.004374D0	// Loop we don't want that
+004374D7   . 2BCE           SUB ECX,ESI
+004374D9   . 8D5424 48      LEA EDX,DWORD PTR SS:[ESP+48]
+004374DD   . 2BD1           SUB EDX,ECX
+004374DF   . C602 00        MOV BYTE PTR DS:[EDX],0
+004374E2   . 8BC8           MOV ECX,EAX
+004374E4   > 8A10           MOV DL,BYTE PTR DS:[EAX]
+004374E6   . 40             INC EAX
+004374E7   . 84D2           TEST DL,DL
+004374E9   .^75 F9          JNZ SHORT mpegable.004374E4	// Loop we don't want that
+004374EB   . 8D7C24 08      LEA EDI,DWORD PTR SS:[ESP+8]
+004374EF   . 2BC1           SUB EAX,ECX
+004374F1   . 8BF1           MOV ESI,ECX
+004374F3   . 4F             DEC EDI
+004374F4   > 8A4F 01        MOV CL,BYTE PTR DS:[EDI+1]
+004374F7   . 47             INC EDI
+004374F8   . 84C9           TEST CL,CL
+004374FA   .^75 F8          JNZ SHORT mpegable.004374F4	// Loop we don't want that
+004374FC   . 8BC8           MOV ECX,EAX
+004374FE   . C1E9 02        SHR ECX,2
+00437501   . F3:A5          REP MOVS DWORD PTR ES:[EDI],DWORD PTR DS>
+00437503   . 8BC8           MOV ECX,EAX
+00437505   . 8D4424 08      LEA EAX,DWORD PTR SS:[ESP+8]
+00437509   . 83E1 03        AND ECX,3
+0043750C   . 50             PUSH EAX
+0043750D   . F3:A4          REP MOVS BYTE PTR ES:[EDI],BYTE PTR DS:[>
+0043750F   . E8 DCFCFFFF    CALL mpegable.004371F0
+00437514   . 8B4D 10        MOV ECX,DWORD PTR SS:[EBP+10]
+00437517   . 8BFA           MOV EDI,EDX
+00437519   . 57             PUSH EDI
+0043751A   . 8BF0           MOV ESI,EAX
+0043751C   . 56             PUSH ESI
+0043751D   . 68 F0424700    PUSH mpegable.004742F0                   ;  ASCII "%020I64u"
+00437522   . 51             PUSH ECX
+00437523   . E8 822B0000    CALL mpegable.0043A0AA
+00437528   . A1 90414800    MOV EAX,DWORD PTR DS:[484190]
+0043752D   . 8B15 84414800  MOV EDX,DWORD PTR DS:[484184]
+00437533   . 8B4D 0C        MOV ECX,DWORD PTR SS:[EBP+C]
+00437536   . 83C4 14        ADD ESP,14
+00437539   . 57             PUSH EDI
+0043753A   . 56             PUSH ESI
+0043753B   . 83F8 02        CMP EAX,2
+0043753E   . A1 80414800    MOV EAX,DWORD PTR DS:[484180]
+00437543   . 52             PUSH EDX
+00437544   . 50             PUSH EAX
+00437545   . 75 18          JNZ SHORT mpegable.0043755F	// Leads to returning from whence we came, not a good idea.
+00437547   . 68 C0424700    PUSH mpegable.004742C0
+0043754C   . 51             PUSH ECX
+0043754D   . E8 582B0000    CALL mpegable.0043A0AA
+00437552   . 83C4 18        ADD ESP,18
+00437555   . 33C0           XOR EAX,EAX
+00437557   . 5F             POP EDI
+00437558   . 5E             POP ESI
+00437559   . 8BE5           MOV ESP,EBP
+0043755B   . 5D             POP EBP
+0043755C   . C2 0C00        RETN 0C
+0043755F   > 68 98424700    PUSH mpegable.00474298                   ;  ASCII "Username: %s
+Email: %s 
+Key: %020I64u"
+00437564   . 51             PUSH ECX
+00437565   . E8 402B0000    CALL mpegable.0043A0AA
+0043756A   . 83C4 18        ADD ESP,18
+0043756D   . 5F             POP EDI
+0043756E   . 33C0           XOR EAX,EAX
+00437570   . 5E             POP ESI
+00437571   . 8BE5           MOV ESP,EBP
+00437573   . 5D             POP EBP
+00437574   . C2 0C00        RETN 0C
+
+Ok so this is a lot, but read through it step by step. Ok make the following changes:
+
+00437417   . 32C9           XOR CL,CL
+00437420     E9 9D000000    JMP mpegable.004374C2
+00437425     90             NOP
+00437444   . 84C9           XOR CL,CL
+00437454   . 84C9           XOR CL,CL
+00437483   . 84D2           XOR DL,DL
+00437494   . 84C9           XOR CL,CL
+004374B3   . 84C9           XOR CL,CL
+004374BC     90             NOP
+004374BD     90             NOP
+004374BE     90             NOP
+004374BF     90             NOP
+004374C0     90             NOP
+004374C1     90             NOP
+004374D3     32D2           XOR DL,DL
+004374E7     32D2           XOR DL,DL
+004374F8     32C9           XOR CL,CL
+004376C4  |. 85C0           XOR EAX,EAX
+0043771D     33C0           XOR EAX,EAX
+
+Now here is the challenge, try and figure out why I've made those changes? You can't be, and shouldn't be spoonfed everything, also try and find another way of doing things, I took the long (the extremely long) way round for this, I did this to introduce you to different code, bring a you a new experience, and also for me to write my longest tutorial to date.
+Remember if you use the application then buy it!
+============================================================================
+SHOUTZ AND GREETZ:
+To Kyrstie, I love you with all my heart 4eva neva n always. 8-) To exetools.com/forum, dob2.com, tech-arena.com, Hoof Arted for inspiring me to write tutorials for OllyDbg, the creators of mpegable Broadcaster, and OllyDbg. LONG LIVE THE ARTEAM!
+============================================================================

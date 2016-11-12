@@ -1,0 +1,238 @@
+*************************************************************************************************TITLE:
+Cracking tutorial for WebWhacker 5.0 
+*************************************************************************************************
+BEST VIEWED:
+Notepad with word wrap enabled, and in restored window mode
+*************************************************************************************************
+TOOLS USED:
+Ollydbg v1.09d
+*************************************************************************************************TARGET:
+ww.exe & ix.dll
+*************************************************************************************************LOCATION OF TOOLS AND PROGRAM:
+Ollydbg v1.09d http://www.grinders.withernsea.com/tools/odbg109d.rar
+WebWhacker 5.0  http://www.grinders.withernsea.com/tools/WebWhacker5Setup.rar
+*************************************************************************************************
+CONTACT INFORMATION:
+vinceandjane@hotmail.com
+*************************************************************************************************
+TUTORIAL WRITTEN:
+05/03/2004
+*************************************************************************************************
+AUTHOR:
+Pompeyfan
+*************************************************************************************************
+
+Okay,lets attack our target, open Olly, and if you haven't done so already, to make things easier for yourself, right click, select appearance/highlighting/jumps'n'calls, makes things so much easier to follow.
+
+Now I tried finding a valid serial for quite a while, but to no avail, so what we are going to do is crack the trial period so that it never expires.
+
+Firstly though, I registered the thing, so at least you don't keep getting asked to register the damn thing everytime you open the program, pretty easily done over the net, give any details you like really.
+
+Now, on with the crack!!!
+
+Open ww.exe in Olly, and you land here:
+
+0045E42C >/$ 55             PUSH EBP
+
+Press F9 run, and you get an evaluation notice telling you how many days you have left, lets just click back on the Olly cpu screen, then F12 (pause), and Alt & K to bring up the call stack:
+
+Call stack of main thread
+Address    Stack      Procedure / arguments                 Called from                   Frame
+0012F2E8   77D43A09   Includes 7FFE0304                     USER32.77D43A07               0012F30C
+0012F2EC   77D443B5   USER32.77D439FD                       USER32.77D443B0               0012F30C
+0012F310   10058ACD   USER32.GetMessageA                    IX.10058AC7                   0012F30C
+0012F314   1007F890     pMsg = IX.1007F890
+0012F318   00000000     hWnd = NULL
+0012F31C   00000000     MsgFilterMin = 0
+0012F320   00000000     MsgFilterMax = 0
+0012F32C   1005646D   Includes IX.10058ACD                  IX.1005646A
+0012F350   10053A22   IX.10056393                           IX.10053A1D
+0012F38C   1001211D   ? IX.10053941                         IX.10012118
+0012F87C   10020998   IX.10011EB0                           IX.10020993
+0012F8A4   004158F0   Includes IX.10020998                  WW.004158ED
+0012F8C0   00449AAB   WW.004158D0                           WW.00449AA6
+0012F934   0044911B   WW.004497D0                           WW.00449116
+0012F938   0012F8D4     Arg1 = 0012F8D4
+0012FF14   004B6D0D   Includes WW.0044911B                  WW.004B6D0A
+0012FF24   004AA9DC   ? WW.004B6CC6                         WW.004AA9D7
+0012FF38   0045E50C   ? WW.004AA9C7                         WW.<ModuleEntryPoint>+0DB
+
+Okay, looks to me like the real checking is done in the ix.dll file, now lets click on the E on your toolbar or Alt & E (whichever you prefer), bring up the active modules, then double click on ix.dll, now Right click/search for all referenced text strings, funny thing is a text search for "trial" and "evaluation" bring up nothing.
+
+Okay, try this, bring up your active modules again, now right click on ix.dll, and select view resource strings, ah looks more interesting eh!!!
+
+This line looks interesting:
+
+Resource strings in module IX, item 41
+ Address=10094BFA
+ Index= 5260 (21088.)
+ Language=0409 English (US)
+ String=Your evaluation period has expired.
+
+Unfortunately you have no easy way of going from here to find all references for the command, best bet is to take note of the index number (5260), then go back to the cpu window and right click/search for/all sequences and type in the box "PUSH 5260", without the quotation marks, and click on find, and you get this:
+
+Found sequences
+Address    Disassembly                               Comment
+10001000   PUSH -1                                   (Initial CPU selection)
+10016CE4   PUSH 5260
+10016D04   PUSH 5260
+10016D37   PUSH 5260
+
+Okay, double click on the first one, and it takes you here:
+
+10016CE4   68 60520000      PUSH 5260
+
+Okay, I played around with this section for ages, and I could get rid of evaluation notice, but whenever you put your clock forward, you get the expired message, even if you try and bypass all the push 5260 messages, so I decided I needed to dig deeper, look further up to here:
+
+10016C71   E8 5A83FFFF      CALL IX.GetEvalTimeRemaining
+
+Left click on it once, and in the little window below, you see 1000EFD0=IX.GetEvalTimeRemaining
+
+Okay, right click/go to expression and enter 1000EFD0, and you are here:
+
+1000EFD0 > 56               PUSH ESI
+
+Then on this line, right click/find references to selected command, and you get this:
+
+References in IX:.text to GetEvalTimeRemaining
+Address    Disassembly                               Comment
+1000EDD9   CALL IX.GetEvalTimeRemaining
+1000EFD0   PUSH ESI                                  (Initial CPU selection)
+100126B1   CALL IX.GetEvalTimeRemaining
+10012710   CALL IX.GetEvalTimeRemaining
+10016C71   CALL IX.GetEvalTimeRemaining
+
+Now double click on the first line, and you are here:
+
+1000EDD9   E8 F2010000      CALL IX.GetEvalTimeRemaining
+1000EDDE   85C0             TEST EAX,EAX
+1000EDE0   77 05            JA SHORT IX.1000EDE7
+1000EDE2   800E 10          OR BYTE PTR DS:[ESI],10
+1000EDE5   EB 03            JMP SHORT IX.1000EDEA
+1000EDE7   8026 EF          AND BYTE PTR DS:[ESI],0EF
+1000EDEA   56               PUSH ESI
+1000EDEB   E8 30000000      CALL IX.GetIsPurchased
+1000EDF0   85C0             TEST EAX,EAX
+1000EDF2   74 11            JE SHORT IX.1000EE05
+1000EDF4   66:8B06          MOV AX,WORD PTR DS:[ESI]
+1000EDF7   24 F7            AND AL,0F7
+1000EDF9   0C 20            OR AL,20
+1000EDFB   66:8906          MOV WORD PTR DS:[ESI],AX
+1000EDFE   5E               POP ESI
+1000EDFF   0FBFC0           MOVSX EAX,AX
+1000EE02   C2 0400          RETN 4
+
+Okay, I played around with this a bit, but to test it out, you have to make changes permanent, or they will be lost when you restart program ( so back up your ix.dll file, so you can restore it if changes don't work out), so firstly try nopping the jump at 1000EDE0, obviously to make it permanent you have to then Right click/copy to executable/all modifications/copy all, and then right click on new box that comes up/save file, double click on the file to overwrite and select yes to overwrite.
+
+P.S. For any newbies, to nop this jump, left click on the line once, then right click/binary/fill with nops.
+ 
+Now, restart Olly (Ctrl & F2), then F9 (run), and you get the message "WebWhacker encountered error WS0345. Please contact, bla, bla, bla", lets just click back on the Olly cpu screen, then F12 (pause), and Alt & K to bring up the call stack:
+
+Call stack of main thread
+Address    Stack      Procedure / arguments                 Called from                   Frame
+0012F2BC   77D43C53   Includes 7FFE0304                     USER32.77D43C51               0012F2F0
+0012F2C0   77D4B3F2   USER32.WaitMessage                    USER32.77D4B3ED               0012F2F0
+0012F2F4   77D4D9A0   USER32.77D4B265                       USER32.77D4D99B               0012F2F0
+0012F31C   77D6AE8E   USER32.77D4D8EC                       USER32.77D6AE89               0012F318
+0012F5D4   77D6A911   ? USER32.SoftModalMessageBox          USER32.77D6A90C               0012F55C
+0012F71C   77D6AFD5   ? USER32.77D6A7D7                     USER32.77D6AFD0               0012F6A4
+0012F774   77D6B0BD   USER32.MessageBoxTimeoutW             USER32.77D6B0B8               0012F770
+0012F7A8   77D6B04A   ? USER32.MessageBoxTimeoutA           USER32.77D6B045               0012F7A4
+0012F7C8   77D6B02E   ? USER32.MessageBoxExA                USER32.77D6B029               0012F7C4
+0012F7CC   00000000     hOwner = NULL
+0012F7D0   00511BE8     Text = "WebWhacker encountered err
+0012F7D4   012023F8     Title = "WebWhacker"
+0012F7D8   00000030     Style = MB_OK|MB_ICONEXCLAMATION|M
+0012F7DC   00000000     LanguageID = 0 (LANG_NEUTRAL)
+0012F7E0   004BBDEB   ? USER32.MessageBoxA                  WW.004BBDE5
+0012F7E4   00000000     hOwner = NULL
+0012F7E8   00511BE8     Text = "WebWhacker encountered err
+0012F7EC   012023F8     Title = "WebWhacker"
+0012F7F0   00000030     Style = MB_OK|MB_ICONEXCLAMATION|M
+
+Okay, it is generated by ww.exe, no mention of ix.dll here, so I restart ww.exe (ctrl & F2), then right click/search for all referenced text strings, then left click on 1st line once, then right click/ search for text, and enter "WS0345", without the quotation marks, and you get this:
+
+Text strings referenced in WW:.text, item 670
+ Address=004490C4
+ Disassembly=PUSH WW.00511BE8
+ Text string=ASCII "WebWhacker encountered error WS0345.
+Please contact Blue Squirrel for assistance.
+(801)352-1551"
+
+Double click on this, and you are here:
+
+004490C4   . 68 E81B5100    PUSH WW.00511BE8                         ; |Arg1 = 00511BE8 ASCII "WebWhacker encountered error WS0345.
+Please contact Blue Squirrel for assistance.
+(801)352-1551"
+
+Here is the relevant section of code to work on:
+
+00449094   > 50             PUSH EAX                                 ; /Arg1
+00449095   . 8D4C24 68      LEA ECX,DWORD PTR SS:[ESP+68]            ; |
+00449099   . E8 523CFEFF    CALL WW.0042CCF0                         ; \WW.0042CCF0
+0044909E   . 84C0           TEST AL,AL
+004490A0   . 74 1E          JE SHORT WW.004490C0
+004490A2   . B1 01          MOV CL,1
+004490A4   . 33C0           XOR EAX,EAX
+004490A6   > 84C9           TEST CL,CL
+004490A8   . 74 16          JE SHORT WW.004490C0
+004490AA   . 8A5404 64      MOV DL,BYTE PTR SS:[ESP+EAX+64]
+004490AE   . 3A5404 48      CMP DL,BYTE PTR SS:[ESP+EAX+48]
+004490B2   . 74 02          JE SHORT WW.004490B6
+004490B4   . 32C9           XOR CL,CL
+004490B6   > 40             INC EAX
+004490B7   . 83F8 10        CMP EAX,10
+004490BA   .^72 EA          JB SHORT WW.004490A6
+004490BC   . 84C9           TEST CL,CL
+004490BE   . 75 51          JNZ SHORT WW.00449111
+004490C0   > 6A 00          PUSH 0                                   ; /Arg3 = 00000000
+004490C2   . 6A 00          PUSH 0                                   ; |Arg2 = 00000000
+004490C4   . 68 E81B5100    PUSH WW.00511BE8                         ; |Arg1 = 00511BE8 ASCII "WebWhacker encountered error WS0345.
+Please contact Blue Squirrel for assistance.
+(801)352-1551"
+004490C9   . E8 4C2D0700    CALL WW.004BBE1A                         ; \WW.004BBE1A
+
+OKay, my guess is that we want to jump to oo449111 to avoid the error message, so lets nop the jumps at 004490A0, 004490A8, 004490B2 & 004490BA , then change the JNZ at 004490BE to JMP, seems to easy a solution, but guess what, it fucking works!!!
+
+P.S. For any newbies, to nop these jumps, left click on each line once, then right click/binary/fill with nops. Then to alter the JNZ to JMP, left click once on the line, then Right click/Assemble, make the changes & hit assemble, then close the box.
+
+Okay, restart Olly (Ctrl & F2), press F9 (run), oh shit we still get the evaluation notice, lets go back to that section of code we had before, in particular:
+
+1000EDEB   E8 30000000      CALL IX.GetIsPurchased
+1000EDF0   85C0             TEST EAX,EAX
+1000EDF2   74 11            JE SHORT IX.1000EE05
+1000EDF4   66:8B06          MOV AX,WORD PTR DS:[ESI]
+1000EDF7   24 F7            AND AL,0F7
+1000EDF9   0C 20            OR AL,20
+1000EDFB   66:8906          MOV WORD PTR DS:[ESI],AX
+1000EDFE   5E               POP ESI
+1000EDFF   0FBFC0           MOVSX EAX,AX
+1000EE02   C2 0400          RETN 4
+1000EE05   66:8B0E          MOV CX,WORD PTR DS:[ESI]
+
+OKay, I think this line is the culprit:
+
+1000EDF2   74 11            JE SHORT IX.1000EE05
+
+It jumps beyond the RETN 4, so lets try nopping it (by now even the newbies should be able to do this).
+
+NOw lets restart ww.exe in Olly (Ctrl & F2), then F9 run, okay so we hit access violations, so bloody what, just shift and F9 twice and program opens, no evaluation screen, sounds prommising!.
+
+Okay, put your clock forward a month or a year, whatever you like, and open ww.exe, voila!, opens fine and is fully functional, well done cracker!!!
+
+Funny thing is, if you noticed above, when I did a search above for References in IX:.text to GetEvalTimeRemaining, their was mention of other calls, those being:
+
+100126B1   CALL IX.GetEvalTimeRemaining
+10012710   CALL IX.GetEvalTimeRemaining
+10016C71   CALL IX.GetEvalTimeRemaining
+
+But we only needed to change the first one, 1000EDD9   CALL IX.GetEvalTimeRemaining, to kill the trial, I thought I would have to mess with all these. I guess if any problems develop down the track, these calls would be the place to look.
+
+And remember, if you use the program, buy it ,software developers rely on the income from sales to keep going, if nobody buys, no new software would be developed.
+
+*************************************************************************************************
+SHOUTZ AND GREETZ:
+
+To exetools forum, tsrh forum, Ollydbg forum, Ricardo Narvaja, Kruger, Satyric0n, R@dier, LaBBa, Nilrem & Ferarri whoose tuts have helped me more than any others , Ollydbg, my brother for asking me to crack this application, and the authors of WebWhacker 5.0.
+
+*************************************************************************************************

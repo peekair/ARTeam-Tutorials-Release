@@ -1,0 +1,321 @@
+*************************************************************************************************TITLE:
+Cracking tutorial for SuperCleaner 2.67.0.0 
+*************************************************************************************************
+BEST VIEWED:
+Notepad with word wrap enabled, and in restored window mode
+*************************************************************************************************
+TOOLS USED:
+Ollydbg v1.09d
+*************************************************************************************************TARGET:
+SuperCleaner.exe
+*************************************************************************************************LOCATION OF TOOLS AND PROGRAM:
+Ollydbg v1.09d http://www.grinders.withernsea.com/tools/Ollydbg/odbg109d.rar
+SuperCleaner 2.67.0.0 http://www.grinders.withernsea.com/tools/CleanSetup.rar
+*************************************************************************************************
+CONTACT INFORMATION:
+vinceandjane@hotmail.com
+*************************************************************************************************
+TUTORIAL WRITTEN:
+24/03/2004
+*************************************************************************************************
+AUTHOR:
+Pompeyfan
+*************************************************************************************************
+
+Okay,lets attack our target, open Olly, and if you haven't done so already, to make things easier for yourself, right click, select appearance/highlighting/jumps'n'calls, makes things so much easier to follow.
+
+Okay, lets open the program in Olly, and you land here:
+
+0041FEC9 >/$ 55             PUSH EBP
+
+Press F9 run, and you get a dialogue box giving you the option to enter registration details amongst other things, so enter your fake details, I used Pompeyfan and 47806, and you get the message "Sorry, you have entered an incorrect registration code".
+
+No matter, left click once on the Olly cpu screen, then press F12 (pause), then Alt & K to bring up the call stack window, and you get this:
+
+Call stack of main thread
+Address    Stack      Procedure / arguments                 Called from                   Frame
+0012DFF8   77D43C53   Includes 7FFE0304                     USER32.77D43C51               0012E02C
+0012DFFC   77D4B3F2   USER32.WaitMessage                    USER32.77D4B3ED               0012E02C
+0012E030   77D4D9A0   USER32.77D4B265                       USER32.77D4D99B               0012E02C
+0012E058   77D6AE8E   USER32.77D4D8EC                       USER32.77D6AE89               0012E054
+0012E310   77D6A911   ? USER32.SoftModalMessageBox          USER32.77D6A90C               0012E298
+0012E458   77D6AFD5   ? USER32.77D6A7D7                     USER32.77D6AFD0               0012E3E0
+0012E4B0   77D6B0BD   USER32.MessageBoxTimeoutW             USER32.77D6B0B8               0012E4AC
+0012E4E4   77D6B04A   ? USER32.MessageBoxTimeoutA           USER32.77D6B045               0012E4E0
+0012E504   77D6B02E   ? USER32.MessageBoxExA                USER32.77D6B029               0012E500
+0012E508   0022013C     hOwner = 0022013C ('Register',clas
+0012E50C   0012E530     Text = "Sorry, you have entered an
+0012E510   0042D1AC     Title = "SuperCleaner"
+0012E514   00000000     Style = MB_OK|MB_APPLMODAL
+0012E518   00000000     LanguageID = 0 (LANG_NEUTRAL)
+0012E51C   0040DC08   ? USER32.MessageBoxA                  SuperCle.0040DC02
+0012E520   0022013C     hOwner = 0022013C ('Register',clas
+0012E524   0012E530     Text = "Sorry, you have entered an
+0012E528   0042D1AC     Title = "SuperCleaner"
+0012E52C   00000000     Style = MB_OK|MB_APPLMODAL
+0012E630   004191D0   ? SuperCle.0040DBC0                   SuperCle.004191CB
+0012E848   77D43A50   Includes SuperCle.004191D0            USER32.77D43A4D
+0012E874   77D4C675   ? USER32.77D43A35                     USER32.77D4C670
+0012E8E0   77D4C4E4   ? USER32.77D4C5C0                     USER32.77D4C4DF               0012E8DC
+0012E928   77D4C6D1   USER32.77D4C467                       USER32.77D4C6CC               0012E924
+0012E940   77D43A50   Includes USER32.77D4C6D1              USER32.77D43A4D               0012E968
+0012E96C   77D43B1F   ? USER32.77D43A35                     USER32.77D43B1A               0012E968
+0012E9D4   77D45453   ? USER32.77D43A68                     USER32.77D4544E               0012E9D0
+0012EA10   77D454B4   USER32.77D45383                       USER32.77D454AF               0012EA0C
+0012EA30   71981492   USER32.SendMessageW                   COMCTL32.7198148C             0012EA2C
+0012EA34   0022013C     hWnd = 22013C
+0012EA38   00000111     Message = WM_COMMAND
+0012EA3C   00000001     age = Notify = MENU/BN_CLICKED...
+0012EA40   000A029E     hControage = 000A029E ('&OK',class
+0012EA4C   7198156B   COMCTL32.71981458                     COMCTL32.71981566             0012EAE4
+0012EA68   7198376D   COMCTL32.71981497                     COMCTL32.71983768             0012EAE4
+0012EAE8   77D43A50   Includes COMCTL32.7198376D            USER32.77D43A4D               0012EAE4
+0012EB14   77D43B1F   ? USER32.77D43A35                     USER32.77D43B1A               0012EB10
+0012EB7C   77D43D79   ? USER32.77D43A68                     USER32.77D43D74               0012EB78
+0012EBDC   77D43DDF   ? USER32.77D43CA1                     USER32.77D43DDA               0012EBD8
+0012EBE8   77D4B1F5   ? USER32.DispatchMessageW             USER32.77D4B1F0
+0012EBEC   0012EC24     pMsg = WM_LBUTTONUP hw = A029E ("&
+0012EC0C   77D4B324   ? USER32.IsDialogMessageW             USER32.77D4B31F
+0012EC10   0022013C     hWnd = 0022013C ('Register',class=
+0012EC14   005AA6B0     pMsg = WM_DESTROY hw = A029E ("&OK
+0012EC48   77D4D9A0   USER32.77D4B265                       USER32.77D4D99B               0012EC44
+0012EC70   77D4D9DB   USER32.77D4D8EC                       USER32.77D4D9D6               0012EC6C
+0012EC90   77D656DE   USER32.DialogBoxIndirectParamAorW     USER32.77D656D9               0012EC8C
+0012ECBC   004193EA   USER32.DialogBoxParamA                SuperCle.004193E4             0012ECB8
+0012ECC0   00400000     hInst = 00400000
+0012ECC4   00000065     pTemplate = 65
+0012ECC8   00110132     hOwner = 00110132 (class='#32770')
+0012ECCC   004190D0     DlgProc = SuperCle.004190D0
+0012ECD0   00000000     lParam = NULL
+0012F838   77D43A50   Includes SuperCle.004193EA            USER32.77D43A4D               0012F860
+0012F864   77D4C675   ? USER32.77D43A35                     USER32.77D4C670               0012F860
+0012F8D0   77D4C4E4   ? USER32.77D4C5C0                     USER32.77D4C4DF               0012F8CC
+0012F918   77D4C6D1   USER32.77D4C467                       USER32.77D4C6CC               0012F914
+0012F930   77D43A50   Includes USER32.77D4C6D1              USER32.77D43A4D               0012F958
+0012F95C   77D43B1F   ? USER32.77D43A35                     USER32.77D43B1A               0012F958
+0012F9C4   77D45453   ? USER32.77D43A68                     USER32.77D4544E               0012F9C0
+0012FA00   77D454B4   USER32.77D45383                       USER32.77D454AF               0012F9FC
+0012FA20   71981492   USER32.SendMessageW                   COMCTL32.7198148C             0012FA1C
+0012FA24   00110132     hWnd = 110132
+0012FA28   00000111     Message = WM_COMMAND
+0012FA2C   000003F1     age = Notify = MENU/BN_CLICKED...
+0012FA30   001500E2     hControage = 001500E2 ('&Enter Reg
+0012FA3C   7198156B   COMCTL32.71981458                     COMCTL32.71981566             0012FAD4
+0012FA58   7198376D   COMCTL32.71981497                     COMCTL32.71983768             0012FAD4
+0012FAD8   77D43A50   Includes COMCTL32.7198376D            USER32.77D43A4D               0012FAD4
+0012FB04   77D43B1F   ? USER32.77D43A35                     USER32.77D43B1A               0012FB00
+0012FB6C   77D43D79   ? USER32.77D43A68                     USER32.77D43D74               0012FB68
+0012FBCC   77D43DDF   ? USER32.77D43CA1                     USER32.77D43DDA               0012FBC8
+0012FBD8   77D4B1F5   ? USER32.DispatchMessageW             USER32.77D4B1F0
+0012FBDC   0012FC14     pMsg = WM_LBUTTONUP hw = 1500E2 ("
+0012FBFC   77D4B324   ? USER32.IsDialogMessageW             USER32.77D4B31F
+0012FC00   00110132     hWnd = 00110132 (class='#32770')
+0012FC04   005D6E10     pMsg = WM_DESTROY hw = 1500E2 ("&E
+0012FC38   77D4D9A0   USER32.77D4B265                       USER32.77D4D99B               0012FC34
+0012FC60   77D4D9DB   USER32.77D4D8EC                       USER32.77D4D9D6               0012FC5C
+0012FC80   77D656DE   USER32.DialogBoxIndirectParamAorW     USER32.77D656D9               0012FC7C
+0012FCAC   0041968C   USER32.DialogBoxParamA                SuperCle.00419686             0012FCA8
+0012FCB0   00400000     hInst = 00400000
+0012FCB4   00000066     pTemplate = 66
+0012FCB8   00000000     hOwner = NULL
+0012FCBC   004191F0     DlgProc = SuperCle.004191F0
+0012FCC0   00000000     lParam = NULL
+0012FED4   0041B3A0   SuperCle.00419550                     SuperCle.0041B39B
+0012FF38   0041FFA9   SuperCle.0041B1D0                     SuperCle.<ModuleEntryPoint>+
+0012FF3C   00400000     Arg1 = 00400000
+0012FF40   00000000     Arg2 = 00000000
+0012FF44   00151F10     Arg3 = 00151F10
+0012FF48   0000000A     Arg4 = 0000000A
+
+Pretty lenghty call stack, but the message box seems to be called from here:
+
+Call stack of main thread, item 14
+ Address=0012E51C
+ Stack=0040DC08
+ Procedure / arguments=? USER32.MessageBoxA
+ Called from=SuperCle.0040DC02
+
+So double click on this line, and you are here:
+
+0040DC02  |. FF15 38A44200  CALL DWORD PTR DS:[<&USER32.MessageBoxA>>; \MessageBoxA
+
+Lets put a breakpoint (F2) on the start of this routine:
+
+0040DBC0  /$ 8B4C24 08      MOV ECX,DWORD PTR SS:[ESP+8]
+
+Okay, restart Olly (Ctrl & F2), press F9 (Run), enter your fake registration details again, and when you hit ok, Olly breaks here:
+
+0040DBC0  /$ 8B4C24 08      MOV ECX,DWORD PTR SS:[ESP+8]
+
+We trace with F8 till we get to the error message, and it tells us nothing, so we need to trace further back, how did it get to 0040DC02, this is where the call stack is our friend, we can see it got there from:
+
+0012E630   004191D0   ? SuperCle.0040DBC0                   SuperCle.004191CB
+
+If we didn't use the call stack, and just clicked on 0040DBC0, and searched for references to this command, you would find quite a number of calls lead to here, so let us Right click/Go to/Expression and enter 004191CB, and put a breakpoint (F2) on this line, then restart Olly (Ctrl & F2), then run the program and put your fake details in again, and you brake here:
+
+004191CB   . E8 F049FFFF    CALL SuperCle.0040DBC0
+
+Now look at the EDX register on the right, it has a number which looks a lot like a serial, for me it is 285-49036-1051-13202, we try that and of course we got excited over nothing, so let us trace further back, we have this in the call stack:
+
+0012ECCC   004190D0     DlgProc = SuperCle.004190D0
+
+So, double click on it, set a breakpoint on it, restart the program in Olly, and when you hit the button to to get the dialogue to enter your registration details, Olly breaks here, before the dialogue shows up:
+
+004190D0   . 8B4424 08      MOV EAX,DWORD PTR SS:[ESP+8]
+
+So we have this code between this breakpoint, and the last one, the serial check must be in here somewhere:
+
+004190D0   . 8B4424 08      MOV EAX,DWORD PTR SS:[ESP+8]
+004190D4   . 81EC 00020000  SUB ESP,200
+004190DA   . 2D 10010000    SUB EAX,110                              ;  Switch (cases 110..111)
+004190DF   . 0F84 FA000000  JE SuperCle.004191DF
+004190E5   . 48             DEC EAX
+004190E6   . 74 0B          JE SHORT SuperCle.004190F3
+004190E8   . 33C0           XOR EAX,EAX                              ;  Default case of switch 004190DA
+004190EA   . 81C4 00020000  ADD ESP,200
+004190F0   . C2 1000        RETN 10
+004190F3   > 8B8424 0C02000>MOV EAX,DWORD PTR SS:[ESP+20C]           ;  Case 111 of switch 004190DA
+004190FA   . 56             PUSH ESI
+004190FB   . 25 FFFF0000    AND EAX,0FFFF
+00419100   . 48             DEC EAX                                  ;  Switch (cases 1..2)
+00419101   . 74 23          JE SHORT SuperCle.00419126
+00419103   . 48             DEC EAX
+00419104   . 0F85 C9000000  JNZ SuperCle.004191D3
+0041910A   . 8B8424 0802000>MOV EAX,DWORD PTR SS:[ESP+208]           ;  Case 2 of switch 00419100
+00419111   . 6A 00          PUSH 0                                   ; /Result = 0
+00419113   . 50             PUSH EAX                                 ; |hWnd
+00419114   . FF15 68A34200  CALL DWORD PTR DS:[<&USER32.EndDialog>]  ; \EndDialog
+0041911A   . 33C0           XOR EAX,EAX
+0041911C   . 5E             POP ESI
+0041911D   . 81C4 00020000  ADD ESP,200
+00419123   . C2 1000        RETN 10
+00419126   > 8BB424 0802000>MOV ESI,DWORD PTR SS:[ESP+208]           ;  Case 1 of switch 00419100
+0041912D   . 57             PUSH EDI
+0041912E   . 8B3D CCA34200  MOV EDI,DWORD PTR DS:[<&USER32.GetDlgIte>;  USER32.GetDlgItemTextA
+00419134   . 8D8C24 0801000>LEA ECX,DWORD PTR SS:[ESP+108]
+0041913B   . 68 00010000    PUSH 100                                 ; /Count = 100 (256.)
+00419140   . 51             PUSH ECX                                 ; |Buffer
+00419141   . 68 17040000    PUSH 417                                 ; |ControlID = 417 (1047.)
+00419146   . 56             PUSH ESI                                 ; |hWnd
+00419147   . FFD7           CALL EDI                                 ; \GetDlgItemTextA
+00419149   . 8D5424 08      LEA EDX,DWORD PTR SS:[ESP+8]
+0041914D   . 68 00010000    PUSH 100                                 ; /Count = 100 (256.)
+00419152   . 52             PUSH EDX                                 ; |Buffer
+00419153   . 68 F3030000    PUSH 3F3                                 ; |ControlID = 3F3 (1011.)
+00419158   . 56             PUSH ESI                                 ; |hWnd
+00419159   . FFD7           CALL EDI                                 ; \GetDlgItemTextA
+0041915B   . E8 A0ECFFFF    CALL SuperCle.00417E00
+00419160   . 85C0           TEST EAX,EAX
+00419162   . 5F             POP EDI
+00419163   . 75 5C          JNZ SHORT SuperCle.004191C1
+00419165   . 8D4424 04      LEA EAX,DWORD PTR SS:[ESP+4]
+00419169   . 8D8C24 0401000>LEA ECX,DWORD PTR SS:[ESP+104]
+00419170   . 50             PUSH EAX
+00419171   . 51             PUSH ECX
+00419172   . E8 89050000    CALL SuperCle.00419700
+00419177   . 83C4 08        ADD ESP,8
+0041917A   . 85C0           TEST EAX,EAX
+0041917C   . 74 43          JE SHORT SuperCle.004191C1
+0041917E   . 8D5424 04      LEA EDX,DWORD PTR SS:[ESP+4]
+00419182   . 8D8424 0401000>LEA EAX,DWORD PTR SS:[ESP+104]
+00419189   . 52             PUSH EDX
+0041918A   . 50             PUSH EAX
+0041918B   . 68 78184300    PUSH SuperCle.00431878                   ;  ASCII "Software\SuperCleaner\Registration"
+00419190   . 68 01000080    PUSH 80000001
+00419195   . E8 E6050000    CALL SuperCle.00419780
+0041919A   . 68 78184300    PUSH SuperCle.00431878                   ;  ASCII "Software\SuperCleaner\Registration"
+0041919F   . 68 01000080    PUSH 80000001
+004191A4   . E8 A7030000    CALL SuperCle.00419550
+004191A9   . 83C4 18        ADD ESP,18
+004191AC   . 6A 01          PUSH 1                                   ; /Result = 1
+004191AE   . 56             PUSH ESI                                 ; |hWnd
+004191AF   . FF15 68A34200  CALL DWORD PTR DS:[<&USER32.EndDialog>]  ; \EndDialog
+004191B5   . 33C0           XOR EAX,EAX
+004191B7   . 5E             POP ESI
+004191B8   . 81C4 00020000  ADD ESP,200
+004191BE   . C2 1000        RETN 10
+004191C1   > 6A 00          PUSH 0
+004191C3   . 68 ACD14200    PUSH SuperCle.0042D1AC                   ;  ASCII "SuperCleaner"
+004191C8   . 6A 0A          PUSH 0A
+004191CA   . 56             PUSH ESI
+004191CB   . E8 F049FFFF    CALL SuperCle.0040DBC0
+
+Now, if you try tracing with F8 from here, those pissy RETN 10's send you on a wild goose chase, so I suggest setting a break point here instead, just past these annoyances, and remove the one at 004190D0:
+
+00419126   > 8BB424 0802000>MOV ESI,DWORD PTR SS:[ESP+208]           ;  Case 1 of switch 00419100
+
+Okay, restart the program in Olly, follow the same procedure as before, but this time the dialogue box comes up before your new breakpoint, enter your fake details, and then you break here:
+
+00419126   > 8BB424 0802000>MOV ESI,DWORD PTR SS:[ESP+208]           ;  Case 1 of switch 00419100
+
+Now, trace with F8, and you see:
+
+00419165   . 8D4424 04      LEA EAX,DWORD PTR SS:[ESP+4] ----> Your fake serial loaded to the EAX register
+00419169   . 8D8C24 0401000>LEA ECX,DWORD PTR SS:[ESP+104] --> Your username loaded into ECX register
+00419170   . 50             PUSH EAX ------------------------> Your fake serial pushed into the stack
+00419171   . 51             PUSH ECX ------------------------> Your username pushed into the stack
+00419172   . E8 89050000    CALL SuperCle.00419700-----------> Returns from call and adds 285-49036-1051-13202 (that bloody fake serial) into edx register
+00419177   . 83C4 08        ADD ESP,8------------------------> ESP=0012E644
+0041917A   . 85C0           TEST EAX,EAX---------------------> EAX=0
+0041917C   . 74 43          JE SHORT SuperCle.004191C1-------> Jump is taken, as EAX=0
+
+Which then leads us to the call at 004191CB, which leads us to the routine ending in the bad cracker message.
+
+I think we need to try again, but trace into the call at 00419172, so restart the program in Olly, use the same procedure as before, except that when you get to 00419172, press F7 to trace into the call, and you are here:
+
+00419700  /$ 81EC 00010000  SUB ESP,100
+00419706  |. 53             PUSH EBX
+00419707  |. 8B9C24 0801000>MOV EBX,DWORD PTR SS:[ESP+108]
+0041970E  |. 53             PUSH EBX
+0041970F  |. E8 FCEFFFFF    CALL SuperCle.00418710
+00419714  |. 83C4 04        ADD ESP,4
+00419717  |. 85C0           TEST EAX,EAX
+00419719  |. 74 0A          JE SHORT SuperCle.00419725
+0041971B  |. 33C0           XOR EAX,EAX
+0041971D  |. 5B             POP EBX
+0041971E  |. 81C4 00010000  ADD ESP,100
+00419724  |. C3             RETN
+00419725  |> A0 18554300    MOV AL,BYTE PTR DS:[435518]
+0041972A  |. 56             PUSH ESI
+0041972B  |. 57             PUSH EDI
+0041972C  |. 884424 0C      MOV BYTE PTR SS:[ESP+C],AL
+00419730  |. B9 3F000000    MOV ECX,3F
+00419735  |. 33C0           XOR EAX,EAX
+00419737  |. 8D7C24 0D      LEA EDI,DWORD PTR SS:[ESP+D]
+0041973B  |. 33F6           XOR ESI,ESI
+0041973D  |. F3:AB          REP STOS DWORD PTR ES:[EDI]
+0041973F  |. 66:AB          STOS WORD PTR ES:[EDI]
+00419741  |. 8D4C24 0C      LEA ECX,DWORD PTR SS:[ESP+C]
+00419745  |. 51             PUSH ECX
+00419746  |. 53             PUSH EBX
+00419747  |. AA             STOS BYTE PTR ES:[EDI]
+00419748  |. E8 B3000000    CALL SuperCle.00419800
+0041974D  |. 8B8424 1C01000>MOV EAX,DWORD PTR SS:[ESP+11C]
+00419754  |. 8D5424 14      LEA EDX,DWORD PTR SS:[ESP+14]
+00419758  |. 52             PUSH EDX
+00419759  |. 50             PUSH EAX
+0041975A  |. E8 51FFFFFF    CALL SuperCle.004196B0
+0041975F  |. 83C4 10        ADD ESP,10
+00419762  |. 85C0           TEST EAX,EAX
+00419764  |. 74 05          JE SHORT SuperCle.0041976B
+00419766  |. BE 01000000    MOV ESI,1
+0041976B  |> 8BC6           MOV EAX,ESI
+0041976D  |. 5F             POP EDI
+0041976E  |. 5E             POP ESI
+0041976F  |. 5B             POP EBX
+00419770  |. 81C4 00010000  ADD ESP,100
+00419776  \. C3             RETN
+
+Okay, trace with F8, you will see it jump the first return, keep tracing, and when you F8 at the call at 00419478, you see it returns a value of 1285-49036-1051-13202, and loads it into EAX, this is that other fake serial, but with a 1 in front of it, and after the call at 0041957A the 1 is dropped from this number, is this a trick to fool would be crackers who don't trace deep enough, and give up?
+
+Now, before we go any further, want to know something funny about this program, Right click/Search for/All referenced text strings, now scroll down till you get to 00417E8D-00418C12, and what do you see, they seem to have gone to real elaborate lengths to prevent anyone using keygens that are around, so don't ya think they should have gone to more trouble to prevent people grabbing a valid serial number themselves, well that's what I think anyway.
+
+Anyway, lets make absolutely sure we have the correct serial this time, close Olly, open the application and enter your username & Serial number you obtained, no error message, sounds prommising!, click on Help/About SuperCleaner and Voila!, it is registered in your name, well done cracker!!!
+
+And remember, if you use the program, buy it ,software developers rely on the income from sales to keep going, if nobody buys, no new software would be developed.
+
+*************************************************************************************************
+SHOUTZ AND GREETZ:
+
+To the AR Cracking forum, exetools forum, tsrh forum, Ollydbg forum, Ricardo Narvaja, Kruger, Britedream, Satyric0n, R@dier, LaBBa, Nilrem & Ferarri whoose tuts have helped me more than any others , Ollydbg, and the authors of SuperCleaner.
+*************************************************************************************************

@@ -1,0 +1,265 @@
+*************************************************************************************************TITLE:
+Cracking tutorial for WatchDog Version 8.0.0.5
+*************************************************************************************************
+BEST VIEWED:
+Notepad with word wrap enabled, and in restored window mode
+*************************************************************************************************
+TOOLS USED:
+Ollydbg v1.09d
+*************************************************************************************************TARGET:
+watchdog.exe
+*************************************************************************************************LOCATION OF TOOLS AND PROGRAM:
+Ollydbg v1.09d http://www.grinders.withernsea.com/tools/Ollydbg/odbg109d.rar
+WatchDog Version 8.0.0.5 http://www.grinders.withernsea.com/tools/wdcurrent.rar
+*************************************************************************************************
+CONTACT INFORMATION:
+vinceandjane@hotmail.com
+*************************************************************************************************
+TUTORIAL WRITTEN:
+13/04/2004
+*************************************************************************************************
+AUTHOR:
+Pompeyfan
+*************************************************************************************************
+
+Okay,lets attack our target, open Olly, and if you haven't done so already, to make things easier for yourself, right click, select appearance/highlighting/jumps'n'calls, makes things so much easier to follow.
+
+Okay, lets open the program in Olly, and you land here:
+
+0041A9D0 > $ 68 2CB54100    PUSH watchdog.0041B52C
+
+Press F9 (Run), and the evaluation screen opens, so let us click on "enter registration codes", and enter a User Name and Reg Key, I used Pompeyfan and filled the other box with 7's, and hit okay.
+
+And you get the message "Invalid Registration Key Detected!!!Going Unregistered...., don't hit okay to this yet.
+
+Press F12(Pause), then enter Alt & K to bring up the call stack, and you get the following:
+
+Call stack of main thread
+Address    Stack      Procedure                             Called from                   Frame
+0012ECD0   77D43C53   Includes 7FFE0304                     USER32.77D43C51               0012ED04
+0012ECD4   77D4B3F2   USER32.WaitMessage                    USER32.77D4B3ED               0012ED04
+0012ED08   77D4D9A0   USER32.77D4B265                       USER32.77D4D99B               0012ED04
+0012ED30   77D6AE8E   USER32.77D4D8EC                       USER32.77D6AE89               0012ED2C
+0012EFE8   77D6A911   ? USER32.SoftModalMessageBox          USER32.77D6A90C               0012EF70
+0012F130   77D6C9E9   ? USER32.77D6A7D7                     USER32.77D6C9E4               0012F0B8
+0012F19C   734A613F   Includes USER32.77D6C9E9              MSVBVM60.734A613D             0012F198
+0012F1DC   734A5FBB   Includes MSVBVM60.734A613F            MSVBVM60.734A5FB8             0012F1D8
+0012F204   734A62B6   MSVBVM60.734A5EA1                     MSVBVM60.734A62B1             0012F200
+0012F234   7349E1AB   MSVBVM60.734A6225                     MSVBVM60.7349E1A6             0012F230
+0012F298   73502192   MSVBVM60.7349DF1F                     MSVBVM60.7350218D             0012F294
+0012F310   0051AD4B   ? MSVBVM60.rtcMsgBox                  watchdog.0051AD45             0012F30C
+0012F4F4   006BBD7E   ? watchdog.0051A070                   watchdog.006BBD79             0012F4F0
+
+You hit okay to that message, and then you get the message "Invalid Registration codes!", so again you hit F12(pause), then Alt & K to bring up the call stack, and you get:
+
+Call stack of main thread
+Address    Stack      Procedure                             Called from                   Frame
+0012EF1C   77D43C53   Includes 7FFE0304                     USER32.77D43C51               0012EF50
+0012EF20   77D4B3F2   USER32.WaitMessage                    USER32.77D4B3ED               0012EF50
+0012EF54   77D4D9A0   USER32.77D4B265                       USER32.77D4D99B               0012EF50
+0012EF7C   77D6AE8E   USER32.77D4D8EC                       USER32.77D6AE89               0012EF78
+0012F234   77D6A911   ? USER32.SoftModalMessageBox          USER32.77D6A90C               0012F1BC
+0012F37C   77D6C9E9   ? USER32.77D6A7D7                     USER32.77D6C9E4               0012F304
+0012F3E8   734A613F   Includes USER32.77D6C9E9              MSVBVM60.734A613D             0012F3E4
+0012F428   734A5FBB   Includes MSVBVM60.734A613F            MSVBVM60.734A5FB8             0012F424
+0012F450   734A62B6   MSVBVM60.734A5EA1                     MSVBVM60.734A62B1             0012F44C
+0012F480   7349E1AB   MSVBVM60.734A6225                     MSVBVM60.7349E1A6             0012F47C
+0012F4E4   73502192   MSVBVM60.7349DF1F                     MSVBVM60.7350218D             0012F4E0
+0012F55C   006BB750   ? MSVBVM60.rtcMsgBox                  watchdog.006BB74A             0012F558
+
+OKay, Ctrl & F2 to restart the program in Olly, then F9(Run) to bring up the evaluation screen again.
+
+Okay Right click/Go to/EXpression and enter 006BB74A, and you land here:
+
+006BB6C3     85C0           TEST EAX,EAX
+006BB6C5   . 7D 12          JGE SHORT watchdog.006BB6D9
+006BB6C7   . 68 FC060000    PUSH 6FC
+006BB6CC   . 68 B8DA4500    PUSH watchdog.0045DAB8
+006BB6D1   . 56             PUSH ESI
+006BB6D2   . 50             PUSH EAX
+006BB6D3   . FF15 C8104000  CALL DWORD PTR DS:[<&MSVBVM60.__vbaHresu>;  MSVBVM60.__vbaHresultCheckObj
+006BB6D9   > 8B06           MOV EAX,DWORD PTR DS:[ESI]
+006BB6DB   . 56             PUSH ESI
+006BB6DC   . FF90 F8060000  CALL DWORD PTR DS:[EAX+6F8]
+006BB6E2     85C0           TEST EAX,EAX
+006BB6E4   . 7D 12          JGE SHORT watchdog.006BB6F8
+006BB6E6   . 68 F8060000    PUSH 6F8
+006BB6EB   . 68 B8DA4500    PUSH watchdog.0045DAB8
+006BB6F0   . 56             PUSH ESI
+006BB6F1   . 50             PUSH EAX
+006BB6F2   . FF15 C8104000  CALL DWORD PTR DS:[<&MSVBVM60.__vbaHresu>;  MSVBVM60.__vbaHresultCheckObj
+006BB6F8   > 66:833D 50206D>CMP WORD PTR DS:[6D2050],0
+006BB700   . B9 04000280    MOV ECX,80020004
+006BB705   . B8 0A000000    MOV EAX,0A
+006BB70A   . 894D A8        MOV DWORD PTR SS:[EBP-58],ECX
+006BB70D   . 8945 A0        MOV DWORD PTR SS:[EBP-60],EAX
+006BB710   . 894D B8        MOV DWORD PTR SS:[EBP-48],ECX
+006BB713   . 8945 B0        MOV DWORD PTR SS:[EBP-50],EAX
+006BB716   . 75 54          JNZ SHORT watchdog.006BB76C
+006BB718   . 894D C8        MOV DWORD PTR SS:[EBP-38],ECX
+006BB71B   . 8D55 90        LEA EDX,DWORD PTR SS:[EBP-70]
+006BB71E   . 8D4D D0        LEA ECX,DWORD PTR SS:[EBP-30]
+006BB721   . 8945 C0        MOV DWORD PTR SS:[EBP-40],EAX
+006BB724   . C745 98 2C2C47>MOV DWORD PTR SS:[EBP-68],watchdog.00472>;  UNICODE "Invalid registration codes!"
+006BB72B   . C745 90 080000>MOV DWORD PTR SS:[EBP-70],8
+006BB732   . FF15 98134000  CALL DWORD PTR DS:[<&MSVBVM60.__vbaVarDu>;  MSVBVM60.__vbaVarDup
+006BB738   . 8D4D A0        LEA ECX,DWORD PTR SS:[EBP-60]
+006BB73B   . 51             PUSH ECX
+006BB73C   . 8D55 B0        LEA EDX,DWORD PTR SS:[EBP-50]
+006BB73F   . 52             PUSH EDX
+006BB740   . 8D45 C0        LEA EAX,DWORD PTR SS:[EBP-40]
+006BB743   . 50             PUSH EAX
+006BB744   . 6A 30          PUSH 30
+006BB746   . 8D4D D0        LEA ECX,DWORD PTR SS:[EBP-30]
+006BB749   . 51             PUSH ECX
+006BB74A   . FF15 2C114000  CALL DWORD PTR DS:[<&MSVBVM60.#595>]     ;  MSVBVM60.rtcMsgBox
+006BB750   . 8D55 A0        LEA EDX,DWORD PTR SS:[EBP-60]
+006BB753   . 52             PUSH EDX
+006BB754   . 8D45 B0        LEA EAX,DWORD PTR SS:[EBP-50]
+006BB757   . 50             PUSH EAX
+006BB758   . 8D4D C0        LEA ECX,DWORD PTR SS:[EBP-40]
+006BB75B   . 51             PUSH ECX
+006BB75C   . 8D55 D0        LEA EDX,DWORD PTR SS:[EBP-30]
+006BB75F   . 52             PUSH EDX
+006BB760   . 6A 04          PUSH 4
+006BB762   . FFD3           CALL EBX
+006BB764   . 83C4 14        ADD ESP,14
+006BB767   . E9 6E010000    JMP watchdog.006BB8DA
+006BB76C   > 8D55 90        LEA EDX,DWORD PTR SS:[EBP-70]
+006BB76F   . 8D4D C0        LEA ECX,DWORD PTR SS:[EBP-40]
+006BB772   . C745 98 302D47>MOV DWORD PTR SS:[EBP-68],watchdog.00472>;  UNICODE "Thank you for registering"
+
+Okay, we can see some good boy and bad boy messages here, and 3 tests and conditional jumps, let us set a breakpoint futher up:
+
+006BB6C3     85C0           TEST EAX,EAX
+
+So left click on this line once, then Right click/Breakpoint/Toggle
+
+Notice also, the last conditional jump, leads beyond the bad boy message, by that I mean this one:
+
+006BB716   . 75 54          JNZ SHORT watchdog.006BB76C
+
+Now, enter your fake details again, and we break at our breakpoint, now let us F8 to step over the code, and take note of the values at the tests:
+
+006BB6C3     85C0           TEST EAX,EAX------------->EAX=0, jump taken
+
+We hit here, and the error message comes up:
+
+006BB6DC   . FF90 F8060000  CALL DWORD PTR DS:[EAX+6F8]
+
+OKay, Ctrl & F2 to restart the program in Olly, then F9(Run) to bring up the evaluation screen again, enter your fake details again, but this time, when you get to 006BB6DC, hit F7 to trace into the call, then F8 to step over the code for a while, then let us trace into the call here:
+
+006BBD79   . E8 F2E2E5FF    CALL watchdog.0051A070
+
+So when you get to this call F7 to step into it, and then F8 to step over the code for a while, it moves your details you entered, and also seems to be comparing you against what I assume is a lot of past crackers, and at 0051AC0F I got excited because I thought I saw the real serial moved, but it was a bum lead, then you get here eventually:
+
+0051ACBC   . 33C0           TEST EAX,EAX------------->EAX=FFFFFFFF
+0051ACBE   . 0F84 44010000  JE watchdog.0051AE08
+0051ACC4   . C745 FC 2B0000>MOV DWORD PTR SS:[EBP-4],2B
+0051ACCB   . C785 58FFFFFF >MOV DWORD PTR SS:[EBP-A8],80020004
+0051ACD5   . C785 50FFFFFF >MOV DWORD PTR SS:[EBP-B0],0A
+0051ACDF   . C785 68FFFFFF >MOV DWORD PTR SS:[EBP-98],80020004
+0051ACE9   . C785 60FFFFFF >MOV DWORD PTR SS:[EBP-A0],0A
+0051ACF3   . C785 78FFFFFF >MOV DWORD PTR SS:[EBP-88],80020004
+0051ACFD   . C785 70FFFFFF >MOV DWORD PTR SS:[EBP-90],0A
+0051AD07   . C785 F8FEFFFF >MOV DWORD PTR SS:[EBP-108],watchdog.0044>;  UNICODE "Invalid Registration Key Detected!!!  Going Unregistered..."
+
+Okay, now if you pass this test, you jump beyond the bad cracker message, so we want EAX to equal zero.
+
+So what if we change:
+
+0051ACBC     33C0          TEST EAX,EAX
+
+To:
+
+0051ACBC     33C0           XOR EAX,EAX
+
+So, Right click on this line/Assemble, make the change, then click on Assemble, then close this box.
+
+NOw press F9(Run), and you get "Thank you for registering Watchdog!"
+
+Okay, make changes permanent, Right click/copy to executable/all modifications/copy all, and then right click on new box that comes up/save file, double click on the file to overwrite and select yes to overwrite.
+
+OKay, Ctrl & F2 to restart the program in Olly, then F9(Run), now the program starts, but is minimized to the tray, so Right click on it, and select Main Menu, now we see that the program wants us to verify the license, let us fill the box with our registration code, and hit okay, and we get the message "Invalid Confirmation Code!", so hit F12(Pause), trhen Alt & K to bring up the call stack, and we get the following:
+
+Call stack of main thread
+Address    Stack      Procedure                             Called from                   Frame
+0012EE10   77D43C53   Includes 7FFE0304                     USER32.77D43C51               0012EE44
+0012EE14   77D4B3F2   USER32.WaitMessage                    USER32.77D4B3ED               0012EE44
+0012EE48   77D4D9A0   USER32.77D4B265                       USER32.77D4D99B               0012EE44
+0012EE70   77D6AE8E   USER32.77D4D8EC                       USER32.77D6AE89               0012EE6C
+0012F128   77D6A911   ? USER32.SoftModalMessageBox          USER32.77D6A90C               0012F0B0
+0012F270   77D6C9E9   ? USER32.77D6A7D7                     USER32.77D6C9E4               0012F1F8
+0012F2DC   734A613F   Includes USER32.77D6C9E9              MSVBVM60.734A613D             0012F2D8
+0012F31C   734A5FBB   Includes MSVBVM60.734A613F            MSVBVM60.734A5FB8             0012F318
+0012F344   734A62B6   MSVBVM60.734A5EA1                     MSVBVM60.734A62B1             0012F340
+0012F374   7349E1AB   MSVBVM60.734A6225                     MSVBVM60.7349E1A6             0012F370
+0012F3D8   73502192   MSVBVM60.7349DF1F                     MSVBVM60.7350218D             0012F3D4
+0012F450   006C55CE   ? MSVBVM60.rtcMsgBox                  watchdog.006C55C8             0012F44C
+
+Double click on this line:
+
+0012F450   006C55CE   ? MSVBVM60.rtcMsgBox                  watchdog.006C55C8 
+
+And we are here:
+
+006C55C8   . FF15 2C114000  CALL DWORD PTR DS:[<&MSVBVM60.#595>]     ;  MSVBVM60.rtcMsgBox
+
+Scroll up a bit, and you will see this:
+
+006C559C   > 8D55 90        LEA EDX,DWORD PTR SS:[EBP-70]
+006C559F   . 8D4D D0        LEA ECX,DWORD PTR SS:[EBP-30]
+006C55A2   . C745 98 BC3C47>MOV DWORD PTR SS:[EBP-68],watchdog.00473>;  UNICODE "Invalid confirmation code!"
+
+If we left click on the start of this routine, we will see that 006C5461 is the conditional jump that leads us here, so let us examine the code here:
+
+006C5442   . 66:3BF7        CMP SI,DI
+006C5445   . B9 04000280    MOV ECX,80020004
+006C544A   . B8 0A000000    MOV EAX,0A
+006C544F   . 894D A8        MOV DWORD PTR SS:[EBP-58],ECX
+006C5452   . 8945 A0        MOV DWORD PTR SS:[EBP-60],EAX
+006C5455   . 894D B8        MOV DWORD PTR SS:[EBP-48],ECX
+006C5458   . 8945 B0        MOV DWORD PTR SS:[EBP-50],EAX
+006C545B   . 894D C8        MOV DWORD PTR SS:[EBP-38],ECX
+006C545E   . 8945 C0        MOV DWORD PTR SS:[EBP-40],EAX
+006C5461   . 0F84 35010000  JE watchdog.006C559C
+006C5467   . 8B35 90104000  MOV ESI,DWORD PTR DS:[<&MSVBVM60.__vbaSt>;  MSVBVM60.__vbaStrCat
+006C546D   . 68 003C4700    PUSH watchdog.00473C00                   ;  UNICODE "Thank you for verifying you registration information."
+
+HOw about we set a breakpoint higher up, and the step over the code, set it here:
+
+006C5380   > 55             PUSH EBP
+
+So try entering our info again, and we break at the point we set, then we F8 to step over the code:
+
+006C5418   > 8B45 E8        MOV EAX,DWORD PTR SS:[EBP-18]------->Moves our fake serial into EAX
+006C541B   . 50             PUSH EAX---------------------------->Pushed to the stack
+006C5427   . 8BF0           MOV ESI,EAX------------------------->EAX=FFFFFFFF
+006C544A   . B8 0A000000    MOV EAX,0A-------------------------->EAX=0000000A
+006C545E     8945 C0        MOV DWORD PTR SS:[EBP-40],EAX------->EAX=0000000A
+006C5461     0F84 35010000  JE watchdog.006C559C---------------->Jump taken
+
+So how about we change:
+
+006C545E     8945 C0        MOV DWORD PTR SS:[EBP-40],EAX
+
+To:
+
+006C545E     33C0           XOR EAX,EAX
+006C5460     40             INC EAX
+
+So, Right click on this line/Assemble, make the change, then click on Assemble, then close this box, it will take 2 goes to make the changes, after the first change to "XOR EAX,EAX" 006C5460 will show "nop".
+
+Now F9(Run), and we get the message, "Thank you for verifying your registration information. You will not see this screen again".
+
+Okay, make changes permanent, Right click/copy to executable/all modifications/copy all, and then right click on new box that comes up/save file, double click on the file to overwrite and select yes to overwrite.
+
+Now for the big test, close Olly, open Watchdog, it minimizes to the tray, Right click on the Icon and select Main Menu, program opens without any evaluation or verification screens, we also try putting our system clock forward a year and program still functions, we check Help/About and Voila!, it shows our registration details, well done cracker!!!
+
+And remember, if you use the program, buy it ,software developers rely on the income from sales to keep going, if nobody buys, no new software would be developed.
+
+*************************************************************************************************
+SHOUTZ AND GREETZ:
+
+To the AR Cracking team, exetools forum, tsrh forum, Ollydbg forum, Ricardo Narvaja, Kruger, Britedream, Satyric0n, R@dier, LaBBa, Nilrem & Ferarri whoose tuts have helped me more than any others , Ollydbg, and the authors of Watchdog .
+*************************************************************************************************

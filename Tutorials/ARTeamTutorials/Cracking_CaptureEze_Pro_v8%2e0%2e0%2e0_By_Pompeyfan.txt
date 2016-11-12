@@ -1,0 +1,151 @@
+*************************************************************************************************TITLE:
+Cracking tutorial for CaptureEze Pro 8.0.0.0 with Windows XP
+*************************************************************************************************
+BEST VIEWED:
+Notepad with word wrap enabled, and in restored window mode
+*************************************************************************************************
+TOOLS USED:
+Ollydbg v1.09d
+*************************************************************************************************TARGET:
+czepro.exe
+*************************************************************************************************LOCATION OF TOOLS AND PROGRAM:
+Ollydbg v1.09d http://home.t-online.de/home/Ollydbg/odbg109d.rar
+CaptureEze Pro http://www.grinders.withernsea.com/tools/CaptureEze_Pro_v8.0.0.0.rar
+Point H tutorial by Ricardo Narvaja (optional) http://www.grinders.withernsea.com/tutorials/punto_h_english.zip
+Cruehead Crackme 2 (Optional)  http://www.grinders.withernsea.com/tools/Cruehead_Crackmes.zip
+*************************************************************************************************
+CONTACT INFORMATION:
+vinceandjane@hotmail.com
+*************************************************************************************************
+TUTORIAL WRITTEN:
+18/02/2004
+*************************************************************************************************
+AUTHOR:
+Pompeyfan
+*************************************************************************************************
+The first thing you notice is this message whilst installing, so don't go changing your clock, even if you put it forward just a few days, once you put the clock backwards it will show trial expired:
+
+CaptureEze Pro Trial Version
+by Application Techniques, Inc.
+
+    Welcome to this free, 45-day trial version of CaptureEze Pro, the Professional Screen Capture Utility.
+    This fully functional trial version will allow you to enjoy the product for a 45-day period. If at any time during your trial period you should change your computer's clock, or uninstall CaptureEze Pro from your computer, the trial period will expire.
+
+Copyright © 1991-2001 Application Techniques, Inc. All rights reserved.
+
+Then when installing, your real name comes up as the user, but for the purposes of this tut, I changed that to Pompeyfan before installing.
+
+OKay, down to business,lets attack our target, open Olly, and if you haven't done so already, to make things easier for yourself, right click, select appearance/highlighting/jumps'n'calls, makes things so much easier to follow.
+
+Open czepro.exe in Olly, and you land here:
+
+00429EF4 >/$ 55             PUSH EBP
+
+Press F9 run
+
+You hit an access violation, but if you keep pressing shift & F9, eventually the evaluation screen comes up, it mentions when you purchase, they will send you a full copy, so I assumed wrongly at first that I wouldn't be able to get a hard coded unlock code, you can, but trouble is even though you get a thank you for purchasing message on entering it, next time you open the program, you get a message that you have violated the licence agreement, and program no longer functions. I proceeded to try to kill the 45 day limitation, and wasted quite a lot of time, then out of interest I finally pushed the purchase button, and find it gives me the option of entering an unlock code, so I tried point H method as follows:
+
+If you don't altready know it, you will need to first determine point H (XP equivalent of hmemcpy) for your computer, some excellent articles have been written on this, particularly by Ricardo Narvaja who is a member of both Exetools forum and the Ollydbg forum, try this tutorial by Ricardo http://www.grinders.withernsea.com/tutorials/punto_h_english.zip, and use the Cruehead Crackme 2 at http://www.grinders.withernsea.com/tools/Cruhead_Crackmes.zip with the tut, that one works best I find.
+
+Restart czepro.exe, but this time after pressing continue on the first screen, select purchase on the second screen, then enter your fake unlock code, name and company, I just used 7777777, Pompeyfan and Private, don't press okay yet though. Now, Right click/go to/expression Enter the address of point H for your computer, in my case 77D5DEBB, hit okay and you land here:
+
+77D5DEBB   F3:A5            REP MOVS DWORD PTR ES:[EDI],DWORD PTR DS>
+77D5DEBD   8BC8             MOV ECX,EAX
+77D5DEBF   83E1 03          AND ECX,3
+77D5DEC2   F3:A4            REP MOVS BYTE PTR ES:[EDI],BYTE PTR DS:[>
+77D5DEC4   E8 04F9FFFF      CALL user32.77D5D7CD
+
+Right click Breakpoint/memory on access
+
+Now bring the purchase screen back up again, and hit Ok.
+
+Olly breaks at the above address
+
+Select follow address in dump for the EDI register, Click once on 77D5DEBB then press F8 down to the call, your fake serial will be loaded into the dump window, highlight it, right click/breakpoint/memory on access
+
+Press F9 or run, and you land here, notice you are now in the code of tl32v20.dll:
+
+00385A82   3A01             CMP AL,BYTE PTR DS:[ECX]
+
+Now look in the dump window, at 0012F427 is your fake unlock code, and at 0012F410 is the real unlock code, as stated earlier though, the program wont function the following time you open it if you use this.
+
+Out of interest, I continued to press F8 till the error message, but before I got there, another unlock code showed up, at address:
+
+00384037   8D4D D8          LEA ECX,DWORD PTR SS:[EBP-28]
+
+At this point you will see it appear in the little window below the CPU window.
+
+So, which to use, well the first one is the correct unlock code (however you are a better man than me if you can figure out how to make the program function with it), the second one reinstates your trial period to the full 45 days, I tried them both, however if you reinstate your trial period it will recalculate a new registration number (which the Unlock code is calculated from, not your user name), so you will have to find it all over again with Olly if you want to again extend your trial.
+
+Another method, which I have only been made aware of recently, as I am still quite new to cracking, is to use the Call stack function in Olly, try this:
+
+Open czepro.exe in Olly, and you land here:
+
+00429EF4 >/$ 55             PUSH EBP
+
+Press F9 run
+
+You hit an access violation, but if you keep pressing shift & F9, eventually the evaluation screen comes up, press continue, then select purchase on next screen, enter your details as before, then when error message comes up, don't press okay on the message, go back to Olly, press F12 (pause), then Alt & K to bring up the Call stack window, and you get this:
+
+Call stack of main thread
+Address    Stack      Procedure / arguments                 Called from                   Frame
+0012EE78   77D43C53   Includes 7FFE0304                     USER32.77D43C51               0012EEAC
+0012EE7C   77D4B3F2   USER32.WaitMessage                    USER32.77D4B3ED               0012EEAC
+0012EEB0   77D4D9A0   USER32.77D4B265                       USER32.77D4D99B               0012EEAC
+0012EED8   77D6AE8E   USER32.77D4D8EC                       USER32.77D6AE89               0012EED4
+0012F190   77D6A911   ? USER32.SoftModalMessageBox          USER32.77D6A90C               0012F118
+0012F2D8   77D6AFD5   ? USER32.77D6A7D7                     USER32.77D6AFD0               0012F260
+0012F330   77D6B0BD   USER32.MessageBoxTimeoutW             USER32.77D6B0B8               0012F32C
+0012F364   77D6B04A   ? USER32.MessageBoxTimeoutA           USER32.77D6B045               0012F360
+0012F384   77D6B02E   ? USER32.MessageBoxExA                USER32.77D6B029               0012F380
+0012F388   00040254     hOwner = 00040254 ('Purchase',clas
+0012F38C   003943FB     Text = "You have entered an incorr
+0012F390   00393D29     Title = "CaptureEze Pro"
+0012F394   00002000     Style = MB_OK|MB_TASKMODAL
+0012F398   00000000     LanguageID = 0 (LANG_NEUTRAL)
+0012F39C   0038409C   ? USER32.MessageBoxA                  tl32v20.00384096
+0012F3A0   00040254     hOwner = 00040254 ('Purchase',clas
+0012F3A4   003943FB     Text = "You have entered an incorr
+0012F3A8   00393D29     Title = "CaptureEze Pro"
+0012F3AC   00002000     Style = MB_OK|MB_TASKMODAL
+ 
+That USER32.MessageBoxA looks interesting doesn't it?, lets go to it and put a breakpoint on it, press run, bring up czepro.exe again and okay on the error message, now press okay to enter your fake details again, and then look in the registers window, your fake code is in ECX, and EDX shows the unlock code you need to extend your trial, you seem to be able to do this as many times as you like, so that at least gives you more time to evaluate the program.
+
+Now lets look at this code to make it easier to extend the trial next time:
+
+00384046   75 3E            JNZ SHORT tl32v20.00384086
+00384048   6A 6B            PUSH 6B
+0038404A   E8 24E4FFFF      CALL tl32v20.00382473
+0038404F   83C4 04          ADD ESP,4
+00384052   85C0             TEST EAX,EAX
+00384054   74 20            JE SHORT tl32v20.00384076
+00384056   68 00200000      PUSH 2000
+0038405B   68 293D3900      PUSH tl32v20.00393D29                    ; ASCII "CaptureEze Pro"
+00384060   68 65433900      PUSH tl32v20.00394365                    ; ASCII "Your trial period has been restored."
+00384065   56               PUSH ESI
+00384066   FF15 C4633900    CALL DWORD PTR DS:[<&USER32.MessageBoxA>>; USER32.MessageBoxA
+0038406C   C705 30153900 01>MOV DWORD PTR DS:[391530],1
+00384076   6A 01            PUSH 1
+00384078   56               PUSH ESI
+00384079   FF15 B4633900    CALL DWORD PTR DS:[<&USER32.EndDialog>]  ; USER32.EndDialog
+0038407F   B8 01000000      MOV EAX,1
+00384084   EB 5D            JMP SHORT tl32v20.003840E3
+00384086   68 00200000      PUSH 2000
+0038408B   68 293D3900      PUSH tl32v20.00393D29                    ; ASCII "CaptureEze Pro"
+00384090   68 FB433900      PUSH tl32v20.003943FB                    ; ASCII "You have entered an incorrect code."
+00384095   56               PUSH ESI
+00384096   FF15 C4633900    CALL DWORD PTR DS:[<&USER32.MessageBoxA>>; USER32.MessageBoxA
+
+If you look at the line 00384086, this line leads to your bad boy message, left click on it, and then Right click/find references to selected command, you will see it jumps to this line from 00384046 if EAX does not equal zero, what if we change this to JNZ SHORT tl32v20.00384056, which leads to the trial period restored message, I bet this will then restore our trial period whatever code we punch in, so left click on this line, then Right click/assemble, and make the change, then hit assemble and close this box, try hitting run now and bring up czepro.exe again, enter any details, and voila!, your trial period has been extended, so lets make the changes permanent, Right click/copy to executable/all modifications/copy all, then right click on new box/save file, double click on tl32v20.dll and select overwrite file.
+
+I was able to reinstall this program a few times because I have Goback installed on my PC, otherwise this program doesn't like being reinstalled, at least it will automatically end your trial period if you do this, it has enabled me to play around with it quite a bit, and learn from that, nevertheless I don't have sufficient knowledge to either totally kill off the trial or get the program to work with the real unlock code, maybe someone else can do that, I'd be very interested.
+
+And remember, if you use the program, buy it ,software developers rely on the income from sales to keep going, if nobody buys, no new software would be developed.
+
+*************************************************************************************************
+SHOUTZ AND GREETZ:
+
+To exetools forum, tsrh forum, Ollydbg forum, Ricardo Narvaja, Nilrem, Ferarri & Satyric0n,
+whoose tuts have helped me more than any others , Ollydbg, and the authors of CaptureEze Pro.
+
+*************************************************************************************************

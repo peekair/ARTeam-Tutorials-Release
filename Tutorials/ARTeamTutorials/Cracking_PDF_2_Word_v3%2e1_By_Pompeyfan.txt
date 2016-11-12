@@ -1,0 +1,185 @@
+*************************************************************************************************TITLE:
+Cracking tutorial for PDF2Word/PDF2RTF v1.3 
+*************************************************************************************************
+BEST VIEWED:
+Notepad with word wrap enabled, and in restored window mode
+*************************************************************************************************
+TOOLS USED:
+Ollydbg v1.09d
+*************************************************************************************************TARGET:
+pdf2rtf.exe
+*************************************************************************************************LOCATION OF TOOLS AND PROGRAM:
+Ollydbg v1.09d http://grinders.withernsea.com/tools/odbg109d.rar
+PDF2Word/PDF2RTF v1.3 http://grinders.withernsea.com/tools/pdf2word_v3.1.rar
+*************************************************************************************************
+CONTACT INFORMATION:
+vinceandjane@hotmail.com
+*************************************************************************************************
+TUTORIAL WRITTEN:
+03/03/2004
+*************************************************************************************************
+AUTHOR:
+Pompeyfan
+*************************************************************************************************
+
+Okay,lets attack our target, open Olly, and if you haven't done so already, to make things easier for yourself, right click, select appearance/highlighting/jumps'n'calls, makes things so much easier to follow.
+
+Open pdf2rtf.exe in Olly, and you land here:
+
+00443CFC >/$ 55             PUSH EBP
+
+Press F9 run
+
+Up comes PDF2Word with a dialogue box, enter your email and fake serial number, I used pompeyfan@pompeyfan.com.au and all 7's, and then hit okay, and of course we guessed wrong, we get the message ""Series number error, bla, bla bla", click once on CPU screen, then F12 (pause), then Alt & K to bring up the call stack screen, and you get:
+
+Call stack of main thread
+Address    Stack      Procedure / arguments                 Called from                   Frame
+0012EC7C   77D43C53   Includes 7FFE0304                     USER32.77D43C51               0012ECB0
+0012EC80   77D4B3F2   USER32.WaitMessage                    USER32.77D4B3ED               0012ECB0
+0012ECB4   77D4D9A0   USER32.77D4B265                       USER32.77D4D99B               0012ECB0
+0012ECDC   77D6AE8E   USER32.77D4D8EC                       USER32.77D6AE89               0012ECD8
+0012EF94   77D6A911   ? USER32.SoftModalMessageBox          USER32.77D6A90C               0012EF1C
+0012F0DC   77D6AFD5   ? USER32.77D6A7D7                     USER32.77D6AFD0               0012F064
+0012F134   77D6B0BD   USER32.MessageBoxTimeoutW             USER32.77D6B0B8               0012F130
+0012F168   77D6B04A   ? USER32.MessageBoxTimeoutA           USER32.77D6B045               0012F164
+0012F188   77D6B02E   ? USER32.MessageBoxExA                USER32.77D6B029               0012F184
+0012F18C   0007024E     hOwner = 0007024E ('Please registe
+0012F190   004662D4     Text = "Series number error, pleas
+0012F194   00000000     Title = NULL
+0012F198   00000010     Style = MB_OK|MB_ICONHAND|MB_APPLM
+0012F19C   00000000     LanguageID = 0 (LANG_NEUTRAL)
+0012F1A0   00429757   ? USER32.MessageBoxA                  pdf2rtf.00429751
+0012F1A4   0007024E     hOwner = 0007024E ('Please registe
+0012F1A8   004662D4     Text = "Series number error, pleas
+0012F1AC   00000000     Title = NULL
+0012F1B0   00000010     Style = MB_OK|MB_ICONHAND|MB_APPLM
+
+Okay, restart the program in Olly (Ctrl & F2), in my case it froze, and I had to close Olly and re-open, anyway whatever you have to do to re-start it, then Right click/Go to expression and enter 00429751 where the error message is called from, and let us have a look at the section of code as follows:
+
+004296D2   > 8BB424 E800000>MOV ESI,DWORD PTR SS:[ESP+E8]            ;  Case 1 of switch 00429648
+004296D9   . 68 C8000000    PUSH 0C8                                 ; /Count = C8 (200.)
+004296DE   . B9 32000000    MOV ECX,32                               ; |
+004296E3   . 33C0           XOR EAX,EAX                              ; |
+004296E5   . BF CC954600    MOV EDI,pdf2rtf.004695CC                 ; |
+004296EA   . 68 CC954600    PUSH pdf2rtf.004695CC                    ; |Buffer = pdf2rtf.004695CC
+004296EF   . 68 FB030000    PUSH 3FB                                 ; |ControlID = 3FB (1019.)
+004296F4   . 56             PUSH ESI                                 ; |hWnd
+004296F5   . F3:AB          REP STOS DWORD PTR ES:[EDI]              ; |
+004296F7   . FF15 14774400  CALL DWORD PTR DS:[<&USER32.GetDlgItemTe>; \GetDlgItemTextA
+004296FD   . 68 CC954600    PUSH pdf2rtf.004695CC
+00429702   . E8 09F8FFFF    CALL pdf2rtf.00428F10
+00429707   . 83C4 04        ADD ESP,4
+0042970A   . 85C0           TEST EAX,EAX
+0042970C   . 74 39          JE SHORT pdf2rtf.00429747
+0042970E   . 6A 40          PUSH 40                                  ; /Style = MB_OK|MB_ICONASTERISK|MB_APPLMODAL
+00429710   . 68 2C634600    PUSH pdf2rtf.0046632C                    ; |Title = "Thank you registered"
+00429715   . 68 08634600    PUSH pdf2rtf.00466308                    ; |Text = "Thank you registered pdf2word v1.3."
+0042971A   . 56             PUSH ESI                                 ; |hOwner
+0042971B   . FF15 1C774400  CALL DWORD PTR DS:[<&USER32.MessageBoxA>>; \MessageBoxA
+00429721   . 68 CC954600    PUSH pdf2rtf.004695CC
+00429726   . 56             PUSH ESI
+00429727   . E8 54F9FFFF    CALL pdf2rtf.00429080
+0042972C   . 83C4 08        ADD ESP,8
+0042972F   . C705 94964600 >MOV DWORD PTR DS:[469694],1
+00429739   . 6A 01          PUSH 1                                   ; /Result = 1
+0042973B   . 56             PUSH ESI                                 ; |hWnd
+0042973C   . FF15 18774400  CALL DWORD PTR DS:[<&USER32.EndDialog>]  ; \EndDialog
+00429742   . E9 EB010000    JMP pdf2rtf.00429932
+00429747   > 6A 10          PUSH 10                                  ; /Style = MB_OK|MB_ICONHAND|MB_APPLMODAL
+00429749   . 6A 00          PUSH 0                                   ; |Title = NULL
+0042974B   . 68 D4624600    PUSH pdf2rtf.004662D4                    ; |Text = "Series number error, please check it and try again."
+00429750   . 56             PUSH ESI                                 ; |hOwner
+00429751   . FF15 1C774400  CALL DWORD PTR DS:[<&USER32.MessageBoxA>>; \MessageBoxA
+00429757   . 68 FB030000    PUSH 3FB                                 ; /ControlID = 3FB (1019.)
+
+Okay, click on this line, it is the start of the routine that leads to the bad cracker message (notice the > symbol):
+
+00429747   > 6A 10          PUSH 10                                  ; /Style = MB_OK|MB_ICONHAND|MB_APPLMODAL
+
+Also note in the window below the conditional jump at 0042970C can jump to this line.
+
+The next little routine starts up here:
+
+004296D2   > 8BB424 E800000>MOV ESI,DWORD PTR SS:[ESP+E8]            ;  Case 1 of switch 00429648
+
+Lets put a breakpoint on this line, left click on this line once then press F2 to toggle your breakpoint.
+
+Now press F9 (run), and enter your details again:
+
+Okay, Olly breaks, now what is this appearing at the following line:
+
+004296E5   . BF CC954600    MOV EDI,pdf2rtf.004695CC                 ; |ASCII "DCBA98765432DYIW"
+
+And this line:
+
+004296FD   . 68 CC954600    PUSH pdf2rtf.004695CC                    ;  ASCII "DCBA98765432DYIW"
+
+And if you trace down with F8 to here:
+
+004296FD   . 68 CC954600    PUSH pdf2rtf.004695CC                    ;  ASCII "777777777777777777777777777777777"
+
+Bingo I reckon, now close Olly, open pdf2rtf.exe, enter your details, bugger still get the error message, okay lets reverse the conditional jump, surely it will then accept any serial, by that I mean this line:
+
+0042970C   . 74 39          JE SHORT pdf2rtf.00429747     ->  change to JNE
+
+Okay, left click once on this line, then Right click/assemble, make your change and hit assemble, then close this box.
+
+Then Right click/copy to executable/all modifications/copy all, and then right click on new box that comes up/save file, double click on the file to overwrite and select yes to overwrite.
+
+Okay, enter your details, and you get the thank you registered message, click on help/about, right that shows registered too, looks like all is well.
+
+Hang on a minute, you open it again and you are unregistered, what the!!!!
+
+Okay look further down to this section of code:
+
+00429867   > 8BB424 E800000>MOV ESI,DWORD PTR SS:[ESP+E8]            ;  Case 110 (WM_INITDIALOG) of switch 0042961F
+0042986E   . 68 20624600    PUSH pdf2rtf.00466220                    ; /Text = "Please register pdf2word v1.3"
+00429873   . 56             PUSH ESI                                 ; |hWnd
+00429874   . FF15 28774400  CALL DWORD PTR DS:[<&USER32.SetWindowTex>; \SetWindowTextA
+0042987A   . 68 CC954600    PUSH pdf2rtf.004695CC
+0042987F   . E8 1CFCFFFF    CALL pdf2rtf.004294A0
+00429884   . 83C4 04        ADD ESP,4
+00429887   . 8D5424 10      LEA EDX,DWORD PTR SS:[ESP+10]
+0042988B   . C605 DC954600 >MOV BYTE PTR DS:[4695DC],0
+00429892   . 68 CC954600    PUSH pdf2rtf.004695CC                    ; /<%s> = ""
+00429897   . 68 18624600    PUSH pdf2rtf.00466218                    ; |format = "[%s]"
+0042989C   . 52             PUSH EDX                                 ; |s
+0042989D   . FF15 38764400  CALL DWORD PTR DS:[<&MSVCRT.sprintf>]    ; \sprintf
+004298A3   . 8B3D 2C774400  MOV EDI,DWORD PTR DS:[<&USER32.SetDlgIte>;  USER32.SetDlgItemTextA
+004298A9   . 83C4 0C        ADD ESP,0C
+004298AC   . 8D4424 10      LEA EAX,DWORD PTR SS:[ESP+10]
+004298B0   . 50             PUSH EAX                                 ; /Text
+004298B1   . 68 FE030000    PUSH 3FE                                 ; |ControlID = 3FE (1022.)
+004298B6   . 56             PUSH ESI                                 ; |hWnd
+004298B7   . FFD7           CALL EDI                                 ; \SetDlgItemTextA
+004298B9   . E8 72FAFFFF    CALL pdf2rtf.00429330
+004298BE   . 85C0           TEST EAX,EAX
+004298C0     75 15          JNZ SHORT pdf2rtf.004298D7
+004298C2   . 6A 01          PUSH 1                                   ; /Result = 1
+004298C4   . 56             PUSH ESI                                 ; |hWnd
+004298C5   . C705 94964600 >MOV DWORD PTR DS:[469694],1              ; |
+004298CF   . FF15 18774400  CALL DWORD PTR DS:[<&USER32.EndDialog>]  ; \EndDialog
+004298D5   . EB 1A          JMP SHORT pdf2rtf.004298F1
+004298D7   > 68 A4954600    PUSH pdf2rtf.004695A4
+004298DC   . 68 FB030000    PUSH 3FB
+004298E1   . 56             PUSH ESI
+004298E2   . FFD7           CALL EDI
+004298E4   . 68 44634600    PUSH pdf2rtf.00466344                    ;  ASCII "Please register pdf2word v1.3!"
+
+You have another test here:
+
+004298BE   . 85C0           TEST EAX,EAX
+004298C0     75 15          JNZ SHORT pdf2rtf.004298D7
+
+Which of course leads to the please register message, let's change the first line to XOR EAX,EAX so that it will never jump, because EAX will always equal zero. Best way to test it is to restart the program in Olly, then go to this line and change it, before you hit F9 (run), we try that and it works fine (no message asking us to register), check the Help/about and it shows registered, okay make the changes permanent, Right click/copy to executable/all modifications/copy all, and then right click on new box that comes up/save file, double click on the file to overwrite and select yes to overwrite.
+
+Just to make absolutely sure, close Olly, open the application, and Voila!, no message asking us to register, check help/about and it shows registered, well done cracker!!!
+
+And remember, if you use the program, buy it ,software developers rely on the income from sales to keep going, if nobody buys, no new software would be developed.
+
+*************************************************************************************************
+SHOUTZ AND GREETZ:
+
+To exetools forum, tsrh forum, Ollydbg forum, Ricardo Narvaja, Kruger, Satyric0n, R@dier, LaBBa, Nilrem & Ferarri whoose tuts have helped me more than any others , Ollydbg, and the authors of PDF2Word/PDF2RTF.
+
+*************************************************************************************************

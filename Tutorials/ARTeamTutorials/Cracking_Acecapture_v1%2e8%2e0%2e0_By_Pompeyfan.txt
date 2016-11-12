@@ -1,0 +1,112 @@
+*************************************************************************************************TITLE:
+Cracking tutorial for AceCapture 1.8.0.0
+*************************************************************************************************
+BEST VIEWED:
+Notepad with word wrap enabled, and in restored window mode
+*************************************************************************************************
+TOOLS USED:
+Ollydbg v1.09d
+*************************************************************************************************TARGET:
+AceCapture.exe
+*************************************************************************************************LOCATION OF TOOLS AND PROGRAM:
+Ollydbg v1.09d http://www.grinders.withernsea.com/tools/odbg109d.rar
+AceCapture 1.8.0.0  http://www.grinders.withernsea.com/tools/AceCapture_v1.8.0.0.rar
+Resource Tuner 1.93 http://www.grinders.withernsea.com/tools/ResTuner_v1.93.rar
+*************************************************************************************************
+CONTACT INFORMATION:
+vinceandjane@hotmail.com
+*************************************************************************************************
+TUTORIAL WRITTEN:
+20/02/2004
+*************************************************************************************************
+AUTHOR:
+Pompeyfan
+*************************************************************************************************
+
+OKay, down to business,lets attack our target, open Olly, and if you haven't done so already, to make things easier for yourself, right click, select appearance/highlighting/jumps'n'calls, makes things so much easier to follow.
+
+Open AceCapture.exe in Olly, and you land here:
+
+0041DE1C >/$ 55             PUSH EBP
+
+I'll set out the steps I took to try and get a valid serial, even though I couldn't get one, just so that you know what I tried.
+
+Press F9 run
+
+Up comes the registration box enter your details, you will notice you can only use 5 characters for your name, bloody cheek, so I can't use Pompeyfan, so I used Wally (not my real name) and filled the 2 boxes with 7's for the serial (I'm assuming it wants both boxes filled), and hit go, and get the Message "Registration code is invalid", hit okay to get rid of this box. Funny but now in the boxes it shows 4294967295-4294967295, I'm not sure why that is.
+
+Well, I tried breakpoint on point H,and on on lstrcmpA, and on GetWindowTextA, and on the invalid message, and tried tracing through the routine above the error message, but no luck grabbing the valid serial, even though I saw my own fake details tracing after the breakpoint with the point H method, so I'll tried to get it to accept any serial.
+
+OKay, back to Olly, Right click/Search for all referenced text strings, then Left click on the first entry once, then Right click/serch for text, put in your error message and ok, double click on the entry you find and you will land here:
+
+0040FD0E  |. 68 BCB64600    PUSH AceCaptu.0046B6BC                   ;  ASCII "Registration code is Invalid!"
+
+Lets look at this:
+
+0040FD07  |. 397D EC        CMP DWORD PTR SS:[EBP-14],EDI
+0040FD0A  |. 75 09          JNZ SHORT AceCaptu.0040FD15
+0040FD0C  |. 57             PUSH EDI
+0040FD0D  |. 57             PUSH EDI
+0040FD0E  |. 68 BCB64600    PUSH AceCaptu.0046B6BC                   ;  ASCII "Registration code is Invalid!"
+0040FD13  |. EB 22          JMP SHORT AceCaptu.0040FD37
+0040FD15  |> 837D EC 01     CMP DWORD PTR SS:[EBP-14],1
+0040FD19  |. 75 21          JNZ SHORT AceCaptu.0040FD3C
+0040FD1B  |. 57             PUSH EDI                                 ; /Arg3
+0040FD1C  |. 57             PUSH EDI                                 ; |Arg2
+0040FD1D  |. 68 A0B64600    PUSH AceCaptu.0046B6A0                   ; |Arg1 = 0046B6A0 ASCII "Thank you for supporting!"
+
+What I found was, if you change 0040FD19 to JE & 0040FD0A to JMP, you get the thankyou message, but it doesn't register program, program still shows unregistered, and when you start program next time you still go straight to the evaluation screen.
+
+Then, I thought to myself, I remember when I was tracing through the code with the point H method, that I saw mention of RegCI quite a few times, and in the AceCapture folder, their is a RegCI.dll file, so I started to think this was where the real checking took place, funny though, because I restarted Olly, I clicked on Alt & E to show the modules window, and it wasn't shown, so I pressed F9 and ran the program, then when the evaluation screen came up, I again brought up the modules window, and sure enough now it was listed, as below:
+
+Executable modules, item 1
+ Base=01080000
+ Size=0000A000 (40960.)
+ Entry=01083AF3 RegCI.<ModuleEntryPoint>
+ Name=RegCI
+ File version=1, 0, 0, 1
+ Path=C:\PROGRA~1\BITSSA~1\ACECAP~1\RegCI.dll
+
+Now, double click on this entry, and you are in the code of this .dll, then Right click/search for all referenced text strings, and you find quite a few interesting entries, double click on REGISTED, and here is the key bit of code. 
+
+01081574   75 4A            JNZ SHORT RegCI.010815C0
+01081576   8B45 FC          MOV EAX,DWORD PTR SS:[EBP-4]
+01081579   3947 0C          CMP DWORD PTR DS:[EDI+C],EAX
+0108157C   75 42            JNZ SHORT RegCI.010815C0
+0108157E   8B4D 0C          MOV ECX,DWORD PTR SS:[EBP+C]
+01081581   6A 01            PUSH 1
+01081583   58               POP EAX
+01081584   8901             MOV DWORD PTR DS:[ECX],EAX
+01081586   8945 0C          MOV DWORD PTR SS:[EBP+C],EAX
+01081589   8D45 08          LEA EAX,DWORD PTR SS:[EBP+8]
+0108158C   50               PUSH EAX
+0108158D   68 28600801      PUSH RegCI.01086028                      ; ASCII "TrialEndTest\FULLREG"
+01081592   68 00000080      PUSH 80000000
+01081597   FF15 1C500801    CALL DWORD PTR DS:[<&ADVAPI32.RegCreateK>; ADVAPI32.RegCreateKeyA
+0108159D   8D45 0C          LEA EAX,DWORD PTR SS:[EBP+C]
+010815A0   6A 04            PUSH 4
+010815A2   50               PUSH EAX
+010815A3   6A 03            PUSH 3
+010815A5   6A 00            PUSH 0
+010815A7   68 40600801      PUSH RegCI.01086040                      ; ASCII "REGISTED"
+010815AC   FF75 08          PUSH DWORD PTR SS:[EBP+8]
+010815AF   FF15 18500801    CALL DWORD PTR DS:[<&ADVAPI32.RegSetValu>; ADVAPI32.RegSetValueExA
+010815B5   FF75 08          PUSH DWORD PTR SS:[EBP+8]
+010815B8   FF15 24500801    CALL DWORD PTR DS:[<&ADVAPI32.RegCloseKe>; ADVAPI32.RegCloseKey
+010815BE   EB 06            JMP SHORT RegCI.010815C6
+010815C0   8B45 0C          MOV EAX,DWORD PTR SS:[EBP+C]
+
+Notice the conditional jumps at 01081574 & 0108157C, they jump beyond the REGISTED message, so what if we change these JNZ entries to JE (75 to 74), so for each entry, left click once on the line to change, then Right click/Assemble, make the changes & hit assemble, then close the box.
+
+Now try entering whatever name and serial you like, although I still kept it to a 5 letter user name, and filled both boxes with my fake serial, as their are checks for string length, and voila!, you not only get a "Thank you for supporting!" message, but now it shows you are registered, so make the changes permanant, right click, and select copy to executable/ All modifications, then copy all on new box that pops up, then right click on new box and select save file, then double click on your file to overwrite, and select yes to " do you really want to overwrite it ", and you are done, well done cracker!!!.
+
+But wait, I have a bit of a dislike for Splash screens, not sure why, but they just annoy me, so of course once I had a registered copy of the program, I just had to kill the splash screen too, I tried using the Call stack, but had no luck, so I turned to my trusty APIS32 (An API spy program), damn easy to use even for a newcomer to cracking like me, just select the file to run, select any additional modules to load, run it, and let it create a log, you can even clear what you don't want, if you say only want details of the 3rd or 4th step for instance (eg after pushing continue buttons), but still no real luck, so on to Resource Tuner, this is real easy, open the file in Resource tuner, and listed as Bitmap 263 you find the offender, Right click on it/delete resource/file/save file as/AceCapture.exe/yes to replace/update size of Image yes, and you are done. Open program now, no more splash screen, but then maybe it doesn't bother you.
+
+And remember, if you use the program, buy it ,software developers rely on the income from sales to keep going, if nobody buys, no new software would be developed.
+
+*************************************************************************************************
+SHOUTZ AND GREETZ:
+
+To exetools forum, tsrh forum, Ollydbg forum, Ricardo Narvaja, Nilrem, Ferarri & Satyric0n whoose tuts have helped me more than any others , Ollydbg, and the authors of AceCapture.
+
+*************************************************************************************************

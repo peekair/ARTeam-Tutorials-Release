@@ -1,0 +1,141 @@
+*************************************************************************************************TITLE:
+Cracking tutorial for Animated Screen version 6.0.0.0 with Windows XP *************************************************************************************************
+BEST VIEWED:
+Notepad with word wrap enabled, and in restored window mode
+*************************************************************************************************
+TOOLS USED:
+Ollydbg v1.09d
+*************************************************************************************************TARGET:
+AnimScr.exe
+*************************************************************************************************LOCATION OF TOOLS AND PROGRAM:
+Ollydbg v1.09d http://grinders.withernsea.com/tools/odbg109d.rar
+Animated Screen version 6.0.0.0 http://grinders.withernsea.com/tools/animated_screen_v_6.0.0.0.exe
+Point H tutorial by Ricardo Narvaja (optional) http://grinders.withernsea.com/tutorials/punto_h_english.zip
+Cruehead Crackme 2 (Optional)  http://grinders.withernsea.com/tools/Cruehead_Crackmes.zip
+*************************************************************************************************
+CONTACT INFORMATION:
+vinceandjane@hotmail.com
+*************************************************************************************************
+TUTORIAL WRITTEN:
+8/02/2004
+*************************************************************************************************
+AUTHOR:
+Pompeyfan
+*************************************************************************************************
+
+If you don't altready know it, you will need to first determine point H (XP equivalent of hmemcpy) for your computer, some excellent articles have been written on this, particularly by Ricardo Narvaja who is a member of both Exetools forum and the Ollydbg forum, try this tutorial by Ricardo http://home.tiscali.cz:8080/robocop/files/punto_h_english.zip, and use the Cruehead Crackme 2 at http://grinders.withernsea.com/tutorials/Cruehead_Crackmes.zip with the tut, that one works best I find.
+
+OKay, down to business,lets attack our target, open Olly, and if you haven't done so already, to make things easier for yourself, right click, select appearance/highlighting/jumps'n'calls, makes things so much easier to follow.
+
+Method 1:
+---------
+
+Open AnimScr.exe in Olly, and you land here:
+
+00515254 > $ 55             PUSH EBP
+
+Press F9 run
+
+Close the welcome screen, then click on Help/Registration/Registration Key, enter your details, I used POMPEYFAN and 47806, press ok.
+
+YOu then get the Message titled Error, and the message "Name or Registration Key are not correct. Check Name or Registration Key and try again.
+
+Hit ok.
+
+Click on Olly to bring up CPU window, right click/Search for all referenced text strings, click once on top entry, then right click/ search for text and enter first part of message, I put " Name or Registration Key"
+
+Double click on that to follow in dissassembler, and you land here:
+
+004F710F  |. BA F0724F00    MOV EDX,AnimScr.004F72F0                 ;  ASCII "Name or Registration Key are not correct.Check Name or Registration Key and try again."
+
+Right click, breakpoint/Toggle
+
+Olly breaks at the above address, and if you look in the memory dump in the bottom right of screen, you will see your fake serial and a real one, seems to easy doesn't it,in my case 9AC11000, this appears to be the only serial you get by this method.
+
+Okay so I close Olly down, open AnimScr.exe, enter POMPEYFAN and the above obtained serial, and I get this message:
+
+Information " This type of registration does not allow you to create screen savers and own greetings. To do it you need to upgrade your copy of Animated screen to the version for commercial or home licence. See more info on the online help in the "registration" topic"
+
+Well don't that just give you the shits!!!
+
+I look in the readme, and find this info:
+
+When you purchase an Animated Screen home license, you can sell or give away the screen savers that you create, but they will list PY Software as the author in the program's "settings" box.
+
+When you purchase the Animated Screen commercial license, you can enter your company into the program's "settings" box and create shareware screen savers with shareware reminders, registration names and registration keys that allow users to register your screen savers with your company. Site license covers a single organization for an area of up to one hundred miles (160 km) in radius.
+
+For creating animated .GIF or .AVI files, it will be enough to purchase limited license for $29 US.
+
+Righto, the other serials have to be somewhere!!!
+
+Method 2:
+---------
+
+Out of curiosity, I also tried finding the serial by the point H method (XP equivalent of hmemcpy), and interestingly I got more information, here is the steps I took:
+
+Open AnimScr.exe in Olly, and you land here:
+
+00515254 > $ 55             PUSH EBP
+
+Press F9 run
+
+Close the welcome screen, then click on Help/Registration/Registration Key, enter your details, I used POMPEYFAN and 47806, don't press ok yet.
+
+Right click/go to/expression
+Enter the address of point H for your computer, in my case 77D5DEBB, hit okay and you land here:
+
+77D5DEBB   F3:A5            REP MOVS DWORD PTR ES:[EDI],DWORD PTR DS>
+77D5DEBD   8BC8             MOV ECX,EAX
+77D5DEBF   83E1 03          AND ECX,3
+77D5DEC2   F3:A4            REP MOVS BYTE PTR ES:[EDI],BYTE PTR DS:[>
+77D5DEC4   E8 04F9FFFF      CALL user32.77D5D7CD
+
+Right click Breakpoint/memory on access
+
+Now bring registration screen back up again, and hit Ok.
+
+Olly breaks at the above address
+
+Select follow address in dump for the EDI register, Click once on 77D5DEBB then press F8 down to the call, your username will be loaded into the dump window, highlight it, right click/breakpoint/memory on access
+
+Press F9 or run, and you land here:
+
+00402899  |. F3:A5          REP MOVS DWORD PTR ES:[EDI],DWORD PTR DS>
+0040289B  |. 89C1           MOV ECX,EAX
+0040289D  |. 83E1 03        AND ECX,3
+004028A0  |. 83C6 03        ADD ESI,3
+004028A3  |. 83C7 03        ADD EDI,3
+004028A6  |. F3:A4          REP MOVS BYTE PTR ES:[EDI],BYTE PTR DS:[>
+004028A8  |. FC             CLD
+004028A9  |> 5F             POP EDI
+004028AA  |. 5E             POP ESI
+004028AB  \. C3             RETN
+
+
+Press F8 several times to trace through the code, you will see your user name and fake serial appear a few times, then eventually you see another serial number, but interestingly it is different to the one I obtained by the other method, in my case it was F9A08000, so I continue to press F8, and eventually find 2 more serials, the last being the one I found by the other method, you will see all 3 fairly close together here:
+
+004F7068  |. 58             POP EAX                                  ;  01E5EF88
+(look in the bottom right in the memory dump at address 0167F488, in my case serial here is F9A08000)
+
+
+004F70A2  |. 58             POP EAX                                  ;  01E5FFF4
+(look in the bottom right in the memory dump at address 0167F488, in my case serial here is 0D9C9B00)
+
+
+004F70DC  |. 58             POP EAX                                  ;  01E5EF8C
+(look in the bottom right in the memory dump at address 0167F488, in my case serial here is 9AC11000)
+
+
+Now then, close Olly, start up AnimScr.exe, enter your user name and the 1St serial you obtained using Olly, in my case serial here is F9A08000, okay I cant be bothered typing the info message I get, but click Help/about, and you see you are now registered for Home Use.
+
+So we try the other, it has to be the Commercial, in my case serial here is 0D9C9B00, no messaghe, seems promimising doesn't it, click on help/about, and voila! you see you are now registered for commercial use, well done cracker!!!
+
+
+And remember, if you use the program, buy it ,software developers rely on the income from sales to keep going, if nobody buys, no new software would be developed.
+
+*************************************************************************************************
+SHOUTZ AND GREETZ:
+
+To exetools forum, tsrh forum, Ollydbg forum, Ricardo Narvaja, Nilrem & Ferarri whoose tuts have helped me more than any others , Ollydbg, and the authors of Animated Screen.
+
+*************************************************************************************************

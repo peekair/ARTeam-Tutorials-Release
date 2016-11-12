@@ -1,0 +1,295 @@
+          (BEST VIEWED WITH WORDWRAP ENABLED & FONT= COURIER , SIZE =10)
+
+         @$@$#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@@$@ @#$#$@
+        @@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@0@  @#$#$#$@
+         @@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#$@ @#$#$@
+          @#$@                             
+          @#$@       @$@$@$@$@ @$@$@ $@$@$ @$@$@ $@$@$   @#@#@#@#@@ @$@$@ $@$@$ @$#$#$#@
+          @#$@      @#$#$#$#$@@ @#$#$#$#$#$ @#$#$#$#$#$ @$#$#$#$#@@@ @#$#$#$#$#$ @#$#$@
+          @#$@    @ @#@#@#@#@#@ @#$@$#$#@@@ @#$@$#$#@@@ @#@@    @#$@ @#$@$#$#@@@  @$#@
+          @#$@#$#$@ @#@#   #@#@ @#$@   @@@  @#$@   @@@  @$@     @#$@ @#$@   @@@   @$#@
+          @#$@@#@#@ @#@#@#@#@#@ @#$@   @@   @#$@   @@         @#@#$@ @#$@   @@    @$#@   
+          @#$@#$#$@ @$@$@$@$@$@ @#$@        @#$@         @@#@@#@#@#@ @#$@         @$#@
+          @#$@    @ @$@#        @#$@        @#$@        @#$#$#$#$#$@ @#$@         @$#@
+          @#$@      @$@#        @#$@        @#$@        @#$@    @#$@ @#$@         @$#@
+          @#$@      @#@#@#@#@#@ @#$@        @#$@        @#$@#$#$#$#@ @#$@         @$#@
+          @#$#@     @$@$@$@$@$@ @#$#@       @#$#@       @#$@#@#@#@#@ @#$#@       @#$#$@
+        @#@#@#@#@    @#@#@#@#@ @#@#@#@     @#@#@#@       @#@#@#@#@# @#@#@#@     @$#$#$#@
+
+
+                                      :-)---> ARTeam <---(-:
+                              Visit:-http://cracking.accessroot.com
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$                     $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$  Perfect Keylogger  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$         1.5         $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$@@@@@@@@@@@@@
+@@@@@@@@@@@@@              AUTHOR            :   FERRARI                          @@@@@@@@@@@@@ 
+@@@       @@@              PROTECTION        :   Serial                           @@@       @@@   @@ ferrari @@              TARGET FILE       :   bpk.exe                          @@ ferrari @@ 
+@@@       @@@              TARGET URL        :   http://www.blazingtools.com      @@@       @@@   @@@@@@@@@@@@@              OPERATING SYSTEM  :   WINDOWS ALL                      @@@@@@@@@@@@@   @@@@@@@@@@@@@              RELEASE DATE      :   15.01.2004                       @@@@@@@@@@@@@
+@@@@@@@@@@@@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@                                TOOLS USED & TARGET SOFTWARE                                 @
+@                                =============================                                @
+@                                                                                             @
+@ OllyDbg            :- http://grinders.withernsea.com/tools/odbg110b1.rar                    @
+@ Hide Debugger      :- http://grinders.withernsea.com/tools/hideDebugger.rar                 @
+@ Perfect Keylogger  :- http://grinders.withernsea.com/tools/i_bpk2003.exe                    @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+===============================================================================================
+               Patching Perfect Keylogger to accept any registration name and key.
+===============================================================================================
+First make a backup of bpk.exe
+
+Now copy hideDebugger.dll into Plugins folder of Ollydbg. Open Ollydbg configuration settings file with notepad-->Scroll down to "[History]" and enter the correct path to "Plugin path="
+
+Now load bpk.exe in Olly and hit F9 to run the program. Bring up the registration box and enter any name and serial. I enter ferrari as name and 1111-1111-1111-1111 as reg code. Now wait don't click OK yet. Go back to Olly and hit Ctrl N. Scroll down till u find 'GetDlgItemTextA' .Select it-->right click-->Toggle Breakpoint on import.
+Now back to registration window click Ok.Olly breaks here.This is the USER32 module.
+
+77D6274F > 55               PUSH EBP<--------Breaks here
+77D62750   8BEC             MOV EBP,ESP
+77D62752   FF75 0C          PUSH DWORD PTR SS:[EBP+C]
+77D62755   FF75 08          PUSH DWORD PTR SS:[EBP+8]
+77D62758   E8 4B63FEFF      CALL USER32.GetDlgItem
+77D6275D   85C0             TEST EAX,EAX
+77D6275F   0F84 148F0200    JE USER32.77D8B679
+
+Now just keep pressing F8 till u get out of USER32 and enter bpk.exe code below. Now scroll down till 004141D5
+
+
+0041410D  |. 80BD 68FFFFFF >CMP BYTE PTR SS:[EBP-98],0<----Till u get here.
+00414114  |. 75 18          JNZ SHORT bpk.0041412E
+00414116  |. 6A 40          PUSH 40
+00414118  |. 68 B46F4400    PUSH bpk.00446FB4                ;  ASCII "Attention!"
+0041411D  |. 68 9C6F4400    PUSH bpk.00446F9C                ;  ASCII "Please enter your name!"
+00414122  |. 8BCF           MOV ECX,EDI
+00414124  |. E8 75F40100    CALL <JMP.&MFC42.#4224>
+00414129  |. E9 FA000000    JMP bpk.00414228
+0041412E  |> 56             PUSH ESI
+0041412F  |. 6A 0A          PUSH 0A
+00414131  |. 5E             POP ESI
+00414132  |. 8D45 E8        LEA EAX,DWORD PTR SS:[EBP-18]
+00414135  |. 56             PUSH ESI
+00414136  |. 50             PUSH EAX
+00414137  |. 68 DAD60000    PUSH 0D6DA
+0041413C  |. 8BCF           MOV ECX,EDI
+0041413E  |. E8 B1F20100    CALL <JMP.&MFC42.#3098>
+00414143  |. 8D45 D0        LEA EAX,DWORD PTR SS:[EBP-30]
+00414146  |. 56             PUSH ESI
+00414147  |. 50             PUSH EAX
+00414148  |. 68 DBD60000    PUSH 0D6DB
+0041414D  |. 8BCF           MOV ECX,EDI
+0041414F  |. E8 A0F20100    CALL <JMP.&MFC42.#3098>
+00414154  |. 8D45 DC        LEA EAX,DWORD PTR SS:[EBP-24]
+00414157  |. 56             PUSH ESI
+00414158  |. 50             PUSH EAX
+00414159  |. 68 DCD60000    PUSH 0D6DC
+0041415E  |. 8BCF           MOV ECX,EDI
+00414160  |. E8 8FF20100    CALL <JMP.&MFC42.#3098>
+00414165  |. 8D45 F4        LEA EAX,DWORD PTR SS:[EBP-C]
+00414168  |. 56             PUSH ESI
+00414169  |. 50             PUSH EAX
+0041416A  |. 68 DDD60000    PUSH 0D6DD
+0041416F  |. 8BCF           MOV ECX,EDI
+00414171  |. E8 7EF20100    CALL <JMP.&MFC42.#3098>
+00414176  |. 8D45 E8        LEA EAX,DWORD PTR SS:[EBP-18]
+00414179  |. 50             PUSH EAX                         ; /String2
+0041417A  |. 8D45 9C        LEA EAX,DWORD PTR SS:[EBP-64]    ; |
+0041417D  |. 50             PUSH EAX                         ; |String1
+0041417E  |. FF15 10814300  CALL DWORD PTR DS:[<&KERNEL32.ls>; \lstrcpyA
+00414184  |. 8B35 44814300  MOV ESI,DWORD PTR DS:[<&KERNEL32>;  kernel32.lstrcatA
+0041418A  |. 8D45 D0        LEA EAX,DWORD PTR SS:[EBP-30]
+0041418D  |. 50             PUSH EAX                         ; /StringToAdd
+0041418E  |. 8D45 9C        LEA EAX,DWORD PTR SS:[EBP-64]    ; |
+00414191  |. 50             PUSH EAX                         ; |ConcatString
+00414192  |. FFD6           CALL ESI                         ; \lstrcatA
+00414194  |. 8D45 DC        LEA EAX,DWORD PTR SS:[EBP-24]
+00414197  |. 50             PUSH EAX                         ; /StringToAdd
+00414198  |. 8D45 9C        LEA EAX,DWORD PTR SS:[EBP-64]    ; |
+0041419B  |. 50             PUSH EAX                         ; |ConcatString
+0041419C  |. FFD6           CALL ESI                         ; \lstrcatA
+0041419E  |. 8D45 F4        LEA EAX,DWORD PTR SS:[EBP-C]
+004141A1  |. 50             PUSH EAX                         ; /StringToAdd
+004141A2  |. 8D45 9C        LEA EAX,DWORD PTR SS:[EBP-64]    ; |
+004141A5  |. 50             PUSH EAX                         ; |ConcatString
+004141A6  |. FFD6           CALL ESI                         ; \lstrcatA
+004141A8  |. 8D85 34FFFFFF  LEA EAX,DWORD PTR SS:[EBP-CC]
+004141AE  |. 50             PUSH EAX
+004141AF  |. 8D85 68FFFFFF  LEA EAX,DWORD PTR SS:[EBP-98]
+004141B5  |. 68 00B84300    PUSH bpk.0043B800                ;  ASCII "_r <&~<1-Z2[l5,^"
+004141BA  |. 50             PUSH EAX
+004141BB  |. E8 61FEFFFF    CALL bpk.00414021
+004141C0  |. 83C4 0C        ADD ESP,0C
+004141C3  |. 8D45 9C        LEA EAX,DWORD PTR SS:[EBP-64]
+004141C6  |. 50             PUSH EAX                         ; /String2
+004141C7  |. 8D85 34FFFFFF  LEA EAX,DWORD PTR SS:[EBP-CC]    ; |
+004141CD  |. 50             PUSH EAX                         ; |String1
+004141CE  |. FF15 1C814300  CALL DWORD PTR DS:[<&KERNEL32.ls>; \lstrcmpiA
+004141D4  |. 5E             POP ESI
+004141D5  |. 85C0           TEST EAX,EAX
+004141D7  |. 6A 40          PUSH 40
+004141D9  |. 75 31          JNZ SHORT bpk.0041420C
+004141DB  |. 68 8C6F4400    PUSH bpk.00446F8C                ;  ASCII "Registration"
+004141E0  |. 68 486F4400    PUSH bpk.00446F48                ;  ASCII "Registration succeeded. Thank you for choosing Perfect Keylogger!"
+004141E5  |. 8BCF           MOV ECX,EDI
+004141E7  |. E8 B2F30100    CALL <JMP.&MFC42.#4224>
+004141EC  |. 8D85 68FFFFFF  LEA EAX,DWORD PTR SS:[EBP-98]
+004141F2  |. 8D4F 64        LEA ECX,DWORD PTR DS:[EDI+64]
+004141F5  |. 50             PUSH EAX
+004141F6  |. E8 87EE0100    CALL <JMP.&MFC42.#860>
+004141FB  |. 8D45 9C        LEA EAX,DWORD PTR SS:[EBP-64]
+004141FE  |. 8D4F 60        LEA ECX,DWORD PTR DS:[EDI+60]
+00414201  |. 50             PUSH EAX
+00414202  |. E8 7BEE0100    CALL <JMP.&MFC42.#860>
+00414207  |. 6A 01          PUSH 1
+00414209  |. 58             POP EAX
+0041420A  |. EB 1E          JMP SHORT bpk.0041422A
+0041420C  |> 68 346F4400    PUSH bpk.00446F34                ;  ASCII "Registration error"
+00414211  |. 68 E06E4400    PUSH bpk.00446EE0                ;  ASCII "Registration code or user name is invalid. Please check all fields and try again!"
+
+
+Now what happens is if the name and serial u entered is correct which is compared at 004141CE, string 1 holds the serial u entered and string 2 holds the correct serial. 
+if valid, then at 004141D9, jump is not taken and we go to 004141DB which is our good message. 
+If its invalid   jump is taken to 0041420C and we get the bad message. 
+Now if u change this (Ctrl E)
+004141D5  |. 85C0           TEST EAX,EAX
+
+to
+
+004141D5  |. 33C0           XOR EAX,EAX
+the flag is set, EAX==0, and the jump is always not taken to 0041420C and we alwyas jump to our good message at 004141DB .So change the TEST to XOR :-) . if u save (refer last paragraph of this tut) the changes to bpk.exe and run it and enter the reg details and hit OK, u will get our good message but every time u start the program u have to enter the reg info again n again :-( So now what???
+ The reason is the fake serial u entered is stored in the registry and the next time u run the program it checks the registry and compares the fake serial with the correct one and if not correct prompts u to enter the reg info again. you may wonder how i know that?? 
+
+Now goto the below address,
+004141BB  |. E8 61FEFFFF    CALL bpk.00414021
+ select it, hit enter and land here
+
+00414021  /$ 55             PUSH EBP
+00414022  |. 8BEC           MOV EBP,ESP
+00414024  |. 51             PUSH ECX
+00414025  |. 51             PUSH ECX
+00414026  |. 53             PUSH EBX
+00414027  |. 56             PUSH ESI
+00414028  |. FF75 0C        PUSH DWORD PTR SS:[EBP+C] ; /String
+0041402B  |. 8B35 B8804300  MOV ESI,DWORD PTR DS:[<&K>; |kernel32.lstrlenA
+00414031  |. FFD6           CALL ESI                  ; \lstrlenA
+00414033  |. FF75 08        PUSH DWORD PTR SS:[EBP+8] ; /String
+00414036  |. 8BD8           MOV EBX,EAX               ; |
+00414038  |. 895D FC        MOV DWORD PTR SS:[EBP-4],>; |
+0041403B  |. FFD6           CALL ESI                  ; \lstrlenA
+0041403D  |. 8BF0           MOV ESI,EAX
+0041403F  |. 85F6           TEST ESI,ESI
+00414041  |. 8975 F8        MOV DWORD PTR SS:[EBP-8],>
+00414044  |. 75 08          JNZ SHORT bpk.0041404E
+00414046  |. 8B45 10        MOV EAX,DWORD PTR SS:[EBP>
+00414049  |. 8020 00        AND BYTE PTR DS:[EAX],0
+0041404C  |. EB 4E          JMP SHORT bpk.0041409C
+0041404E  |> 57             PUSH EDI
+0041404F  |. 8B7D 10        MOV EDI,DWORD PTR SS:[EBP>
+00414052  |. FF75 0C        PUSH DWORD PTR SS:[EBP+C] ; /String2
+00414055  |. 57             PUSH EDI                  ; |String1
+00414056  |. FF15 10814300  CALL DWORD PTR DS:[<&KERN>; \lstrcpyA
+0041405C  |. 3BF3           CMP ESI,EBX
+0041405E  |. 8975 0C        MOV DWORD PTR SS:[EBP+C],>
+00414061  |. 7F 03          JG SHORT bpk.00414066
+00414063  |. 895D 0C        MOV DWORD PTR SS:[EBP+C],>
+00414066  |> 33F6           XOR ESI,ESI
+00414068  |. 3975 0C        CMP DWORD PTR SS:[EBP+C],>
+0041406B  |. 7E 2C          JLE SHORT bpk.00414099
+0041406D  |> 8BC6           /MOV EAX,ESI<-------------------|
+0041406F  |. 6A 19          |PUSH 19                        |
+00414071  |. 99             |CDQ                            |
+00414072  |. F77D FC        |IDIV DWORD PTR SS:[EBP-4>      |
+00414075  |. 8BC6           |MOV EAX,ESI                    | 
+00414077  |. 5B             |POP EBX                        |
+00414078  |. 8D0C3A         |LEA ECX,DWORD PTR DS:[ED>      | 
+0041407B  |. 99             |CDQ                            |
+0041407C  |. F77D F8        |IDIV DWORD PTR SS:[EBP-8>      |
+0041407F  |. 8B45 08        |MOV EAX,DWORD PTR SS:[EB>      | 
+00414082  |. 0FB60402       |MOVZX EAX,BYTE PTR DS:[E>      |
+00414086  |. 0FB611         |MOVZX EDX,BYTE PTR DS:[E>      |
+00414089  |. 33C2           |XOR EAX,EDX                    |
+0041408B  |. 99             |CDQ                            |
+0041408C  |. F7FB           |IDIV EBX                       |
+0041408E  |. 80C2 41        |ADD DL,41                      |
+00414091  |. 46             |INC ESI                        |
+00414092  |. 3B75 0C        |CMP ESI,DWORD PTR SS:[EB>      |
+00414095  |. 8811           |MOV BYTE PTR DS:[ECX],DL       |
+00414097  |.^7C D4          \JL SHORT bpk.0041406D<---------|
+00414099  |> 8BC7           MOV EAX,EDI                     
+0041409B  |. 5F             POP EDI                         
+0041409C  |> 5E             POP ESI                         
+0041409D  |. 5B             POP EBX              
+0041409E  |. C9             LEAVE
+0041409F  \. C3             RETN
+
+
+Now u can see the loop from address 0041406D to 00414097. The real serial is calculated against your name and compared with ur fake serial in this loop. You may run the  program with F9. Enter fake registration info-->F2 (BP) at address  00414021-->Click OK-->Olly breaks at BP-->then trace with F8 to see how the serial is calculated in the Registers FPU pane on Top right hand side. Now when the correct serial is calculated it is returned to this two address(Select 00414021 and hit Ctrl R) below for further comparing. 
+
+004141BB CALL bpk.00414021<--Remember we already seen this where we change TEST->XOR at 004141D5
+00414240 CALL bpk.00414021<--Double click on this one and land in below code
+
+00414240  |. E8 DCFDFFFF    CALL bpk.00414021
+00414245  |. 8B75 0C        MOV ESI,DWORD PTR SS:[EBP>
+00414248  |. 83C4 0C        ADD ESP,0C
+0041424B  |. 8D45 C0        LEA EAX,DWORD PTR SS:[EBP>
+0041424E  |. 56             PUSH ESI                  ; /String2
+0041424F  |. 50             PUSH EAX                  ; |String1
+00414250  |. FF15 1C814300  CALL DWORD PTR DS:[<&KERN>; \lstrcmpiA
+00414256  |. 85C0           TEST EAX,EAX
+00414258  |. 75 09          JNZ SHORT bpk.00414263
+0041425A  |. 3806           CMP BYTE PTR DS:[ESI],AL
+0041425C  |. 74 05          JE SHORT bpk.00414263
+0041425E  |. 6A 01          PUSH 1
+00414260  |. 58             POP EAX
+00414261  |. EB 02          JMP SHORT bpk.00414265
+00414263  |> 33C0           XOR EAX,EAX
+00414265  |> 5E             POP ESI
+00414266  |. C9             LEAVE
+00414267  \. C3             RETN
+
+Ahaa! can u see that the serial is again checked at 00414250. If u want to verify this i assume that u changed the TEST to XOR at 004141D5 and saved the changes, and entered the fake reg info so that the fake serial is in the registry. 
+Okay now put BP  at 00414250 and then hit F9. Olly breaks at our BP. Now can u see the registers pane.
+
+EAX 0012D9E4 ASCII "HXHDVMKMWPOIFRYJ"
+ESI 0012E8C0 ASCII "1111111111111111"
+
+So now u know wat to do, change TEST-->XOR so jump is never taken and it goes to CMP at 0041425A so that ESI(fake serial) is always == AL so the program accepts it as a correct serial & gets registered.
+
+So finally to make the crack successful remember we have to change TEST-->XOR at :
+
+1) 004141D5
+2 )00414256
+
+Okay now time to make the changes permanent :-)
+Right click/copy to executable/allmodifications/copy all, then right click on new box/save file, double click on bpk.exe and select overwrite file.
+
+Run the program, enter any name and serial and the program is registered!! :-)
+
+================================================================================================
+                        Finding the correct registration name and code
+================================================================================================
+Put a breakpoint on below address by pressing F2
+
+004141CE  |. FF15 1C814300  CALL DWORD PTR DS:[<&KERNEL32.lstrcmpiA>>; \lstrcmpiA
+
+Now press F9 and bpk.exe will run.Enter any name preferrably yours -->i type ferrari and any serial for eg. '1111111111111111' and click Ok. Now get back to Olly and see on far top right hand side pane --> 'Registers'  you will find the correct serial number!! 
+
+EAX 0012C114  ASCII "HXHDVMKMWPOIFRYJ" <--- Serial number valid for my name i.e ferrari
+                                            your's will be different.
+
+Congratulations cracker!!!
+
+@@@@@@@@@@###########################################################################@@@@@@@@@@ 
+@@@@@@@@@@#                          ---SHOUTZ AND GREETZ---                        #@@@@@@@@@@
+@@@@  @@@@#                                                                         #@@@@  @@@@ 
+@@@ H  @@@#            To Nilrem-->Merlin who's Tutorials helped me to use          #@@@ H  @@@   @@  O   @@#            Ollydbg for debugging. Thanks to el-kiwi whose tutorials     #@@  O   @@
+@   R    @#            helped me alot. Thanks to Pompeyfan, www.tech-arena.com      #@   R    @  
+@@  S   @@#            staff, members for encouraging me to write these tutorials.  #@@  S   @@
+@@@ E  @@@#            exetools.com,Sir JMI, SatyricOn, R@dier and others who       #@@@ E  @@@
+@@@@  @@@@#            helped me alot.                                              #@@@@  @@@@
+@@@@@@@@@@@@@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$@@@@@@@@@@@@@ 
+@@@@@@@@@@@@@                                                                     @@@@@@@@@@@@@
+@@@       @@@                                                                     @@@       @@@
+@@ ferrari @@             REMEMBER IF U USE THE PROGRAM THEN BUY IT ;-) !         @@ ferrari @@ 
+@@@       @@@                                                                     @@@       @@@ 
+@@@@@@@@@@@@@                                                                     @@@@@@@@@@@@@   @@@@@@@@@@@@@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$@@@@@@@@@@@@@

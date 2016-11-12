@@ -1,0 +1,517 @@
+*************************************************************************************************TITLE:
+Cracking tutorial for CuteFTP Pro 6.0.0.4
+*************************************************************************************************
+BEST VIEWED:
+Notepad with word wrap enabled, and in restored window mode
+*************************************************************************************************
+TOOLS USED:
+Ollydbg v1.09d
+*************************************************************************************************TARGET:
+CUTEFTPPRO.exe
+*************************************************************************************************LOCATION OF TOOLS AND PROGRAM:
+Ollydbg v1.09d http://www.grinders.withernsea.com/tools/Ollydbg/odbg109d.rar
+CuteFTP Pro 6.0.0.4 http://www.grinders.withernsea.com/tools/cuteftppro.rar
+HexToText.exe http://www.grinders.withernsea.com/tools/HexToText.rar
+Regmon v6.06(Optional) http://www.grinders.withernsea.com/tools/ntregmon.zip
+*************************************************************************************************
+CONTACT INFORMATION:
+vinceandjane@hotmail.com
+*************************************************************************************************
+TUTORIAL WRITTEN:
+09/04/2004
+*************************************************************************************************
+AUTHOR:
+Pompeyfan
+*************************************************************************************************
+
+Okay,lets attack our target, open Olly, and if you haven't done so already, to make things easier for yourself, right click, select appearance/highlighting/jumps'n'calls, makes things so much easier to follow.
+
+Okay, lets open the program in Olly, and you land here:
+
+0051481A >/$ 55             PUSH EBP
+
+Press F9 (Run), and the evaluation screen opens, click on "enter serial number", and enter your fake serial, I used all 7's filling the box, then hit the "next" button, and you get the message "your serial number has not been accepted, bla, bla, bla".
+
+Now, don't press okay to this message yet, press F12(pause), then Alt & K to bring up the call stack, and you get the following:
+
+Call stack of main thread
+Address    Stack      Procedure                             Called from                   Frame
+0012DDD4   77D43C53   Includes 7FFE0304                     USER32.77D43C51               0012DE08
+0012DDD8   77D4B3F2   USER32.WaitMessage                    USER32.77D4B3ED               0012DE08
+0012DE0C   77D4D9A0   USER32.77D4B265                       USER32.77D4D99B               0012DE08
+0012DE34   77D6AE8E   USER32.77D4D8EC                       USER32.77D6AE89               0012DE30
+0012E0EC   77D6A911   ? USER32.SoftModalMessageBox          USER32.77D6A90C               0012E074
+0012E234   77D6AFD5   ? USER32.77D6A7D7                     USER32.77D6AFD0               0012E1BC
+0012E28C   77D6B0BD   USER32.MessageBoxTimeoutW             USER32.77D6B0B8               0012E288
+0012E2C0   77D6B04A   ? USER32.MessageBoxTimeoutA           USER32.77D6B045               0012E2BC
+0012E2E0   77D6B02E   ? USER32.MessageBoxExA                USER32.77D6B029               0012E2DC
+0012E2F8   0052B534   ? USER32.MessageBoxA                  CUTEFTPP.0052B52E
+0012E310   0046FD24   ? CUTEFTPP.0052B506                   CUTEFTPP.0046FD1F
+
+Now, double click on the bottom entry, and you arehere:
+
+0046FD1F   . E8 E2B70B00    CALL CUTEFTPP.0052B506
+
+Right click on it, then Breakpoint/Toggle
+
+Now, again press the "next" button on the serial dialogue, and Olly breaks here:
+
+0046FD1F   . E8 E2B70B00    CALL CUTEFTPP.0052B506
+
+and you will notice the "Registration failed" message in the EAX register, as well as in the dump, and you will see a number in the dump pane of A2222222222222 ( I tried this number, and of course we were not that lucky for it to be the real serial, looked to odd a number to be real anyway, but keep it in mind for later, as it plays a big part in the crack).
+
+You press F7 to trace into this call, and you have this routine:
+
+0052B506  /$ 8B4424 08      MOV EAX,DWORD PTR SS:[ESP+8]
+0052B50A  |. 56             PUSH ESI
+0052B50B  |. 85C0           TEST EAX,EAX
+0052B50D  |. 8BF1           MOV ESI,ECX
+0052B50F  |. 75 08          JNZ SHORT CUTEFTPP.0052B519
+0052B511  |. E8 050A0200    CALL CUTEFTPP.0054BF1B
+0052B516  |. 8B40 10        MOV EAX,DWORD PTR DS:[EAX+10]
+0052B519  |> 85F6           TEST ESI,ESI
+0052B51B  |. 75 04          JNZ SHORT CUTEFTPP.0052B521
+0052B51D  |. 33C9           XOR ECX,ECX
+0052B51F  |. EB 03          JMP SHORT CUTEFTPP.0052B524
+0052B521  |> 8B4E 1C        MOV ECX,DWORD PTR DS:[ESI+1C]
+0052B524  |> FF7424 10      PUSH DWORD PTR SS:[ESP+10]               ; /Style
+0052B528  |. 50             PUSH EAX                                 ; |Title
+0052B529  |. FF7424 10      PUSH DWORD PTR SS:[ESP+10]               ; |Text
+0052B52D  |. 51             PUSH ECX                                 ; |hOwner
+0052B52E  |. FF15 3CA65700  CALL DWORD PTR DS:[<&USER32.MessageBoxA>>; \MessageBoxA
+0052B534  |. 5E             POP ESI
+0052B535  \. C2 0C00        RETN 0C
+
+This routine leads to the bad bracker message, but after fiddling with this routine a bit, I came to the conclusion, that once in it, it is to late, you need to trace further back.
+
+So if we scroll up from the first call we had at:
+
+0046FD1F   . E8 E2B70B00    CALL CUTEFTPP.0052B506
+
+We see that this sub-routine starts at:
+
+0046FCAB   > 8B0D 000A5D00  MOV ECX,DWORD PTR DS:[5D0A00]            ;  CUTEFTPP.005D0A14
+
+Now Right click on this line, then Find references to\Selected command, and you get this:
+
+References in CUTEFTPP:.text to 0046FCAB
+Address    Disassembly                               Comment
+0046FC44   JE SHORT CUTEFTPP.0046FCAB
+0046FC60   JE SHORT CUTEFTPP.0046FCAB
+0046FCAB   MOV ECX,DWORD PTR DS:[5D0A00]             (Initial CPU selection)
+
+How about we scroll up to the start of the previous sub-routine, and put a breakpoint on this line:
+
+0046FC12   > 8B15 000A5D00  MOV EDX,DWORD PTR DS:[5D0A00]            ;  CUTEFTPP.005D0A14
+
+Enter your details again, and we break at this line, and you see your fake serial loaded into the EAX register, we trace with F8, and again we see our fake serial being compared with A2222222222222 for some reason, I tried tracing into some of the calls with F7, the serial calculation could very well be in there, but to complex for me I'm afraid.
+
+So we get to this section:
+
+0046FC42   . 85C0           TEST EAX,EAX
+0046FC44   . 74 65          JE SHORT CUTEFTPP.0046FCAB
+0046FC46   . 6A 00          PUSH 0
+0046FC48   . 8BCF           MOV ECX,EDI
+0046FC4A   . E8 57D60B00    CALL CUTEFTPP.0052D2A6
+0046FC4F   . 8D5424 14      LEA EDX,DWORD PTR SS:[ESP+14]
+0046FC53   . 50             PUSH EAX
+0046FC54   . 52             PUSH EDX
+0046FC55   . E8 A67C0000    CALL CUTEFTPP.00477900
+0046FC5A   . 83C4 08        ADD ESP,8
+0046FC5D   . 66:85C0        TEST AX,AX
+0046FC60   . 74 49          JE SHORT CUTEFTPP.0046FCAB
+
+We have 2 tests, and 2 conditional jumps which lead to the bad cracker message, if we trace with F8, at the first EAX=FFFFFFFF and it is not taken, at the second AX=0 and away we go on our way to the bad cracker message.
+
+Now, I may be no expert, but what I have learned, is that quite often with these tests, the value here, can be something like 0=unregistered/1=registered, so how about we change:
+
+0046FC5D   . 66:85C0        TEST AX,AX 
+
+to: 
+
+0046FC5D     66:40          INC AX
+0046FC5F     90             NOP
+
+So, Right click on that line, then Assemble, make the change, then click on Assemble, then close this box. 
+
+Now, enter your fake serial again, and this time you get a different dialogue to complete, it is the "Registration wizzard", just fill in your name that is enough, and hit next, this box is designed to confirm your serial number online, so I definitely think we hit on a good alteration above, as we are not getting the bad cracker message anymore.
+
+OKay, let us make this change permanent, Right click/copy to executable/all modifications/copy all, and then right click on new box that comes up/save file, double click on the file to overwrite and select yes to overwrite.
+
+Okay, after hitting next, we get the "registration failed message of course, because we are not connected to the internet, of course we don't want it verified online, so we will evenyually have to find a way of getting around this, so we select "Attempt to auto-complete the registration later" and hit "next", the program opens, and if you check the Help/About screen, you will see that your registration details now show you as Registerd but UNVERIFIED, and it shows your fake serial.
+
+I know from experience with previous versions of this program, that it usually contains registration details somewhere in the HKEY_USERS key in your registry, so we fire up Regedit, and look under HKEY_USERS\DEFAULT\Software\GlobalSCAPE\CuteFTP Professional and we now find an entry "RegUserName", with the name you entered in the registration wizzard, and an extra key has appeared called "Index", and surprise surprise, it has your fake serial.
+
+Before exiting Regedit, let us make a backup of that registry key, so Right click on the CuteFTP Professional key, select export, then perhaps save the reg file as CuteFTPregcrack.reg or whatever you want.
+
+Now, we try and restart the application outside of Olly, but we get the evaluation screen up again, and we see that we are again a temporary user, and although the "RegUserName" is still there, the "Index" key has vannished.
+
+I tried seeing what was happening with Regmon, and you can see clearly the key getting added and deleted:
+
+Enter fake serial:
+
+2	4.75877269	CUTEFT~1.EXE:348	OpenKey	HKU\.DEFAULT\Software\GlobalSCAPE\CuteFTP Professional\Index	NOTFOUND		
+3	10.95688055	CUTEFT~1.EXE:348	CreateKey	HKU\.DEFAULT\Software\GlobalSCAPE\CuteFTP Professional\Index	SUCCESS	Key: 0xE14CD138	
+4	10.95702862	CUTEFT~1.EXE:348	SetValue	HKU\.DEFAULT\Software\GlobalSCAPE\CuteFTP Professional\Index\1	SUCCESS	37 37 37 37 37 37 37 37 ...	
+5	10.95707555	CUTEFT~1.EXE:348	CloseKey	HKU\.DEFAULT\Software\GlobalSCAPE\CuteFTP Professional\Index	SUCCESS	Key: 0xE14CD138	
+6	10.95720126	CUTEFT~1.EXE:348	OpenKey	HKU\.DEFAULT\Software\GlobalSCAPE\CuteFTP Professional	SUCCESS	Key: 0xE14CD138	
+7	10.95724876	CUTEFT~1.EXE:348	SetValue	HKU\.DEFAULT\Software\GlobalSCAPE\CuteFTP Professional\RegUserName	SUCCESS	"Pompeyfan"	
+8	10.95727502	CUTEFT~1.EXE:348	CloseKey	HKU\.DEFAULT\Software\GlobalSCAPE\CuteFTP Professional	SUCCESS	Key: 0xE14CD138
+
+Startup with fake serial:
+
+14734	9.38531573	CUTEFT~1.EXE:1848	OpenKey	HKU\.DEFAULT\Software\GlobalSCAPE\CuteFTP Professional\Index	SUCCESS	Key: 0xE1247670	
+14735	9.38538194	CUTEFT~1.EXE:1848	QueryValue	HKU\.DEFAULT\Software\GlobalSCAPE\CuteFTP Professional\Index\1	SUCCESS	37 37 37 37 37 37 37 37 ...	
+14736	9.38541155	CUTEFT~1.EXE:1848	QueryValue	HKU\.DEFAULT\Software\GlobalSCAPE\CuteFTP Professional\Index\3	NOTFOUND		
+14737	9.38547553	CUTEFT~1.EXE:1848	CloseKey	HKU\.DEFAULT\Software\GlobalSCAPE\CuteFTP Professional\Index	SUCCESS	Key: 0xE1247670	
+14738	9.38572807	CUTEFT~1.EXE:1848	OpenKey	HKU\.DEFAULT\Software\GlobalSCAPE\CuteFTP Professional\Index	SUCCESS	Key: 0xE1247670	
+14739	9.38645023	CUTEFT~1.EXE:1848	DeleteKey	HKU\.DEFAULT\Software\GlobalSCAPE\CuteFTP Professional\Index	SUCCESS	Key: 0xE1247670	
+14740	9.38649828	CUTEFT~1.EXE:1848	CloseKey	HKU\.DEFAULT\Software\GlobalSCAPE\CuteFTP Professional\Index	SUCCESS	Key: 0xE1247670	
+
+
+So, what will we do about this, well firstly run the program outside of Olly, and enter your serial number, and follow the directions as above to include your serial in the registry,then re-open the application in Olly, then Right click/Search for name (label) in current module, then scroll down, and we see a likely target, it is RegDeleteKeyA, so Right click/Set breakpoint on every reference, and we see we have 12, now F9 (Run), and we strike it lucky first time, we are here:
+
+0046D0D6   . FF15 2CA05700  CALL DWORD PTR DS:[<&ADVAPI32.RegDeleteK>; \RegDeleteKeyA
+
+Look at the EAX register, it clearly mentions the "Index" key, and look at the EBP & ESI values, again our fake serial & A2222222222222, and this is the sub-routine that leads to the message:
+
+0046D0C9   > 8B5424 20      MOV EDX,DWORD PTR SS:[ESP+20]
+0046D0CD   . 8B42 28        MOV EAX,DWORD PTR DS:[EDX+28]
+0046D0D0   . 50             PUSH EAX                                 ; /Subkey
+0046D0D1   . 68 03000080    PUSH 80000003                            ; |hKey = HKEY_USERS
+0046D0D6   . FF15 2CA05700  CALL DWORD PTR DS:[<&ADVAPI32.RegDeleteK>; \RegDeleteKeyA
+
+Right click on the first line (0046D0C9), then Find references to/Selected command, and you get this:
+
+References in CUTEFTPP:.text to 0046D0C9
+Address    Disassembly                               Comment
+0046CF48   JE CUTEFTPP.0046D0C9
+0046CF5F   JE CUTEFTPP.0046D0C9
+0046D0C9   MOV EDX,DWORD PTR SS:[ESP+20]             (Initial CPU selection)
+	
+Both these conditional jumps have tests before them, and if you jump your key will be deleted, let us see if anything else happens further up, by setting a breakpoint up the top of this routine at, firstly though remove all your other breakpoints:
+
+0046CE50   . 64:A1 00000000 MOV EAX,DWORD PTR FS:[0]
+
+Now Ctrl & F2 to restart the program in Olly, then F9 (Run), and we break at the point set, now F8 to step over the code, you have a couple of jumps here not taken, that would go beyond the delete key message if conditions are met, but they are not taken:
+
+0046CED9   . 85C0           TEST EAX,EAX------------------->EAX=0
+0046CEDB   . 0F85 23020000  JNZ CUTEFTPP.0046D104---------->Not taken
+0046CEE1   . 807D 00 00     CMP BYTE PTR SS:[EBP],0-------->First byte of your fake serial 7(or37 in Hex) compared with 0
+0046CEE5   . 0F84 29020000  JE CUTEFTPP.0046D114----------->Not taken
+
+0046CF21   . 3A16           CMP DL,BYTE PTR DS:[ESI]------->Compares your first byte of your fake serial with A
+0046CF23   . 75 1C          JNZ SHORT CUTEFTPP.0046CF41---->Taken because not equal
+
+0046CF46   > 85C0           TEST EAX,EAX------------------->FFFFFFFF
+0046CF48   . 0F84 7B010000  JE CUTEFTPP.0046D0C9----------->Not taken
+
+0046CF5C   . 66:85C0        TEST AX,AX--------------------->AX=0
+0046CF5F   . 0F84 64010000  JE CUTEFTPP.0046D0C9----------->Jump taken
+
+Okay, I traced into some of the calls, and again this serial calculation is probably in here somewhere, but beyond me, so out of interest, using a bit of lateral thinking, I know that A2222222222222 isn't the real serial, but it is compared so damn much, I'd just like to know what happens if we use this instead, so run the program, and enter this as your fake serial, okay it wont accept it, probably because of the changes we made to the code already I suspect, but what if we enter it manually into the registry, either via Regedit, or what I did is alter my CuteFTPregcrack.reg file, then double click on it to merge into the registry.
+
+I use a little program called HexToText to calculate the Hex equivalent ofanything, so I enter
+A2222222222222 and hit convert, and I have 41 32 32 32 32 32 32 32 32 32 32 32 32 32, so I put this in my reg file to replace what is showing under the Index key (Value 1), and double click on it to merge it into my registry.
+
+Now, I restart CuteFTP Pro in Olly, F9(Run), and we again break here:
+
+0046CE50   . 64:A1 00000000 MOV EAX,DWORD PTR FS:[0]
+
+Again we step over the code with F8:
+
+0046CED9   . 85C0           TEST EAX,EAX------------------->EAX=0
+0046CEDB   . 0F85 23020000  JNZ CUTEFTPP.0046D104---------->Not taken
+0046CEE1   . 807D 00 00     CMP BYTE PTR SS:[EBP],0-------->First byte of your fake serial A(or 41 in Hex) compared with 0
+0046CEE5   . 0F84 29020000  JE CUTEFTPP.0046D114----------->Not taken
+
+We get to here:
+
+0046CF21   . 3A16           CMP DL,BYTE PTR DS:[ESI]---------->A (First byte of fake serial) compared with A
+0046CF23   . 75 1C          JNZ SHORT CUTEFTPP.0046CF41------->We wont take the jump of course
+
+And we are in this loop:
+
+0046CF23   . 75 1C          JNZ SHORT CUTEFTPP.0046CF41
+0046CF25   . 84C9           TEST CL,CL
+0046CF27   . 74 14          JE SHORT CUTEFTPP.0046CF3D
+0046CF29   . 8A50 01        MOV DL,BYTE PTR DS:[EAX+1]
+0046CF2C   . 8ACA           MOV CL,DL
+0046CF2E   . 3A56 01        CMP DL,BYTE PTR DS:[ESI+1]
+0046CF31   . 75 0E          JNZ SHORT CUTEFTPP.0046CF41
+0046CF33   . 83C0 02        ADD EAX,2
+0046CF36   . 83C6 02        ADD ESI,2
+0046CF39   . 84C9           TEST CL,CL
+0046CF3B   .^75 E0          JNZ SHORT CUTEFTPP.0046CF1D
+
+When we finally come out:
+
+0046CF3D   > 33C0           XOR EAX,EAX------------------------>EAX is set to 0
+0046CF3F   . EB 05          JMP SHORT CUTEFTPP.0046CF46-------->Then Jump
+
+0046CF46   > 85C0           TEST EAX,EAX----------------------->Which equals zero of course because of the XOR
+0046CF48   . 0F84 7B010000  JE CUTEFTPP.0046D0C9--------------->Jump to delete our key routine
+
+Okay, restart Olly before you get to that delete key section, otherwise you will have to re-enter your details again.
+
+I tried changing 0046CED9 to INC EAX, so that EAX would equal 1, but this is a bad jump, so I will save you the trouble of trying that.
+
+So my next idea was this:
+
+0046CF3F   . EB 05          JMP SHORT cuteftpp.0046CF46---------->Nop this
+
+0046CF43   . 83D8 FF        SBB EAX,-1--------------------------->Change to INC EAX
+
+Why, because remember their are 2 conditional jumps which lead to the delete key routine, those being in this section of code, we nop the jump because it gives us more chance change potential flags from 0=unregistered to 1=registered, and we want to increment EAX so that it will equal 1 at 0046CF46, and AX will hopefully equal 1 at 0046CF5C:
+
+0046CF41   > 1BC0           SBB EAX,EAX
+0046CF43   . 83D8 FF        SBB EAX,-1--------------------------->We change to INC EAX
+0046CF46   > 85C0           TEST EAX,EAX------------------------->1 of course
+0046CF48   . 0F84 7B010000  JE CUTEFTPP.0046D0C9
+0046CF4E   . 8D4424 2C      LEA EAX,DWORD PTR SS:[ESP+2C]
+0046CF52   . 55             PUSH EBP
+0046CF53   . 50             PUSH EAX
+0046CF54   . E8 A7A90000    CALL CUTEFTPP.00477900
+0046CF59   . 83C4 08        ADD ESP,8
+0046CF5C   . 66:85C0        TEST AX,AX--------------------------->Actually it equals FFFF? here
+0046CF5F   . 0F84 64010000  JE CUTEFTPP.0046D0C9
+
+Lets look in the call at 00477900:
+
+00477900  /$ 83EC 20        SUB ESP,20
+00477903  |. 8B5424 28      MOV EDX,DWORD PTR SS:[ESP+28]
+00477907  |. 57             PUSH EDI
+00477908  |. 8BFA           MOV EDI,EDX
+0047790A  |. 83C9 FF        OR ECX,FFFFFFFF
+0047790D  |. 33C0           XOR EAX,EAX
+0047790F  |. C64424 12 00   MOV BYTE PTR SS:[ESP+12],0
+00477914  |. F2:AE          REPNE SCAS BYTE PTR ES:[EDI]
+00477916  |. F7D1           NOT ECX
+00477918  |. 49             DEC ECX
+00477919  |. C64424 22 00   MOV BYTE PTR SS:[ESP+22],0
+0047791E  |. 83F9 0E        CMP ECX,0E
+00477921  |. 0F85 82000000  JNZ CUTEFTPP.004779A9
+00477927  |. 8B02           MOV EAX,DWORD PTR DS:[EDX]
+00477929  |. 8B4A 04        MOV ECX,DWORD PTR DS:[EDX+4]
+0047792C  |. 894424 04      MOV DWORD PTR SS:[ESP+4],EAX
+00477930  |. 8B42 08        MOV EAX,DWORD PTR DS:[EDX+8]
+00477933  |. 894C24 08      MOV DWORD PTR SS:[ESP+8],ECX
+00477937  |. 66:8B4A 0C     MOV CX,WORD PTR DS:[EDX+C]
+0047793B  |. 8D5424 04      LEA EDX,DWORD PTR SS:[ESP+4]
+0047793F  |. 56             PUSH ESI
+00477940  |. 52             PUSH EDX
+00477941  |. 894424 14      MOV DWORD PTR SS:[ESP+14],EAX
+00477945  |. 66:894C24 18   MOV WORD PTR SS:[ESP+18],CX
+0047794A  |. E8 F1AC0900    CALL CUTEFTPP.00512640
+0047794F  |. 8D4424 0C      LEA EAX,DWORD PTR SS:[ESP+C]
+00477953  |. 50             PUSH EAX
+00477954  |. E8 F7BBFFFF    CALL CUTEFTPP.00473550
+00477959  |. 8BF0           MOV ESI,EAX
+0047795B  |. 56             PUSH ESI
+0047795C  |. E8 DFB8FFFF    CALL CUTEFTPP.00473240
+00477961  |. 8D4C24 24      LEA ECX,DWORD PTR SS:[ESP+24]
+00477965  |. 8BF8           MOV EDI,EAX
+00477967  |. 51             PUSH ECX
+00477968  |. 56             PUSH ESI
+00477969  |. C64424 2C 00   MOV BYTE PTR SS:[ESP+2C],0
+0047796E  |. E8 5DBAFFFF    CALL CUTEFTPP.004733D0
+00477973  |. 8D5424 1C      LEA EDX,DWORD PTR SS:[ESP+1C]
+00477977  |. 6A 0E          PUSH 0E
+00477979  |. 8D4424 30      LEA EAX,DWORD PTR SS:[ESP+30]
+0047797D  |. 52             PUSH EDX
+0047797E  |. 50             PUSH EAX
+0047797F  |. E8 CCC60900    CALL CUTEFTPP.00514050
+00477984  |. 83C4 20        ADD ESP,20
+00477987  |. 85C0           TEST EAX,EAX
+00477989  |. 5E             POP ESI
+0047798A  |. 75 0F          JNZ SHORT CUTEFTPP.0047799B
+0047798C  |. 8B4C24 28      MOV ECX,DWORD PTR SS:[ESP+28]
+00477990     66:0D FFFF     OR AX,0FFFF
+00477994  |. 8939           MOV DWORD PTR DS:[ECX],EDI
+00477996  |. 5F             POP EDI
+00477997  |. 83C4 20        ADD ESP,20
+
+Let us change:
+
+00477990     66:0D FFFF     OR AX,0FFFF-------------------->to INC AX, now it will return a value of 1 when it gets to 0046CF5C.
+
+
+Okay, restart the program in Olly, then F9(Run) to get to our breakpoint, then make the above changes, then F9(run), and bingo, the program is licenced in our name but UNVERIFIED.
+
+Okay, make the above changes permanent, as described before, we obviously want to keep these ammendments.
+
+But what if we now want it to accept any serial, okay I want my serial to be AR CRACKING
+, so again I use HexToText, and in Hex that is 41 52 20 43 52 41 43 4B 49 4E 47, and I alter my  CuteFTPregcrack.reg file, then double click on it to merge into the registry.
+
+Okay, restart the program in Olly, and Put a breakpoint on those last 2 tests:
+
+0046CF46     85C0           TEST EAX,EAX
+
+&
+
+0046CF5C     66:85C0        TEST AX,AX
+
+Now, F9(Run), and we break at the first test:
+
+We see our serial compared in the registers window, and at the first breakpoint EAX=1 which is okay.
+
+We get to the 2nd breakpoint, and AX=0, so simply change this line to:
+
+0046CF5C     66:40          INC AX
+0046CF5E     90             NOP
+
+Now we know that AX will also equal 1, so we F9(Run), and program opens registered to us withb a serial of AR CRACKING, but UNVERIFIED.
+
+So, if you want to register the program with any serial, make these changes permanent, you are restricted to 14 characters though.
+
+Okay, now we have to make sure that the program never tries to verify the serial with the Authors site, one way seem work if you have a firewall, is to just not allow CUTEFTPPRO.exe access to the internet, after all ftpte.exe is responsible for all the file transfers, I did this successfully for a while, but decided I should try and make 100% sure, at least with logging enabled on my firewall, I could see when an attempt was made.
+
+Actually the solution is quite easy, the routine is right under the one we were working on before, take note of the value of EAX at 0046CF69:
+
+0046CF65   . 8B4424 10      MOV EAX,DWORD PTR SS:[ESP+10]
+0046CF69     85C0           TEST EAX,EAX
+0046CF6B   . 0F84 82010000  JE CUTEFTPP.0046D0F3
+0046CF71   . 68 48775C00    PUSH CUTEFTPP.005C7748                   ;  ASCII "http://"
+0046CF76   . 8D4C24 1C      LEA ECX,DWORD PTR SS:[ESP+1C]
+0046CF7A   . E8 65FF0B00    CALL CUTEFTPP.0052CEE4
+0046CF7F   . 8D4C24 34      LEA ECX,DWORD PTR SS:[ESP+34]
+0046CF83   . 6A 0A          PUSH 0A                                  ; /Arg3 = 0000000A
+0046CF85   . 51             PUSH ECX                                 ; |Arg2
+0046CF86   . 6A 50          PUSH 50                                  ; |Arg1 = 00000050
+0046CF88   . C68424 100C000>MOV BYTE PTR SS:[ESP+C10],2              ; |
+0046CF90   . E8 19580A00    CALL CUTEFTPP.005127AE                   ; \CUTEFTPP.005127AE
+0046CF95   . 83C4 0C        ADD ESP,0C
+0046CF98   . 8D4C24 10      LEA ECX,DWORD PTR SS:[ESP+10]------------>Connect to Port 80
+0046CF9C   . 68 2C775C00    PUSH CUTEFTPP.005C772C                   ;  ASCII "dbregistration.cuteftp.com"----------------------------------------->Authors site
+0046CFA1   . E8 3EFF0B00    CALL CUTEFTPP.0052CEE4
+0046CFA6   . 68 20365C00    PUSH CUTEFTPP.005C3620
+0046CFAB   . 8D4C24 14      LEA ECX,DWORD PTR SS:[ESP+14]
+0046CFAF   . C68424 080C000>MOV BYTE PTR SS:[ESP+C08],3
+0046CFB7   . E8 91780B00    CALL CUTEFTPP.0052484D
+0046CFBC   . 8BF0           MOV ESI,EAX
+0046CFBE   . 83FE FF        CMP ESI,-1
+0046CFC1   . 74 2F          JE SHORT CUTEFTPP.0046CFF2
+0046CFC3   . 68 28775C00    PUSH CUTEFTPP.005C7728
+0046CFC8   . 56             PUSH ESI
+0046CFC9   . 8D4C24 18      LEA ECX,DWORD PTR SS:[ESP+18]
+0046CFCD   . E8 DB730B00    CALL CUTEFTPP.005243AD
+0046CFD2   . 8D5424 34      LEA EDX,DWORD PTR SS:[ESP+34]
+0046CFD6   . 46             INC ESI
+0046CFD7   . 52             PUSH EDX
+0046CFD8   . 56             PUSH ESI
+0046CFD9   . 8D4C24 18      LEA ECX,DWORD PTR SS:[ESP+18]
+0046CFDD   . E8 CB730B00    CALL CUTEFTPP.005243AD
+0046CFE2   . 8D4424 10      LEA EAX,DWORD PTR SS:[ESP+10]
+0046CFE6   . 8D4C24 18      LEA ECX,DWORD PTR SS:[ESP+18]
+0046CFEA   . 50             PUSH EAX
+0046CFEB   . E8 9E020C00    CALL CUTEFTPP.0052D28E
+0046CFF0   . EB 2A          JMP SHORT CUTEFTPP.0046D01C
+0046CFF2   > 68 2C775C00    PUSH CUTEFTPP.005C772C                   ;  ASCII "dbregistration.cuteftp.com"
+0046CFF7   . 8D4C24 1C      LEA ECX,DWORD PTR SS:[ESP+1C]
+0046CFFB   . E8 52020C00    CALL CUTEFTPP.0052D252
+0046D000   . 68 28775C00    PUSH CUTEFTPP.005C7728
+0046D005   . 8D4C24 1C      LEA ECX,DWORD PTR SS:[ESP+1C]
+0046D009   . E8 44020C00    CALL CUTEFTPP.0052D252
+0046D00E   . 8D4C24 34      LEA ECX,DWORD PTR SS:[ESP+34]
+0046D012   . 51             PUSH ECX
+0046D013   . 8D4C24 1C      LEA ECX,DWORD PTR SS:[ESP+1C]
+0046D017   . E8 36020C00    CALL CUTEFTPP.0052D252
+0046D01C   > 8B5424 18      MOV EDX,DWORD PTR SS:[ESP+18]
+0046D020   . 52             PUSH EDX
+0046D021   . E8 FABA0400    CALL CUTEFTPP.004B8B20
+0046D026   . 83C4 04        ADD ESP,4
+0046D029   . 85C0           TEST EAX,EAX
+0046D02B   . 74 53          JE SHORT CUTEFTPP.0046D080
+
+and when you get here:
+
+0046D021   . E8 FABA0400    CALL CUTEFTPP.004B8B20
+
+If you syep into the call (F7), you can see this routine has your internet API's.
+
+004B8B20  /$ 51             PUSH ECX
+004B8B21  |. 56             PUSH ESI
+004B8B22  |. 57             PUSH EDI
+004B8B23  |. 8D4424 08      LEA EAX,DWORD PTR SS:[ESP+8]
+004B8B27  |. 6A 00          PUSH 0
+004B8B29  |. 50             PUSH EAX
+004B8B2A  |. FF15 F4A85700  CALL DWORD PTR DS:[<&WININET.InternetGet>;  WININET.InternetGetConnectedState
+004B8B30  |. 8BF8           MOV EDI,EAX
+004B8B32  |. 85FF           TEST EDI,EDI
+004B8B34  |. 74 5A          JE SHORT CUTEFTPP.004B8B90
+004B8B36  |. 6A 00          PUSH 0
+004B8B38  |. 6A 00          PUSH 0
+004B8B3A  |. 6A 00          PUSH 0
+004B8B3C  |. 6A 00          PUSH 0
+004B8B3E  |. 68 00CE5C00    PUSH CUTEFTPP.005CCE00                   ;  ASCII "InternetConn"
+004B8B43  |. FF15 F0A85700  CALL DWORD PTR DS:[<&WININET.InternetOpe>;  WININET.InternetOpenA
+004B8B49  |. 8BF0           MOV ESI,EAX
+004B8B4B  |. 85F6           TEST ESI,ESI
+004B8B4D  |. 74 3B          JE SHORT CUTEFTPP.004B8B8A
+004B8B4F  |. 8B4C24 10      MOV ECX,DWORD PTR SS:[ESP+10]
+004B8B53  |. 53             PUSH EBX
+004B8B54  |. 6A 00          PUSH 0
+004B8B56  |. 68 00000080    PUSH 80000000
+004B8B5B  |. 6A 00          PUSH 0
+004B8B5D  |. 6A 00          PUSH 0
+004B8B5F  |. 51             PUSH ECX
+004B8B60  |. 56             PUSH ESI
+004B8B61  |. FF15 FCA85700  CALL DWORD PTR DS:[<&WININET.InternetOpe>;  WININET.InternetOpenUrlA
+004B8B67  |. 8B1D CCA85700  MOV EBX,DWORD PTR DS:[<&WININET.Internet>;  WININET.InternetCloseHandle
+004B8B6D  |. 85C0           TEST EAX,EAX
+004B8B6F  |. 74 0D          JE SHORT CUTEFTPP.004B8B7E
+004B8B71  |. 50             PUSH EAX
+004B8B72  |. FFD3           CALL EBX                                 ;  <&WININET.InternetCloseHandle>
+004B8B74  |. 56             PUSH ESI
+004B8B75  |. FFD3           CALL EBX
+004B8B77  |. 8BC7           MOV EAX,EDI
+004B8B79  |. 5B             POP EBX
+004B8B7A  |. 5F             POP EDI
+004B8B7B  |. 5E             POP ESI
+004B8B7C  |. 59             POP ECX
+004B8B7D  |. C3             RETN
+004B8B7E  |> 56             PUSH ESI
+004B8B7F  |. 33FF           XOR EDI,EDI
+004B8B81  |. FFD3           CALL EBX
+004B8B83  |. 8BC7           MOV EAX,EDI
+004B8B85  |. 5B             POP EBX
+004B8B86  |. 5F             POP EDI
+004B8B87  |. 5E             POP ESI
+004B8B88  |. 59             POP ECX
+004B8B89  |. C3             RETN
+004B8B8A  |> 5F             POP EDI
+004B8B8B  |. 33C0           XOR EAX,EAX
+004B8B8D  |. 5E             POP ESI
+004B8B8E  |. 59             POP ECX
+004B8B8F  |. C3             RETN
+004B8B90  |> 8BC7           MOV EAX,EDI
+004B8B92  |. 5F             POP EDI
+004B8B93  |. 5E             POP ESI
+004B8B94  |. 59             POP ECX
+004B8B95  \. C3             RETN
+
+Well EAX=1 at 0046CF69,  so all you need to do is 
+
+0046CF69     85C0           TEST EAX,EAX
+
+to:
+
+0046CF69     33C0           XOR EAX,EAX
+
+Then we jump to here:
+
+0046D0F3   > C68424 040C000>MOV BYTE PTR SS:[ESP+C04],0
+
+Which is past the registration check routine, I used the program after this chage, and my firewall log no longer shows any connection attempts to the authors site.
+
+So again, make these changes permanent in Olly.
+
+So, as far as I'm concerned, that is job done, I did notice that their were 3 other mentions of dbregistration.cuteftp.com in the referenced text strings(0046D428, 004703E4 & 00473E22), but now of those routines seem to be called up with our current status of registration, and in my opinion so long as the target is killed and fully functions, that is the end of story, so well done crackers!!!
+
+And remember, if you use the program, buy it ,software developers rely on the income from sales to keep going, if nobody buys, no new software would be developed.
+
+*************************************************************************************************
+SHOUTZ AND GREETZ:
+
+To the AR Cracking forum, exetools forum, tsrh forum, Ollydbg forum, Ricardo Narvaja, Kruger, Britedream, Satyric0n, R@dier, LaBBa, Nilrem & Ferarri whoose tuts have helped me more than any others , Ollydbg, and the authors of CuteFTP Pro.
+*************************************************************************************************
